@@ -3,23 +3,30 @@
 from web3 import Web3, HTTPProvider
 import json
 
-contract_info = ""
-with open('../build/contracts/BlockCertsOnchaining.json') as file:
-    data = file.read()
-    contract_info = json.loads(data)
+class ContractConnection:
+    def __init__(self, contract_url, contract_info_path):
+        self.contract_url = contract_url
+        self.contract_info_path = contract_info_path
+        self.contract_info = self.get_contract_info()
 
-abi = contract_info["abi"]
-address = contract_info["networks"]["5777"]["address"]
-print(address)
+    def get_contract_info(self):
+        contract_info = ""
+        with open(self.contract_info_path) as file:
+            data = file.read()
+            contract_info = json.loads(data)
+        return contract_info
 
-# connecting to local ethereum node using ganache
-w3 = Web3(HTTPProvider('http://localhost:8545'))
-w3.eth.defaultAccount = w3.eth.accounts[0]
+    def get_contract_abi(self):
+        return self.contract_info["abi"]
 
-# print(w3.eth.getBlock("latest"))
+    def get_contract_address(self):
+        return self.contract_info["networks"]["5777"]["address"]
 
-certsc = w3.eth.contract(address=address,abi=abi)
+    def create_w3_object(self):
+        w3 = Web3(HTTPProvider(self.contract_url))
+        w3.eth.defaultAccount = w3.eth.accounts[0]
+        return w3
 
-certsc.functions.issueCert(666).transact()
-print(certsc.functions.certCount().call())
-print(certsc.functions.testVal().call())
+    def create_contract_object(self):
+        w3 = self.create_w3_object()
+        return w3.eth.contract(address = self.get_contract_address(), abi = self.get_contract_abi())
