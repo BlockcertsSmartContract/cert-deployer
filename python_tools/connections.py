@@ -9,7 +9,8 @@ class ContractConnection:
         self.contract_url = contract_url
         self.contract_info_path = contract_info_path
         self.contract_info = self.get_contract_info()
-        print("ContractConnection: initializing")
+        self.contract_obj = self.create_contract_object()
+        print("ContractConnection: initialized")
 
     def get_contract_info(self):
         contract_info = ""
@@ -38,3 +39,6 @@ class ContractConnection:
         abi = self.get_contract_abi()
         print("ContractConnection: created interface to contract at address: " + str(address))
         return self.w3.eth.contract(address = address, abi = abi)
+
+    def get_contract_object(self):
+        return self.contract_obj

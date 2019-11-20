@@ -4,28 +4,28 @@ from connections import ContractConnection
 
 # always accesses last deployed contract instance
 c = ContractConnection('http://localhost:8545','../build/contracts/BlockCertsOnchaining.json')
-issuer = c.create_contract_object()
+issuer = c.get_contract_object()
+
+# wrap function calls
+def issueCert(merkleRootHash):
+    try:
+        issuer.functions.issueCert(merkleRootHash).transact()
+        print("issued cert with merkleRootHash " + str(merkleRootHash))
+    except ValueError:
+        print("could not issue cert with merkleRootHash " + str(merkleRootHash))
+
+def printCertCount():
+    certCount = issuer.functions.certCount().call()
+    print("number of certs issued so far " + str(certCount))
 
 # print("available functions: ", issuer.all_functions())
-print("# of certs issued so far")
-print(issuer.functions.certCount().call())
 
-print("issuing cert with hash 666")
-issuer.functions.issueCert(666).transact()
+issueCert(123)
+issueCert(111)
 
-print("# of certs issued so far")
-print(issuer.functions.certCount().call())
+printCertCount()
 
 c.set_w3_wallet(1)
 
-print("trying to issue cert with hash 666")
-try:
-    issuer.functions.issueCert(666).transact()
-except:
-    print("only owner")
+issueCert(666)
 
-print("# of certs issued so far")
-print(issuer.functions.certCount().call())
-
-# print("test value (hardcoded)")
-# print(issuer.functions.testVal().call())
