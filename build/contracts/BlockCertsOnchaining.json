@@ -67,12 +67,12 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.8+commit.23d335f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"certs\",\"outputs\":[{\"name\":\"_merkleRootHash\",\"type\":\"uint256\"},{\"name\":\"_issuer\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"testVal\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_merkleRootHash\",\"type\":\"uint256\"}],\"name\":\"issueCert\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"certCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol\":\"BlockCertsOnchaining\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol\":{\"keccak256\":\"0x282455d5b97bccdc1d404d9d9fd5909f67d9a58d96a6d0f2f92a05d42f3bbf2f\",\"urls\":[\"bzzr://4e052ce543a7f0da7c8b76bbfaf029c9f309b66a02700d304eae542d52c2ba6c\"]}},\"version\":1}",
-  "bytecode": "0x608060405260008055600c60015534801561001957600080fd5b5061026f806100296000396000f3fe608060405234801561001057600080fd5b5060043610610069576000357c010000000000000000000000000000000000000000000000000000000090048063646750d61461006e57806377001dd6146100e3578063b0d0a81c14610101578063d4e207a21461012f575b600080fd5b61009a6004803603602081101561008457600080fd5b810190808035906020019092919050505061014d565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b6100eb610191565b6040518082815260200191505060405180910390f35b61012d6004803603602081101561011757600080fd5b8101908080359060200190929190505050610197565b005b61013761023d565b6040518082815260200191505060405180910390f35b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905082565b60015481565b60405180604001604052808281526020013373ffffffffffffffffffffffffffffffffffffffff1681525060026000805481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055509050506001600080828254019250508190555050565b6000548156fea165627a7a72305820b559823ade5ae796bcb1544b644c21c72ee3f36090cb99831d3491c43f5d60e40029",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b5060043610610069576000357c010000000000000000000000000000000000000000000000000000000090048063646750d61461006e57806377001dd6146100e3578063b0d0a81c14610101578063d4e207a21461012f575b600080fd5b61009a6004803603602081101561008457600080fd5b810190808035906020019092919050505061014d565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b6100eb610191565b6040518082815260200191505060405180910390f35b61012d6004803603602081101561011757600080fd5b8101908080359060200190929190505050610197565b005b61013761023d565b6040518082815260200191505060405180910390f35b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905082565b60015481565b60405180604001604052808281526020013373ffffffffffffffffffffffffffffffffffffffff1681525060026000805481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055509050506001600080828254019250508190555050565b6000548156fea165627a7a72305820b559823ade5ae796bcb1544b644c21c72ee3f36090cb99831d3491c43f5d60e40029",
+  "metadata": "{\"compiler\":{\"version\":\"0.5.8+commit.23d335f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"certs\",\"outputs\":[{\"name\":\"_merkleRootHash\",\"type\":\"uint256\"},{\"name\":\"_issuer\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"testVal\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_merkleRootHash\",\"type\":\"uint256\"}],\"name\":\"issueCert\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"certCount\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol\":\"BlockCertsOnchaining\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol\":{\"keccak256\":\"0x459dd2fc8a7ad9143560a0752adde5bc39a43ec7fb0fe21b445f3b3359da28a4\",\"urls\":[\"bzzr://f837adbc2bf770fae492998477db95a4bcc881cd085ce1a92db8e83d44b7967f\"]}},\"version\":1}",
+  "bytecode": "0x608060405260008055600d60015534801561001957600080fd5b5061026f806100296000396000f3fe608060405234801561001057600080fd5b5060043610610069576000357c010000000000000000000000000000000000000000000000000000000090048063646750d61461006e57806377001dd6146100e3578063b0d0a81c14610101578063d4e207a21461012f575b600080fd5b61009a6004803603602081101561008457600080fd5b810190808035906020019092919050505061014d565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b6100eb610191565b6040518082815260200191505060405180910390f35b61012d6004803603602081101561011757600080fd5b8101908080359060200190929190505050610197565b005b61013761023d565b6040518082815260200191505060405180910390f35b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905082565b60015481565b60405180604001604052808281526020013373ffffffffffffffffffffffffffffffffffffffff1681525060026000805481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055509050506001600080828254019250508190555050565b6000548156fea165627a7a72305820ab918dc62b32a33abacfdcac7c4fc5251ec1d0fe2a7af67f6e94fa1e757052e90029",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b5060043610610069576000357c010000000000000000000000000000000000000000000000000000000090048063646750d61461006e57806377001dd6146100e3578063b0d0a81c14610101578063d4e207a21461012f575b600080fd5b61009a6004803603602081101561008457600080fd5b810190808035906020019092919050505061014d565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b6100eb610191565b6040518082815260200191505060405180910390f35b61012d6004803603602081101561011757600080fd5b8101908080359060200190929190505050610197565b005b61013761023d565b6040518082815260200191505060405180910390f35b60026020528060005260406000206000915090508060000154908060010160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905082565b60015481565b60405180604001604052808281526020013373ffffffffffffffffffffffffffffffffffffffff1681525060026000805481526020019081526020016000206000820151816000015560208201518160010160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055509050506001600080828254019250508190555050565b6000548156fea165627a7a72305820ab918dc62b32a33abacfdcac7c4fc5251ec1d0fe2a7af67f6e94fa1e757052e90029",
   "sourceMap": "25:455:0:-;;;88:1;61:28;;117:2;95:24;;25:455;8:9:-1;5:2;;;30:1;27;20:12;5:2;25:455:0;;;;;;;",
   "deployedSourceMap": "25:455:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;25:455:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;130:41;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;130:41:0;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;95:24;;;:::i;:::-;;;;;;;;;;;;;;;;;;;276:202;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;276:202:0;;;;;;;;;;;;;;;;;:::i;:::-;;61:28;;;:::i;:::-;;;;;;;;;;;;;;;;;;;130:41;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;95:24::-;;;;:::o;276:202::-;407:40;;;;;;;;419:15;407:40;;;;436:10;407:40;;;;;388:5;:16;394:9;;388:16;;;;;;;;;;;:59;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;470:1;457:9;;:14;;;;;;;;;;;276:202;:::o;61:28::-;;;;:::o",
-  "source": "pragma solidity >0.5.0;\n\ncontract BlockCertsOnchaining {\n    uint256 public certCount = 0;\n    uint public testVal = 12;\n    \n    mapping(uint => Certificate) public certs;\n    \n    struct Certificate {\n        uint256 _merkleRootHash;\n        address _issuer;\n    }\n    \n    function issueCert(uint256 _merkleRootHash) public {\n        // check if msg.sender is allowed to issue\n        certs[certCount] = Certificate(_merkleRootHash, msg.sender);\n        certCount += 1;\n    }\n}\n",
+  "source": "pragma solidity >0.5.0;\n\ncontract BlockCertsOnchaining {\n    uint256 public certCount = 0;\n    uint public testVal = 13;\n    \n    mapping(uint => Certificate) public certs;\n    \n    struct Certificate {\n        uint256 _merkleRootHash;\n        address _issuer;\n    }\n    \n    function issueCert(uint256 _merkleRootHash) public {\n        // check if msg.sender is allowed to issue\n        certs[certCount] = Certificate(_merkleRootHash, msg.sender);\n        certCount += 1;\n    }\n}\n",
   "sourcePath": "/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol",
   "ast": {
     "absolutePath": "/home/marc/projects/pas/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol",
@@ -176,7 +176,7 @@
             },
             "value": {
               "argumentTypes": null,
-              "hexValue": "3132",
+              "hexValue": "3133",
               "id": 6,
               "isConstant": false,
               "isLValue": false,
@@ -187,10 +187,10 @@
               "src": "117:2:0",
               "subdenomination": null,
               "typeDescriptions": {
-                "typeIdentifier": "t_rational_12_by_1",
-                "typeString": "int_const 12"
+                "typeIdentifier": "t_rational_13_by_1",
+                "typeString": "int_const 13"
               },
-              "value": "12"
+              "value": "13"
             },
             "visibility": "public"
           },
@@ -667,7 +667,7 @@
             },
             "value": {
               "argumentTypes": null,
-              "hexValue": "3132",
+              "hexValue": "3133",
               "id": 6,
               "isConstant": false,
               "isLValue": false,
@@ -678,10 +678,10 @@
               "src": "117:2:0",
               "subdenomination": null,
               "typeDescriptions": {
-                "typeIdentifier": "t_rational_12_by_1",
-                "typeString": "int_const 12"
+                "typeIdentifier": "t_rational_13_by_1",
+                "typeString": "int_const 13"
               },
-              "value": "12"
+              "value": "13"
             },
             "visibility": "public"
           },
@@ -1064,12 +1064,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xC70b6E66545Dbf87516B843c61a162cd82E96cbc",
-      "transactionHash": "0x72e3fb6b335d39fe434e48d3756e77728fcfd6ebff82aa23695b9a53edae594d"
+      "address": "0x39553BC07B4b2e19423a6fD370Ea243049069c52",
+      "transactionHash": "0x5f85e2e694ec1c244bba91bd51a6435e5155d226d00f14d139404d8651fb2174"
     }
   },
   "schemaVersion": "3.0.11",
-  "updatedAt": "2019-11-19T18:56:27.868Z",
+  "updatedAt": "2019-11-20T11:09:15.617Z",
   "devdoc": {
     "methods": {}
   },

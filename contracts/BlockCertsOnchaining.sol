@@ -2,7 +2,7 @@ pragma solidity >0.5.0;
 
 contract BlockCertsOnchaining {
     uint256 public certCount = 0;
-    uint public testVal = 12;
+    uint public testVal = 13;
     
     mapping(uint => Certificate) public certs;
     
