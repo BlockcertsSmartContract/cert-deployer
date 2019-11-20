@@ -13,6 +13,8 @@ def issueCert(merkleRootHash):
         print("issued cert with merkleRootHash " + str(merkleRootHash))
     except ValueError:
         print("could not issue cert with merkleRootHash " + str(merkleRootHash))
+    # except ValidationError:
+        # print("wrong arguments")
 
 def printCertCount():
     certCount = issuer.functions.certCount().call()
@@ -25,7 +27,12 @@ issueCert(111)
 
 printCertCount()
 
+# change current wallet
 c.set_w3_wallet(1)
 
+# won't work, as onlyOwner modifier is set
 issueCert(666)
 
+
+a = issuer.functions.certs(1).call()
+print(a)
