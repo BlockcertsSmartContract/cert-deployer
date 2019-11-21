@@ -29,8 +29,8 @@ def getCertByIndex(index):
 
 # print("available functions: ", issuer.all_functions())
 
-issueCert(123)
-issueCert(111)
+# issueCert(123)
+# issueCert(111)
 
 # change current wallet
 # c.set_w3_wallet(1)
@@ -44,7 +44,9 @@ issueCert(111)
 
 # issuer.functions.revokedCerts(1).call()
 
-
-
+issuer.functions.issueCert(12, [5, 3]).transact()
+print(getCertByIndex(12))
+issuer.functions.revokeCert(12).transact()
+print(getCertByIndex(12))
 
 
