@@ -5,6 +5,7 @@ to implement on-chain revokation of certificates and a persistent identity
 - truffle framework
 - python3 with web3py
 - ganache(-cli)
+- (optional) python virtualenv
 
 ## set up
 1. Clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`

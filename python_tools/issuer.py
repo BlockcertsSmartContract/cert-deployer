@@ -16,12 +16,15 @@ def issueCert(merkleRootHash):
     # except ValidationError:
         # print("wrong arguments")
 
-def getCertCount():
-    certCount = issuer.functions.certCount().call()
-    # print("number of certs issued so far " + str(certCount))
-    return certCount
+def revokeCert(merkleRootHash):
+    try:
+        issuer.functions.revokeCert(merkleRootHash).transact()
+        print("issued cert with merkleRootHash " + str(merkleRootHash))
+    except ValueError:
+        print("could not revoke cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
 
-def getCertByIndex(index):
+def getCertByMRH(index):
+    """get certificate by merkle root hash"""
     try:
         return issuer.functions.certs(index).call()
     except:
@@ -29,27 +32,19 @@ def getCertByIndex(index):
 
 # print("available functions: ", issuer.all_functions())
 
-# issueCert(123)
-# issueCert(111)
-
 # change current wallet
-# c.set_w3_wallet(1)
+c.set_w3_wallet(1)
 # won't work, as onlyOwner modifier is set
-# issueCert(666)
+issueCert(666)
 
-# for i in range(0,getCertCount()):
-    # print(getCertByIndex(i))
+c.set_w3_wallet(0)
 
-
-
-# issuer.functions.revokedCerts(1).call()
-
-issuer.functions.issueCert(12, [4, 3]).transact()
-print(getCertByIndex(12))
+issueCert(12)
+print(getCertByMRH(12))
 try:
     issuer.functions.revokeCert(12).transact()
 except:
     print("couldn't revoke")
-print(getCertByIndex(12))
+print(getCertByMRH(12))
 
 
