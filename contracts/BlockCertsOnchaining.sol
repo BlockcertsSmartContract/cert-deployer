@@ -1,29 +1,31 @@
 pragma solidity >0.5.0;
 
 contract BlockCertsOnchaining {
-    uint256 public certCount = 0;
+	//uint256 public certCount = 0;
+	address internal owner;
 
-    address internal owner;
+	constructor() public {
+		owner = msg.sender;
+	}
 
-    constructor() public {
-        owner = msg.sender;
-    }
+	modifier onlyOwner() {
+		require(msg.sender == owner);
+		_;
+	}
+	
+	mapping(uint => Certificate) public certs;
+	
+	struct Certificate {
+		uint256 _merkleRootHash;
+		bool _revoked;
+	}
 
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
-    
-    mapping(uint => Certificate) public certs;
-    
-    struct Certificate {
-        uint256 _merkleRootHash;
-        address _issuer;
-    }
-    
-    function issueCert(uint256 _merkleRootHash) public onlyOwner {
-        // check if msg.sender is allowed to issue
-        certs[certCount] = Certificate(_merkleRootHash, msg.sender);
-        certCount += 1;
-    }
+    // todo: check for permission
+	function revokeCert(uint256 _merkleRootHash) public {
+	    certs[_merkleRootHash]._revoked = true;
+	}
+	
+	function issueCert(uint256 _merkleRootHash) public onlyOwner {
+		certs[_merkleRootHash] = Certificate(_merkleRootHash, false);
+	}
 }

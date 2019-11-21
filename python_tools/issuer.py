@@ -37,5 +37,14 @@ issueCert(111)
 # won't work, as onlyOwner modifier is set
 # issueCert(666)
 
-for i in range(0,getCertCount()):
-    print(getCertByIndex(i))
+# for i in range(0,getCertCount()):
+    # print(getCertByIndex(i))
+
+
+
+# issuer.functions.revokedCerts(1).call()
+
+
+
+
+
