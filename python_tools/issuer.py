@@ -16,23 +16,26 @@ def issueCert(merkleRootHash):
     # except ValidationError:
         # print("wrong arguments")
 
-def printCertCount():
+def getCertCount():
     certCount = issuer.functions.certCount().call()
-    print("number of certs issued so far " + str(certCount))
+    # print("number of certs issued so far " + str(certCount))
+    return certCount
+
+def getCertByIndex(index):
+    try:
+        return issuer.functions.certs(index).call()
+    except:
+        print("Could not get certificate by index: " + str(index) + ". Correct data type?")
 
 # print("available functions: ", issuer.all_functions())
 
 issueCert(123)
 issueCert(111)
 
-printCertCount()
-
 # change current wallet
-c.set_w3_wallet(1)
-
+# c.set_w3_wallet(1)
 # won't work, as onlyOwner modifier is set
-issueCert(666)
+# issueCert(666)
 
-
-a = issuer.functions.certs(1).call()
-print(a)
+for i in range(0,getCertCount()):
+    print(getCertByIndex(i))
