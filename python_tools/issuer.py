@@ -3,7 +3,7 @@
 from connections import ContractConnection
 
 # always accesses last deployed contract instance
-c = ContractConnection('http://localhost:8545','../build/contracts/BlockCertsOnchaining.json')
+c = ContractConnection('http://localhost:8545','/Users/florianweiss/Desktop/PAS_Git/BlockCertsOnchainingEth/build/contracts/BlockCertsOnchaining.json')
 issuer = c.get_contract_object()
 
 # wrap function calls
