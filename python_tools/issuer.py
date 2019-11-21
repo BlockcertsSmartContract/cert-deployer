@@ -7,44 +7,41 @@ c = ContractConnection('http://localhost:8545','../build/contracts/BlockCertsOnc
 issuer = c.get_contract_object()
 
 # wrap function calls
-def issueCert(merkleRootHash):
+def issueBatch(merkleRootHash):
     try:
-        issuer.functions.issueCert(merkleRootHash).transact()
-        print("issued cert with merkleRootHash " + str(merkleRootHash))
+        issuer.functions.issueBatch(merkleRootHash).transact()
     except ValueError:
-        print("could not issue cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
-    # except ValidationError:
-        # print("wrong arguments")
+        print("could not issue batch with merkleRootHash " + str(merkleRootHash) + ". No permission?")
 
-def revokeCert(merkleRootHash):
+def revokeBatch(batchHash):
     try:
-        issuer.functions.revokeCert(merkleRootHash).transact()
-        print("issued cert with merkleRootHash " + str(merkleRootHash))
+        issuer.functions.revokeBatch(batchHash).transact()
     except ValueError:
-        print("could not revoke cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
+        print("could not revoke batch with batch hash " + str(batchHash) + ". No permission?")
 
-def getCertByMRH(index):
-    """get certificate by merkle root hash"""
+def revokeCert(certHash):
     try:
-        return issuer.functions.certs(index).call()
+        issuer.functions.revokeCert(certHash).transact()
+    except ValueError:
+        print("could not revoke cert with cert hash " + str(certHash) + ". No permission?")
+
+def getCertInfo(certHash):
+    try:
+        return issuer.functions.revokedCerts(certHash).call()
     except:
-        print("Could not get certificate by index: " + str(index) + ". Correct data type?")
+        print("Could not get certificate by certHash: " + str(certHash) + ". Correct data type?")
 
-# print("available functions: ", issuer.all_functions())
+def getBatchInfo(batchHash):
+    try:
+        return issuer.functions.batches(batchHash).call()
+    except:
+        print("Could not get batchificate by batchHash: " + str(batchHash) + ". Correct data type?")
 
-# change current wallet
-c.set_w3_wallet(1)
-# won't work, as onlyOwner modifier is set
-issueCert(666)
-
-c.set_w3_wallet(0)
-
-issueCert(12)
-print(getCertByMRH(12))
-try:
-    issuer.functions.revokeCert(12).transact()
-except:
-    print("couldn't revoke")
-print(getCertByMRH(12))
-
-
+issueBatch(12)
+print(getBatchInfo(12))
+print(getBatchInfo(11))
+revokeBatch(12)
+print(getBatchInfo(12))
+revokeBatch(12)
+revokeCert(13)
+print(getCertInfo(13))
