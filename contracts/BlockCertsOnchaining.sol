@@ -13,12 +13,12 @@ contract BlockCertsOnchaining {
 	
 	modifier revocationPermission (Certificate memory cert) {
 		// require(msg.sender exists in cert._revokers);
-		require(
+		/* require(
 		    // closer to real life:
 		    // msg.sender == cert.revokers[0],
 		    5 == cert._revokers[0],
 		    "revocation requires permission"
-		    );
+		    ); */
 		_;
 	}
 	
@@ -26,7 +26,7 @@ contract BlockCertsOnchaining {
 		owner = msg.sender;
 	}
 	
-	mapping(uint => Certificate) public certs;
+	mapping(uint256 => Certificate) public certs;
 	
 	struct Certificate {
 		uint256 _merkleRootHash;

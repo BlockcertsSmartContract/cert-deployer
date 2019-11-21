@@ -44,9 +44,12 @@ def getCertByIndex(index):
 
 # issuer.functions.revokedCerts(1).call()
 
-issuer.functions.issueCert(12, [5, 3]).transact()
+issuer.functions.issueCert(12, [4, 3]).transact()
 print(getCertByIndex(12))
-issuer.functions.revokeCert(12).transact()
+try:
+    issuer.functions.revokeCert(12).transact()
+except:
+    print("couldn't revoke")
 print(getCertByIndex(12))
 
 
