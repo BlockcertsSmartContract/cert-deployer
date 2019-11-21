@@ -10,7 +10,6 @@ class ContractConnection:
         self.contract_info_path = contract_info_path
         self.contract_info = self.get_contract_info()
         self.contract_obj = self.create_contract_object()
-        print("ContractConnection: initialized")
 
     def get_contract_info(self):
         contract_info = ""

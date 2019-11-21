@@ -12,7 +12,7 @@ def issueCert(merkleRootHash):
         issuer.functions.issueCert(merkleRootHash).transact()
         print("issued cert with merkleRootHash " + str(merkleRootHash))
     except ValueError:
-        print("could not issue cert with merkleRootHash " + str(merkleRootHash))
+        print("could not issue cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
     # except ValidationError:
         # print("wrong arguments")
 
