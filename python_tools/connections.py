@@ -1,10 +1,9 @@
-#! /usr/bin/python
-
 from web3 import Web3, HTTPProvider
 import json
 
+
 class ContractConnection:
-    """abstraction to create w3/contract object to access smart contract functions TODO: support for ropsten/mainnet ethereum networks"""
+    """abstraction to create w3/contract object to access smart contract functions"""
     def __init__(self, contract_url, contract_info_path):
         self.contract_url = contract_url
         self.contract_info_path = contract_info_path
@@ -28,7 +27,7 @@ class ContractConnection:
         self.w3 = Web3(HTTPProvider(self.contract_url))
         self.set_w3_wallet()
 
-    def set_w3_wallet(self, wallet_id = 0):
+    def set_w3_wallet(self, wallet_id=0):
         self.w3.eth.defaultAccount = self.w3.eth.accounts[wallet_id]
         print("ContractConnection: set active wallet to " + str(self.w3.eth.accounts[wallet_id]))
 
@@ -37,7 +36,7 @@ class ContractConnection:
         address = self.get_contract_address()
         abi = self.get_contract_abi()
         print("ContractConnection: created interface to contract at address: " + str(address))
-        return self.w3.eth.contract(address = address, abi = abi)
+        return self.w3.eth.contract(address=address, abi=abi)
 
     def get_contract_object(self):
         return self.contract_obj
