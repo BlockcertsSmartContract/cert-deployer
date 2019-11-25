@@ -1,40 +1,31 @@
 pragma solidity >0.5.0;
 
 contract BlockCertsOnchaining {
-	struct Batch {
-		uint256 _merkleRootHash;
-		bool _revoked;
-	}
-	struct Cert {
+	struct Hash {
 		bool _revoked;
 	}
 
 	address internal owner;
 	// key: hash, value: Batch/Cert
-	mapping(uint256 => Batch) public batches;
-	mapping(uint256 => Cert) public revokedCerts;
+	mapping(uint256 => Hash) public hashes;
 
 	modifier onlyOwner() {
 		require(
-		    msg.sender == owner,
-		    "only contract owner can issue"
-		    );
+			msg.sender == owner,
+			"only contract owner can issue"
+		);
 		_;
 	}
-	
+
 	constructor() public {
 		owner = msg.sender;
 	}
 
-	function issueBatch(uint256 _merkleRootHash) public onlyOwner {
-		batches[_merkleRootHash] = Batch(_merkleRootHash, false);
+	function issueHash(uint256 _hash) public onlyOwner {
+		hashes[_hash] = Hash(false);
 	}
 
-	function revokeBatch(uint256 _merkleRootHash) public onlyOwner {
-		batches[_merkleRootHash]._revoked = true;
-	}
-
-	function revokeCert(uint256 _certHash) public onlyOwner {
-		revokedCerts[_certHash]._revoked = true;
+	function revokeHash(uint256 _hash) public onlyOwner {
+		hashes[_hash]._revoked = true;
 	}
 }

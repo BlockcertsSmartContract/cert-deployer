@@ -1,47 +1,62 @@
 class Certificate:
     def __init__(self, merkleRootHash, certHash, contract_obj):
-        self.merkleRootHash = merkleRootHash
-        self.certHash = certHash
         self.contract_obj = contract_obj
+        self.merkleRootHash = MRH(merkleRootHash, contract_obj)
+        self.certHash = Hash(certHash, contract_obj)
 
-    def issueBatch(self):
-        try:
-            self.contract_obj.functions.issueBatch(self.merkleRootHash).transact()
-        except ValueError:
-            print("could not issue batch with merkleRootHash " + str(self.merkleRootHash) + ". No permission?")
+    def issue(self):
+        self.merkleRootHash.issue()
 
-    def revokeBatch(self):
-        try:
-            self.contract_obj.functions.revokeBatch(self.merkleRootHash).transact()
-        except ValueError:
-            print("could not revoke batch with batch hash " + str(self.merkleRootHash) + ". No permission?")
+    def getBatchStatus(self):
+        return self.merkleRootHash.getStatus()
+
+    def getCertStatus(self):
+        return self.certHash.getStatus()
 
     def revokeCert(self):
-        try:
-            self.contract_obj.functions.revokeCert(self.certHash).transact()
-        except ValueError:
-            print("could not revoke cert with cert hash " + str(self.certHash) + ". No permission?")
+        self.certHash.revoke()
 
-    def getCertInfo(self):
-        try:
-            return self.contract_obj.functions.revokedCerts(self.certHash).call()
-        except:
-            print("Could not get certificate by certHash: " + str(self.certHash) + ". Correct data type?")
-
-    def getBatchInfo(self):
-        try:
-            return self.contract_obj.functions.batches(self.merkleRootHash).call()
-        except:
-            print("Could not get batch by batchHash: " + str(self.merkleRootHash) + ". Correct data type?")
+    def revokeBatch(self):
+        self.merkleRootHash.revoke()
 
     def isCertValid(self, verbose=True):
-        batchInfo = self.getBatchInfo()
-        certInfo = self.getCertInfo()
-        valid = not (batchInfo[0] == 0 or batchInfo[1] == True or certInfo == True)
-        
+        batchStatus = self.getBatchStatus()
+        certStatus = self.getCertStatus()
+
+        # print(batchStatus)
+        # print(certStatus)
+        valid = False
+        if batchStatus is False and certStatus is False:
+            valid = True
+
         if verbose:
-            print("batch with batch merkleRootHash: " + str(batchInfo[0]) + " is revoked: " + str(batchInfo[1]))
-            print("cert with certHash " + str(self.certHash) + " from batch " + str(batchInfo[0]) + " is revoked: " + str(certInfo))
-            print("cert is valid: " + str(valid))
+            print("> batch with merkleRootHash: " + str(self.merkleRootHash.hashVal) + " is revoked: "
+                  + str(batchStatus))
+            print("> cert with certHash " + str(self.certHash.hashVal) + " from batch "
+                  + str(self.merkleRootHash.hashVal) + " is revoked: " + str(certStatus))
+            print("> cert is valid: " + str(valid))
+
+        return valid
 
 
+class Hash:
+    def __init__(self, hashVal, contract_obj):
+        self.contract_obj = contract_obj
+        self.hashVal = hashVal
+
+    def revoke(self):
+        try:
+            self.contract_obj.functions.revokeHash(self.hashVal).transact()
+        except ValueError:
+            print("could not revoke batch or cert with hash " + str(self.hashVal) + ". No permission?")
+
+    def getStatus(self):
+        return self.contract_obj.functions.hashes(self.hashVal).call()
+
+
+class MRH(Hash):
+    def issue(self):
+        try:
+            self.contract_obj.functions.issueHash(self.hashVal).transact()
+        except ValueError:
+            print("could not issue batch with merkleRootHash " + str(self.hashVal) + ". No permission?")
