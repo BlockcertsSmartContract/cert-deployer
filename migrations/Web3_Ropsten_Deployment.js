@@ -18,8 +18,8 @@ web3.eth.getTransactionCount(issuer, (err, txCount) => {
 
 	const txObject = {
 		nonce: web3.utils.toHex(txCount), 
-		gasLimit: web3.utils.toHex(),//have to insert amount x here
-		gasPrice: web3.utils.toHex(web3.utils.toWei('', 'gwei')),//have to insert amount x here
+		gasLimit: web3.utils.toHex(8000),//have to insert amount x here
+		gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),//have to insert amount x here
 		to: smartcontractaddress,
 		data: contract.methods.X(argument).encodeABI()//call function X with respective parameters. look up available (external) functions in remix too
 	}
