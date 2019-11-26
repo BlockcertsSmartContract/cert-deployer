@@ -19,9 +19,9 @@ contract BlockCerts_Onchaining{
         //State public state;
     }
     
-    constructor() public{
+    constructor(address recipientaddress) public{ //pass recipient address via function call
         sc.issuerID = msg.sender; //msg.sender is the one deploying this SC
-        //smartcontract.recipientID = msg.recipient; //--> needs to be initializedf from python call!
+        sc.recipientID = recipientaddress; //--> needs to be initializedf from python call!
         sc.revoked = false;
         //smartcontract.state = State.Waiting;
     }
