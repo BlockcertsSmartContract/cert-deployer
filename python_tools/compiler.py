@@ -72,19 +72,15 @@ class compiling:
 
 		w3 = Web3(HTTPProvider(nodeurl))
 		w3.eth.defaultAccount = w3.eth.accounts[0]
+		
 		bytecode = compiled_sol['contracts']['BlockCerts_Onchaining.sol']['BlockCerts_Onchaining']['evm']['bytecode']['object']
 		abi = json.loads(compiled_sol['contracts']['BlockCerts_Onchaining.sol']['BlockCerts_Onchaining']['metadata'])['output']['abi']
-		BlockCertsOnchaining = w3.eth.contract(abi=abi, bytecode=bytecode)
+		
+		BlockCertsOnchaining = w3.eth.contract(abi=abi, bytecode=bytecode)		
+		
 		tx_hash = BlockCertsOnchaining.constructor().transact()
 		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
+		print("Tx-Receipt: " + tx_receipt)
+		
 		return BlockCertsOnchaining
-
-
-
-
-
-
-
-
-

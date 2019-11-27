@@ -34,14 +34,7 @@ def getCertByMRH(index):
     except:
         print("Could not get certificate by index: " + str(index) + ". Correct data type?")
 
-# print("available functions: ", issuer.all_functions())
-
-# change current wallet
-c.set_w3_wallet(1)
-# won't work, as onlyOwner modifier is set
 issueCert(666)
-
-c.set_w3_wallet(0)
 
 issueCert(12)
 print(getCertByMRH(12))
