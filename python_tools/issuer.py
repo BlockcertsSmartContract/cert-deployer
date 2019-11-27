@@ -2,13 +2,9 @@
 from connections import ContractConnection
 from compiler import compiling
 
-#local = True #need to have user entering bool if ganache or ropsten
+local = input("Do You Want to Deploy Locally? (True = Local, False = Remote on Ropsten Testnet)\n") #need to have user entering bool if ganache or ropsten
 
-issuer = compiling.compiler()
-
-# always accesses last deployed contract instance
-#c = ContractConnection('http://localhost:8545','/Users/florianweiss/Desktop/PAS_Git/BlockCertsOnchainingEth/build/contracts/BlockCertsOnchaining.json')
-#issuer = c.get_contract_object()
+issuer = compiling.compiler(local)
 
 # wrap function calls
 def issueCert(merkleRootHash):

@@ -5,11 +5,11 @@ from web3 import Web3
 from solc import compile_standard
 
 class compiling:
-	def compiler():
-		#if(local):
-		nodeurl = "http://localhost:8545"
-		#else:
-			#nodeurl = "https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH" 
+	def compiler(local):
+		if(local):
+			nodeurl = "http://localhost:8545"
+		else:
+			nodeurl = "https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH" 
 
 		compiled_sol = compile_standard({
 			"language": "Solidity",
@@ -81,7 +81,7 @@ class compiling:
 		
 		tx_hash = BlockCertsOnchaining.constructor().transact()
 		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-		
-		print(tx_receipt)
 
-		return BlockCertsOnchaining
+		blockCertsOnchaining = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)		
+
+		return blockCertsOnchaining
