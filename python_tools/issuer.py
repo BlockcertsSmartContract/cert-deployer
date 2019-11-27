@@ -2,9 +2,9 @@
 from connections import ContractConnection
 from compiler import compiling
 
-local = true #need to have user entering bool if ganache or ropsten
+#local = True #need to have user entering bool if ganache or ropsten
 
-issuer = compiling.compiler(local)
+issuer = compiling.compiler()
 
 # always accesses last deployed contract instance
 #c = ContractConnection('http://localhost:8545','/Users/florianweiss/Desktop/PAS_Git/BlockCertsOnchainingEth/build/contracts/BlockCertsOnchaining.json')
@@ -12,36 +12,36 @@ issuer = compiling.compiler(local)
 
 # wrap function calls
 def issueCert(merkleRootHash):
-    try:
-        issuer.functions.issueCert(merkleRootHash).transact()
-        print("issued cert with merkleRootHash " + str(merkleRootHash))
-    except ValueError:
-        print("could not issue cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
-    # except ValidationError:
-        # print("wrong arguments")
+	try:
+		issuer.functions.issueCert(merkleRootHash).transact()
+		print("issued cert with merkleRootHash " + str(merkleRootHash))
+	except ValueError:
+		print("could not issue cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
+	# except ValidationError:
+		# print("wrong arguments")
 
 def revokeCert(merkleRootHash):
-    try:
-        issuer.functions.revokeCert(merkleRootHash).transact()
-        print("issued cert with merkleRootHash " + str(merkleRootHash))
-    except ValueError:
-        print("could not revoke cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
+	try:
+		issuer.functions.revokeCert(merkleRootHash).transact()
+		print("issued cert with merkleRootHash " + str(merkleRootHash))
+	except ValueError:
+		print("could not revoke cert with merkleRootHash " + str(merkleRootHash) + ". No permission?")
 
 def getCertByMRH(index):
-    """get certificate by merkle root hash"""
-    try:
-        return issuer.functions.certs(index).call()
-    except:
-        print("Could not get certificate by index: " + str(index) + ". Correct data type?")
+	"""get certificate by merkle root hash"""
+	try:
+		return issuer.functions.certs(index).call()
+	except:
+		print("Could not get certificate by index: " + str(index) + ". Correct data type?")
 
-issueCert(666)
+def dummyTest():
+	try:
+		temp = issuer.functions.getRevoked().call()
+		print(temp);
+	except:
+		print("sorry Bruder...")
 
-issueCert(12)
-print(getCertByMRH(12))
-try:
-    issuer.functions.revokeCert(12).transact()
-except:
-    print("couldn't revoke")
-print(getCertByMRH(12))
+
+dummyTest()
 
 
