@@ -1,37 +1,35 @@
 import json
 from Web3 import web3 
 
-Tx = require ('ethereum-tx')
+#if using ganache
+#ganache_url = "" #insert ganache url
+#web3 = Web3(Web3.HTTPProvider(ganache_url))
+
+#if using ropsten infura node 
 Web3 = require('web3')
-web3 = new Web3('https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH')
+web3 = Web3('https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH')
 
 issuer = ''#insert address with 0x prefix here
-#recipient = ''#same
 
 smartcontractaddress = ''#insert address with 0x prefix here
 data = ''#insert contract ABI here from remix
 
 contract = new web3.etc.Contract(data, smartcontractaddress)
 
-privateKeyIssuer = Buffer.from(process.env.PRIVATE_KEY_ISSUER, 'hex')
+privateKeyIssuer = ""#insert key here
 
-web3.eth.getTransactionCount(issuer, (err, txCount) => {
+nonce = web3.eth.getTransactionCount(issuer)
 
-	const txObject = {
-		nonce: web3.utils.toHex(txCount), 
-		gasLimit: web3.utils.toHex(8000),#have to insert amount x here
-		gasPrice: web3.utils.toHex(web3.utils.toWei('10', 'gwei')),#have to insert amount x here
-		to: smartcontractaddress,
-		data: contract.methods.X(argument).encodeABI() #call function X with respective parameters. look up available (external) functions in remix too
-	}
+txObject = {
+	nonce: nonce, 
+	gasLimit: web3.toHex(8000),#have to insert amount x here
+	gasPrice: web3.toHex(web3.toWei('10', 'gwei')),#have to insert amount x here
+	to: smartcontractaddress,
+	data: contract.methods.X(argument).encodeABI() #call function X with respective parameters. look up available (external) functions in remix too
+}
 
-	const tx = new Tx(txObject)
-	tx.sign(privateKeyIssuer)
+tx = web3.eth.account.signTransaction(txObject, privateKeyIssuer)
+tx_hash = web3.eth.sendRawTransaction(tx.rawTransaction)
 
-	const serializedTx = tx.serialize()
-	const raw = '0x' + serializedTx.toString('hex')
+print(web3.toHex(tx_hash))
 
-	web3.eth.sendSignedTransaction(raw, (err, txHash) => {
-		console.log('err: ', err, ', Transaction Hash: ' + txHash)
-	})
-})
