@@ -3,29 +3,27 @@ from Web3 import web3
 
 ganache = false #FLAG --> use of ropsten
 
-issuer = ''#insert address with 0x prefix here
+issuer = ''#INSERT address with 0x prefix here
 
 smartcontractaddress = ''#insert address with 0x prefix here
-data = ''#insert contract ABI here from remix
+data = json.loads('')#insert contract ABI here from remix
 
 contract = new web3.etc.Contract(data, smartcontractaddress)
 
 if(ganache):
-	ganache_url = "" #INSERT ganache url
+	ganache_url = "" #INSERT
 	web3 = Web3(Web3.HTTPProvider(ganache_url))
 
-else:#if using ropsten infura node 
-	Web3 = require('web3')
+else:
 	web3 = Web3('https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH')
-
-	privateKeyIssuer = ""#insert key here	
+	privateKeyIssuer = "" #INSERT
 
 nonce = web3.eth.getTransactionCount(issuer)
 
 txObject = {
 	nonce: nonce, 
-	gasLimit: web3.toHex(8000),#have to insert amount x here
-	gasPrice: web3.toHex(web3.toWei('10', 'gwei')),#have to insert amount x here
+	gasLimit: web3.toHex(8000), #INSERT
+	gasPrice: web3.toHex(web3.toWei('10', 'gwei')), #INSERT
 	to: smartcontractaddress,
 	data: contract.methods.X(argument).encodeABI() #call function X with respective parameters. look up available (external) functions in remix too
 }
