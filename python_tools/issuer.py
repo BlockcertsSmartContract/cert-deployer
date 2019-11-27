@@ -34,14 +34,6 @@ def getCertByMRH(index):
 	except:
 		print("Could not get certificate by index: " + str(index) + ". Correct data type?")
 
-def dummyTest():
-	try:
-		temp = issuer.functions.getRevoked().call()
-		print(temp);
-	except:
-		print("sorry Bruder...")
-
-
-dummyTest()
+issueCert(666)
 
 

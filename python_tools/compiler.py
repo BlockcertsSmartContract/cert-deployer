@@ -7,9 +7,9 @@ from solc import compile_standard
 class compiling:
 	def compiler():
 		#if(local):
-			#nodeurl = "http://localhost:8545"
+		nodeurl = "http://localhost:8545"
 		#else:
-		nodeurl = "https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH" 
+			#nodeurl = "https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH" 
 
 		compiled_sol = compile_standard({
 			"language": "Solidity",
@@ -18,44 +18,38 @@ class compiling:
 				 "content": '''
 					pragma solidity >0.5.0;
 
-					contract BlockCerts_Onchaining{
-						string value = "Lappen";
+					contract BlockCerts_Onchaining {
+						address internal owner;
 
-						smartcontract public sc;
-						
-						modifier onlyIssuer(){
-							require(msg.sender == sc.issuerID);
+						modifier onlyOwner() {
+							require(
+							    msg.sender == owner,
+							    "only contract owner can issue"
+							    );
 							_;
 						}
 						
-						struct smartcontract{
-							address issuerID;
-							bool revoked;
+						constructor() public {
+							owner = msg.sender;
 						}
 						
-						constructor() public{ //pass recipient address via function call
-							sc.issuerID = msg.sender; //msg.sender is the one deploying this SC					        
-							sc.revoked = false;
+						mapping(uint256 => Certificate) public certs;
+						
+						struct Certificate {
+							uint256 _merkleRootHash;
+							bool _revoked;
 						}
 
-						//GETTER SETTER
-						function getIssuerID() public view returns(address){
-							return sc.issuerID;
+					    // todo: check for permission
+						function revokeCert(uint256 _merkleRootHash) public onlyOwner {
+						    certs[_merkleRootHash]._revoked = true;
 						}
 						
-						function getValue() public view returns(string memory){
-							return value;
-						}
-
-						//REVOCATION
-						function revoke() public onlyIssuer{ //have to make sure only the issuer revokes
-							sc.revoked = true;
-						}
-						
-						function getRevoked() public view returns(bool){
-							return sc.revoked;
+						function issueCert(uint256 _merkleRootHash) public onlyOwner {
+							certs[_merkleRootHash] = Certificate(_merkleRootHash, false);
 						}
 					}
+
 				   '''
 				}
 			},
@@ -72,20 +66,22 @@ class compiling:
 
 		w3 = Web3(Web3.HTTPProvider(nodeurl))
 		#if(local):
-		#	w3.eth.defaultAccount = w3.eth.accounts[0]
+		w3.eth.defaultAccount = w3.eth.accounts[0]
 		#else:
-		w3.eth.defaultAccount = "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3"		
+			#w3.eth.defaultAccount = "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3"		
 
 		bytecode = compiled_sol['contracts']['BlockCerts_Onchaining.sol']['BlockCerts_Onchaining']['evm']['bytecode']['object']
 		abi = json.loads(compiled_sol['contracts']['BlockCerts_Onchaining.sol']['BlockCerts_Onchaining']['metadata'])['output']['abi']
 		
 		BlockCertsOnchaining = w3.eth.contract(abi=abi, bytecode=bytecode)		
 		
-		w3.eth.personal.unlockAccount("0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3", "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D", 1000)
+		#NEED TO SOLVE ROPSTEN UNLOCKING 
+		#w3.eth.personal.unlockAccount("0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3", "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D", 1000)
 		#w3.eth.account.signTransaction(BlockCertsOnchaining, '50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D')
 		
 		tx_hash = BlockCertsOnchaining.constructor().transact()
 		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+		
 		print(tx_receipt)
 
 		return BlockCertsOnchaining
