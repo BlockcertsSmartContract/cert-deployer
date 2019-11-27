@@ -1,10 +1,14 @@
 #! /usr/bin/python
-
 from connections import ContractConnection
+from compiler import compiling
+
+local = true #need to have user entering bool if ganache or ropsten
+
+issuer = compiling.compiler(local)
 
 # always accesses last deployed contract instance
-c = ContractConnection('http://localhost:8545','/Users/florianweiss/Desktop/PAS_Git/BlockCertsOnchainingEth/build/contracts/BlockCertsOnchaining.json')
-issuer = c.get_contract_object()
+#c = ContractConnection('http://localhost:8545','/Users/florianweiss/Desktop/PAS_Git/BlockCertsOnchainingEth/build/contracts/BlockCertsOnchaining.json')
+#issuer = c.get_contract_object()
 
 # wrap function calls
 def issueCert(merkleRootHash):
