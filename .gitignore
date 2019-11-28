@@ -2,3 +2,4 @@ node_modules/*
 package*
 */__pycache__/*
 build/*
+*.DS_Store*
