@@ -1,8 +1,9 @@
+from connections import TruffleContract
+from cert import Certificate
+from compiler import compile_contract
 import random
 import sys
 import os
-from connections import ContractConnection
-from cert import Certificate
 
 # always accesses last deployed contract instance
 def get_root_dir():
@@ -10,10 +11,14 @@ def get_root_dir():
     for _ in range(2):
         root_dir = os.path.dirname(root_dir)
     return root_dir
-
+  
+contract_conn = TruffleContract('http://localhost:8545', absFilePath )
 absFilePath = get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
-contract_conn = ContractConnection('http://localhost:8545', absFilePath )
-contract_obj = contract_conn.get_contract_object()
+
+# contract_obj = contract_conn.get_contract_object()
+contract_obj = compile_contract(contract_conn.w3)
+# print(contract_obj.accounts)
+
 
 def issue(merkle_root_hash = random.randint(100, 999), cert_hash = random.randint(100, 999)):
     cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
