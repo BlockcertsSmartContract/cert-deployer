@@ -23,8 +23,8 @@ class Certificate:
         batchStatus = self.getBatchStatus()
         certStatus = self.getCertStatus()
 
-        # print(batchStatus)
-        # print(certStatus)
+        print(batchStatus)
+        print(certStatus)
         valid = False
         if batchStatus is False and certStatus is False:
             valid = True
@@ -45,6 +45,7 @@ class Hash:
         self.hashVal = hashVal
 
     def revoke(self):
+        self.contract_obj.functions.revokeHash(self.hashVal).transact()
         try:
             self.contract_obj.functions.revokeHash(self.hashVal).transact()
         except ValueError:
