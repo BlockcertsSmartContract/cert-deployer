@@ -44,7 +44,7 @@ class ContractConnection(ABC):
         pass
 
 
-class RemoteContract(ContractConnection):
+# class RemoteContract(ContractConnection):
     # pass
 
 
