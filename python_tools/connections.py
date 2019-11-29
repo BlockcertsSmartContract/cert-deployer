@@ -35,6 +35,13 @@ class ContractConnection(ABC):
     def get_contract_object(self):
         return self.contract_obj
 
+    def get_contract_info(self):
+        contract_info = ""
+        with open(self.contract_info_path) as file:
+            data = file.read()
+            contract_info = json.loads(data)
+        return contract_info
+
     @abstractclassmethod
     def get_abi(self):
         pass
@@ -44,26 +51,24 @@ class ContractConnection(ABC):
         pass
 
 
-# class RemoteContract(ContractConnection):
-    # pass
+class SelfDeployedContract(ContractConnection):
+    def __init__(self, url, contract_info_path):
+        self.contract_info_path = contract_info_path
+        self.contract_info = self.get_contract_info()
+        super().__init__(url)
+
+    def get_abi(self):
+        return self.contract_info["abi"]
+
+    def get_address(self):
+        return self.contract_info["address"]
 
 
 class TruffleContract(ContractConnection):
-    """abstraction to create w3/contract object to access smart contract functions"""
     def __init__(self, url, contract_info_path):
-        self.url = url
         self.contract_info_path = contract_info_path
         self.contract_info = self.get_contract_info()
-        self.w3 = MakeW3(self.url).get_w3_obj()
-        self.create_contract_object()
-        self.contract_obj = self.get_contract_object()
-
-    def get_contract_info(self):
-        contract_info = ""
-        with open(self.contract_info_path) as file:
-            data = file.read()
-            contract_info = json.loads(data)
-        return contract_info
+        super().__init__(url)
 
     def get_abi(self):
         return self.contract_info["abi"]

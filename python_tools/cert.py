@@ -23,8 +23,6 @@ class Certificate:
         batchStatus = self.getBatchStatus()
         certStatus = self.getCertStatus()
 
-        print(batchStatus)
-        print(certStatus)
         valid = False
         if batchStatus is False and certStatus is False:
             valid = True
