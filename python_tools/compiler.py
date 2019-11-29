@@ -37,18 +37,8 @@ def compile_contract():
 
     signed = acct.signTransaction(construct_txn)
 
-    w3.eth.sendRawTransaction(signed.rawTransaction)
-    
-    
+    tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
+    print(w3.toHex(tx_hash))
 
-    #contract = w3.eth.contract(abi=abi, bytecode=bytecode)
-
-    #tx_hash = contract.constructor().transact()
-    #tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    #address = tx_receipt.contractAddress
-    #blockCertsOnchaining = w3.eth.contract(address=address, abi=abi)
-    #return blockCertsOnchaining
-
-#w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
 
 compile_contract()
