@@ -2,15 +2,16 @@
 
 import json
 from solc import compile_standard
+from web3 import Web3
 
 
 def compile_contract(w3):
     source_raw = ""
-    with open("../contracts/BlockCertsOnchaining.sol") as source_file:
+    with open("/home/xenia/Documents/PAS/BlockCerts/BlockCertsOnchainingEth/contracts/BlockCertsOnchaining.sol") as source_file:
         source_raw = source_file.read()
 
     opt = ""
-    with open("../data/compile_opt.json") as opt_file:
+    with open("/home/xenia/Documents/PAS/BlockCerts/BlockCertsOnchainingEth/data/compile_opt.json") as opt_file:
         raw_opt = opt_file.read()
         opt = json.loads(raw_opt)
 
@@ -28,3 +29,7 @@ def compile_contract(w3):
     address = tx_receipt.contractAddress
     blockCertsOnchaining = w3.eth.contract(address=address, abi=abi)
     return blockCertsOnchaining
+
+w3 = Web3(Web3.HTTPProvider())
+
+compile_contract(w3)
