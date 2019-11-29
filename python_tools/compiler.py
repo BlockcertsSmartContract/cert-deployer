@@ -32,8 +32,9 @@ def compile_contract():
     construct_txn = contract_.constructor().buildTransaction({
         'from': "0x09eD136C76053F14345b801aA944525a560CC44c",
         'nonce': w3.eth.getTransactionCount("0x09eD136C76053F14345b801aA944525a560CC44c"),
-        'gas': 1728712,
-        'gasPrice': w3.toWei('21', 'gwei')})
+        #'gas': 1728712,
+        #'gasPrice': w3.toWei('21', 'gwei')
+        })
 
     signed = acct.signTransaction(construct_txn)
 
