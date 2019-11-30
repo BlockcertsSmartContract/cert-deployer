@@ -56,3 +56,7 @@ if __name__ == '__main__':
             except:
                 print("Error missing arguments for revocation (--revokeBatch int int)")
         position = position + 1
+
+
+w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
+compile_contract(w3)

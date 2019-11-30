@@ -19,14 +19,12 @@ def compile_contract():
 
     compiled_sol = compile_standard(opt)
 
-    #bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
-    #abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
 
     w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
 
-    abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
     bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
-
+    abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
+    
     contract_ = w3.eth.contract(abi=abi, bytecode=bytecode)
     acct = w3.eth.account.privateKeyToAccount("3ADD48CBFFECF312C634ACDA0EC1268D7982DB067F135A2FB37309A8659F3D2F")
     construct_txn = contract_.constructor().buildTransaction({
