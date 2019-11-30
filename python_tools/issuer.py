@@ -5,8 +5,7 @@ import onchaining_tools.tools as tools
 from onchaining_tools.cert import Certificate
 from onchaining_tools.connections import TruffleContract
 
-contract_conn = TruffleContract('http://localhost:8545', tools.get_contract_as_json_path())
-
+contract_conn = TruffleContract(tools.get_host(), tools.get_contract_as_json_path())
 contract_obj = contract_conn.get_contract_object()
 
 

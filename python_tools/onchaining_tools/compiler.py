@@ -3,18 +3,15 @@
 import json
 from typing import Any
 
+import tools
 from solc import compile_standard
-
-import python_tools.onchaining_tools.tools as tools
 
 
 def compile_contract(w3) -> Any:
-    source_raw = ""
-    with open(tools.get_root_dir() + "/contracts/BlockCertsOnchaining.sol") as source_file:
+    with open(tools.get_contract_path()) as source_file:
         source_raw = source_file.read()
 
-    opt = ""
-    with open(tools.get_root_dir() + "/data/compile_opt.json") as opt_file:
+    with open(tools.get_config_data_path()) as opt_file:
         raw_opt = opt_file.read()
         opt = json.loads(raw_opt)
 

@@ -14,3 +14,15 @@ def get_root_dir() -> str:
 
 def get_contract_as_json_path() -> str:
     return get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
+
+
+def get_contract_path() -> str:
+    return get_root_dir() + "/contracts/BlockCertsOnchaining.sol"
+
+
+def get_config_data_path() -> str:
+    return get_root_dir() + "/data/compile_opt.json"
+
+
+def get_host() -> str:
+    return 'http://localhost:8545'
