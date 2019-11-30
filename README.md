@@ -16,3 +16,8 @@ to implement on-chain revokation of certificates and a persistent identity
 - Run `python_tools/issuer.py --issue someBatchHash someCertHash` to issue
 - Run `python_tools/issuer.py --revokeCert someBatchHash someCertHash` to revoke a certificate
 - Run `python_tools/issuer.py --revokeBatch someBatchHash someCertHash` to revoke a batch
+
+##style guides
+- PEP8
+- Tests should be test_whenSomeThing_thenSomeThing
+- variables and functions should be all lowercase 
