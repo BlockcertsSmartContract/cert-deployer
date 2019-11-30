@@ -48,7 +48,7 @@ class ContractConnection(ABC):
 
 
 class TruffleContract(ContractConnection):
-    """abstraction to create w3/contract object to access smart contract functions"""
+    # abstraction to create w3/contract object to access smart contract functions
 
     def __init__(self, url, contract_info_path) -> None:
         self.url = url

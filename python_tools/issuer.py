@@ -5,16 +5,9 @@ import onchaining_tools.tools as tools
 from onchaining_tools.cert import Certificate
 from onchaining_tools.connections import TruffleContract
 
-# always accesses last deployed contract instance
-
-absFilePath = tools.get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
-contract_conn = TruffleContract('http://localhost:8545', absFilePath)
+contract_conn = TruffleContract('http://localhost:8545', tools.get_contract_as_json_path())
 
 contract_obj = contract_conn.get_contract_object()
-
-
-# contract_obj = compile_contract(contract_conn.w3)
-# print(contract_obj.accounts)
 
 
 def issue(merkle_root_hash=random.randint(100, 999), cert_hash=random.randint(100, 999)) -> None:
