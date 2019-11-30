@@ -1,39 +1,35 @@
-from connections import TruffleContract
-from cert import Certificate
-from compiler import compile_contract
+#! /usr/bin/python
+
 import random
 import sys
-import os
+import argparse
+from connections import TruffleContract, SelfDeployedContract
+from cert import Certificate
 
-# always accesses last deployed contract instance
-def get_root_dir():
-    root_dir = os.path.abspath(__file__)
-    for _ in range(2):
-        root_dir = os.path.dirname(root_dir)
-    return root_dir
-  
-absFilePath = get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
-contract_conn = TruffleContract('http://localhost:8545', absFilePath )
+
+# contract_conn = TruffleContract('http://localhost:8545', '../build/contracts/BlockCertsOnchaining.json')
+contract_conn = SelfDeployedContract('http://localhost:8545', '../data/contr_info.json')
 
 contract_obj = contract_conn.get_contract_object()
-# contract_obj = compile_contract(contract_conn.w3)
-# print(contract_obj.accounts)
 
 
-def issue(merkle_root_hash = random.randint(100, 999), cert_hash = random.randint(100, 999)):
+def issue(merkle_root_hash=random.randint(100, 999), cert_hash=random.randint(100, 999)):
     cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
     cert_mock.issue()
     cert_mock.isCertValid()
+
 
 def revoke_cert(merkle_root_hash, cert_hash):
     cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
     cert_mock.revokeCert()
     cert_mock.isCertValid()
 
+
 def revoke_batch(merkle_root_hash, cert_hash):
     cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
     cert_mock.revokeBatch()
     cert_mock.isCertValid()
+
 
 if __name__ == '__main__':
     arguments = len(sys.argv) - 1
@@ -43,7 +39,7 @@ if __name__ == '__main__':
             try:
                 issue(int(sys.argv[position+1]), int(sys.argv[position+2]))
             except:
-                print("Error missing arguments for issueing (--issue int int), issueing some random cert")
+                print("Error missing arguments for issuing (--issue int int), issuing some random cert")
                 issue()
         if (sys.argv[position] == "--revokeCert"):
             try:
