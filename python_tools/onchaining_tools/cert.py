@@ -1,5 +1,5 @@
 class Certificate:
-    def __init__(self, merkle_root_hash, cert_hash, contract_obj):
+    def __init__(self, merkle_root_hash, cert_hash, contract_obj) -> None:
         self.contract_obj = contract_obj
         self.merkle_root_hash = MRH(merkle_root_hash, contract_obj)
         self.cert_hash = Hash(cert_hash, contract_obj)
