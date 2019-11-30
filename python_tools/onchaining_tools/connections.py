@@ -1,6 +1,9 @@
-from web3 import Web3, HTTPProvider
-from abc import ABC, abstractclassmethod
 import json
+from abc import ABC, abstractmethod
+
+from web3 import Web3, HTTPProvider
+
+
 # http://ropsten.infura.io/v3/a70de76e3fd748cbb6dbb2ed49dda183
 
 
@@ -36,17 +39,16 @@ class ContractConnection(ABC):
         return self.contract_obj
 
     def get_contract_info(self):
-        contract_info = ""
         with open(self.contract_info_path) as file:
             data = file.read()
             contract_info = json.loads(data)
         return contract_info
 
-    @abstractclassmethod
+    @abstractmethod
     def get_abi(self):
         pass
 
-    @abstractclassmethod
+    @abstractmethod
     def get_address(self):
         pass
 
