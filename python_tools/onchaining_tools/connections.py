@@ -1,17 +1,19 @@
 import json
-from abc import ABC, abstractmethod
-
+import onchaining_tools.path_tools as tools
 from web3 import Web3, HTTPProvider
 
 
-# http://ropsten.infura.io/v3/a70de76e3fd748cbb6dbb2ed49dda183
-
-
 class MakeW3:
-    def __init__(self, url):
-        self.url = url
+    def __init__(self, chain):
+        path = tools.get_chain_data_path()
+        with open(path, "r") as raw_json:
+            self.wallet_info = json.loads(raw_json.read())
+
+        self.url = self.wallet_info[chain]["url"]
+        self.privkey = self.wallet_info[chain]["privkey"]
+        self.pubkey = self.wallet_info[chain]["pubkey"]
+
         self.w3 = self.create_w3_obj()
-        self.set_w3_wallet(0)
 
     def create_w3_obj(self):
         return Web3(HTTPProvider(self.url))
@@ -19,14 +21,17 @@ class MakeW3:
     def get_w3_obj(self):
         return self.w3
 
-    def set_w3_wallet(self, wallet_id=0):
-        self.w3.eth.defaultAccount = self.w3.eth.accounts[wallet_id]
+    def get_w3_wallet(self):
+        return self.w3.eth.account.privateKeyToAccount(self.privkey)
 
 
-class ContractConnection(ABC):
-    def __init__(self, url):
-        self.url = url
-        self.w3 = MakeW3(self.url).get_w3_obj()
+class ContractConnection:
+    def __init__(self, chain):
+        self.w3 = MakeW3(chain).get_w3_obj()
+
+        self.contract_info_path = contract_info_path
+        self.contract_info = self.get_contract_info()
+
         self.create_contract_object()
         self.contract_obj = self.get_contract_object()
 
@@ -44,36 +49,8 @@ class ContractConnection(ABC):
             contract_info = json.loads(data)
         return contract_info
 
-    @abstractmethod
-    def get_abi(self):
-        pass
-
-    @abstractmethod
-    def get_address(self):
-        pass
-
-
-class SelfDeployedContract(ContractConnection):
-    def __init__(self, url, contract_info_path):
-        self.contract_info_path = contract_info_path
-        self.contract_info = self.get_contract_info()
-        super().__init__(url)
-
     def get_abi(self):
         return self.contract_info["abi"]
 
     def get_address(self):
         return self.contract_info["address"]
-
-
-class TruffleContract(ContractConnection):
-    def __init__(self, url, contract_info_path):
-        self.contract_info_path = contract_info_path
-        self.contract_info = self.get_contract_info()
-        super().__init__(url)
-
-    def get_abi(self):
-        return self.contract_info["abi"]
-
-    def get_address(self):
-        return self.contract_info["networks"]["5777"]["address"]

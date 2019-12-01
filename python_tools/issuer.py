@@ -5,13 +5,7 @@ import sys
 
 import onchaining_tools.path_tools as tools
 from onchaining_tools.cert import Certificate
-from onchaining_tools.connections import SelfDeployedContract
-
-# contract_conn = TruffleContract(tools.get_host(), tools.get_contract_as_json_path())
-contract_conn = SelfDeployedContract(tools.get_host(), tools.get_config_data_path())
-
-contract_obj = contract_conn.get_contract_object()
-
+from onchaining_tools.connections import ContractConnection
 
 def issue(merkle_root_hash=random.randint(100, 999), cert_hash=random.randint(100, 999)):
     cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
@@ -34,6 +28,9 @@ def revoke_batch(merkle_root_hash, cert_hash):
 if __name__ == '__main__':
     arguments = len(sys.argv) - 1
     position = 1
+
+    contract_obj = ContractConnection("ropsten").get_contract_object()
+
     while arguments >= position:
         if sys.argv[position] == "--issue":
             try:
