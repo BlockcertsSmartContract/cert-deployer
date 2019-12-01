@@ -28,7 +28,7 @@ def compile_contract(w3Factory):
     acct_addr = w3Factory.pubkey
 
     construct_txn = contract.constructor().buildTransaction({
-        'from': acct_addr,
+        # 'from': acct_addr,
         'nonce': w3.eth.getTransactionCount(acct_addr),
         #'gasPrice': w3.toWei('21', 'gwei')
     })
@@ -45,9 +45,6 @@ def compile_contract(w3Factory):
 
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
-
-
-    return blockcerts_onchaining
 
 
 def deploy(chain):

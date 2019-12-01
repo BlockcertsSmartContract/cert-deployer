@@ -28,10 +28,8 @@ class MakeW3:
 class ContractConnection:
     def __init__(self, chain):
         self.w3 = MakeW3(chain).get_w3_obj()
-
-        self.contract_info_path = contract_info_path
+        self.contract_info_path = tools.get_config_data_path()
         self.contract_info = self.get_contract_info()
-
         self.create_contract_object()
         self.contract_obj = self.get_contract_object()
 
