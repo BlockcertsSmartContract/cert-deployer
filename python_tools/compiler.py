@@ -17,27 +17,36 @@ def compile_contract(w3):
 
     opt["sources"]["BlockCertsOnchaining.sol"]["content"] = source_raw
 
+    #define compiling standart
     compiled_sol = compile_standard(opt)
 
-
-    w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
-
+    #define bytecode
     bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
+
+    #define abi
     abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
     
+
     contract_ = w3.eth.contract(abi=abi, bytecode=bytecode)
-    acct = w3.eth.account.privateKeyToAccount("3ADD48CBFFECF312C634ACDA0EC1268D7982DB067F135A2FB37309A8659F3D2F")
+
+    #ask for public key, first withou error handling
+    pubkey = input("Please enter public key of your Ethereum wallet: \n")
+    privkey = input("Please enter private key of your Ethereum wallet: \n")
+
+    #set privatekey
+    acct = w3.eth.account.privateKeyToAccount(privkey)
+    
+    #create unsigned transaction
     construct_txn = contract_.constructor().buildTransaction({
-        'from': "0x09eD136C76053F14345b801aA944525a560CC44c",
-        'nonce': w3.eth.getTransactionCount("0x09eD136C76053F14345b801aA944525a560CC44c"),
-        #'gas': 1728712,
-        #'gasPrice': w3.toWei('21', 'gwei')
+        'from': pubkey,
+        'nonce': w3.eth.getTransactionCount(pubkey),
         })
 
+    #sign transaction
     signed = acct.signTransaction(construct_txn)
 
+    #send transaction to blockchain, returns transaction hash 
     tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
-    print(w3.toHex(tx_hash))
 
-
-#compile_contract()
+    #convert transaction hash to hexa 
+    print("Smart contract successfully deployed! Transaction hash: " + w3.toHex(tx_hash))
