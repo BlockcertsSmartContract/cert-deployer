@@ -1,5 +1,6 @@
 from connections import TruffleContract
 from cert import Certificate
+from web3 import Web3
 from compiler import compile_contract
 import random
 import sys
@@ -11,13 +12,21 @@ def get_root_dir():
     for _ in range(2):
         root_dir = os.path.dirname(root_dir)
     return root_dir
-  
-absFilePath = get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
-contract_conn = TruffleContract('http://localhost:8545', absFilePath )
 
-contract_obj = contract_conn.get_contract_object()
-# contract_obj = compile_contract(contract_conn.w3)
-# print(contract_obj.accounts)
+ 
+contract_version = input("Do you want to deploy your contract locally? [y/n]: ")
+if (contract_version == "y"):
+    absFilePath = get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
+    contract_conn = TruffleContract('http://localhost:8545', absFilePath )
+
+    contract_obj = contract_conn.get_contract_object()
+    # contract_obj = compile_contract(contract_conn.w3)
+    # print(contract_obj.accounts)
+else:
+    w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
+    compile_contract(w3)
+
+
 
 
 def issue(merkle_root_hash = random.randint(100, 999), cert_hash = random.randint(100, 999)):
@@ -58,5 +67,3 @@ if __name__ == '__main__':
         position = position + 1
 
 
-w3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/hqRzEqFKv6IsjRxfVUWH"))
-compile_contract(w3)
