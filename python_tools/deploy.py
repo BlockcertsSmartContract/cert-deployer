@@ -46,7 +46,6 @@ def compile_contract(w3Factory):
 
 
 
-
     data = {'abi': abi, 'address': contr_address}
 
     with open(tools.get_config_data_path(), "w+") as outfile:

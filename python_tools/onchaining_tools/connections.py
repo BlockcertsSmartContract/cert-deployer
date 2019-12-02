@@ -80,28 +80,3 @@ class ContractFunctions:
 
     def getStatus(self, hash_val):
         return self.contract_obj.functions.hashes(hash_val).call()
-
-
-
-    # def constructor(self):
-        # contract = w3.eth.contract(abi=abi, bytecode=bytecode)
-
-        # acct_addr = w3Factory.pubkey
-
-        # construct_txn = contract.constructor().buildTransaction({
-            # # 'from': acct_addr,
-            # 'nonce': w3.eth.getTransactionCount(acct_addr),
-            # 'gasPrice': w3.toWei('50', 'gwei')
-        # })
-
-        # signed = acct.signTransaction(construct_txn)
-        # tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
-        # # tx_hash = contract.constructor().transact()
-        # tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-
-        # contr_address = tx_receipt.contractAddress
-
-
-
-
-
