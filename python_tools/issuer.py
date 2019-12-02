@@ -2,7 +2,6 @@
 
 import random
 import sys
-
 import onchaining_tools.path_tools as tools
 from onchaining_tools.cert import Certificate
 from onchaining_tools.connections import ContractConnection
@@ -25,11 +24,11 @@ def revoke_batch(merkle_root_hash, cert_hash):
     cert_mock.is_cert_valid()
 
 
+contract_obj = ContractConnection("ropsten").get_contract_object()
 if __name__ == '__main__':
     arguments = len(sys.argv) - 1
     position = 1
 
-    contract_obj = ContractConnection("ropsten").get_contract_object()
 
     while arguments >= position:
         if sys.argv[position] == "--issue":

@@ -23,6 +23,9 @@ def compile_contract(w3Factory):
     abi = \
         json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
 
+
+
+
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
     acct_addr = w3Factory.pubkey
@@ -30,7 +33,8 @@ def compile_contract(w3Factory):
     construct_txn = contract.constructor().buildTransaction({
         # 'from': acct_addr,
         'nonce': w3.eth.getTransactionCount(acct_addr),
-        #'gasPrice': w3.toWei('21', 'gwei')
+        'gasPrice': w3.toWei('50', 'gwei'),
+        'gas': 1000000
     })
 
     signed = acct.signTransaction(construct_txn)
@@ -39,12 +43,16 @@ def compile_contract(w3Factory):
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
     contr_address = tx_receipt.contractAddress
-    blockcerts_onchaining = w3.eth.contract(address=contr_address, abi=abi)
+
+
+
 
     data = {'abi': abi, 'address': contr_address}
 
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
+
+    print("deployed contract with address: " + str(contr_address))
 
 
 def deploy(chain):
