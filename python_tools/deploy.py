@@ -20,10 +20,10 @@ def compile_contract(w3Factory):
 
     opt["sources"]["BlockCertsOnchaining.sol"]["content"] = source_raw
     compiled_sol = compile_standard(opt)
-    bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
-    abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
-
-
+    bytecode = compiled_sol[
+        'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
+    abi = json.loads(compiled_sol[
+        'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
@@ -39,13 +39,9 @@ def compile_contract(w3Factory):
 
     signed = acct.signTransaction(construct_txn)
     tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
-    # tx_hash = contract.constructor().transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
     contr_address = tx_receipt.contractAddress
-
-
-
     data = {'abi': abi, 'address': contr_address}
 
     with open(tools.get_config_data_path(), "w+") as outfile:

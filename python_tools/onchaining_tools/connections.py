@@ -60,10 +60,10 @@ class ContractFunctions:
         self.acct_addr = config.config["wallets"][currentChain]["pubkey"]
 
     def issue(self, hashVal):
-        self.method("issueHash", hashVal)
+        self.method("issue_hash", hashVal)
 
     def revoke(self, hashVal):
-        self.method("revokeHash", hashVal)
+        self.method("revoke_hash", hashVal)
 
     def method(self, method, hashVal):
         acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
@@ -78,5 +78,5 @@ class ContractFunctions:
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
 
-    def getStatus(self, hash_val):
+    def get_status(self, hash_val):
         return self.contract_obj.functions.hashes(hash_val).call()
