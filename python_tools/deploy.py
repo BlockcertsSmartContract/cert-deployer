@@ -21,9 +21,7 @@ def compile_contract(w3Factory):
     opt["sources"]["BlockCertsOnchaining.sol"]["content"] = source_raw
     compiled_sol = compile_standard(opt)
     bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
-    abi = \
-        json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
-
+    abi = json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
 
 
 

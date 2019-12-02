@@ -60,22 +60,15 @@ class ContractFunctions:
         self.acct_addr = config.config["wallets"][currentChain]["pubkey"]
 
     def issue(self, hashVal):
-        acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
-
-        construct_txn = self.contract_obj.functions.issueHash(hashVal).buildTransaction({
-            'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-            'gasPrice': self.w3.toWei('50', 'gwei'),
-            'gas': 1000000
-        })
-
-        signed = acct.signTransaction(construct_txn)
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        self.method("issueHash", hashVal)
 
     def revoke(self, hashVal):
+        self.method("revokeHash", hashVal)
+
+    def method(self, method, hashVal):
         acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
 
-        construct_txn = self.contract_obj.functions.revokeHash(hashVal).buildTransaction({
+        construct_txn = self.contract_obj.functions[method](hashVal).buildTransaction({
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
             'gasPrice': self.w3.toWei('50', 'gwei'),
             'gas': 1000000
