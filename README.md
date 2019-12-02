@@ -9,7 +9,7 @@ to implement on-chain revokation of certificates and a persistent identity
 
 ## set up
 1. Clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
-2. Start ganache
+2. Start ganache and add your keys in `config.py`
 3. Deploy smart contract `$ deploy.py`
 
 ## arguments
