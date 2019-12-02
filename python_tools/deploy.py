@@ -2,6 +2,7 @@
 
 import json
 import onchaining_tools.path_tools as tools
+import onchaining_tools.config as config
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
 
@@ -28,7 +29,8 @@ def compile_contract(w3Factory):
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
-    acct_addr = w3Factory.pubkey
+    currentChain = config.config["currentChain"]
+    acct_addr = config.config["wallets"][currentChain]["pubkey"]
 
     construct_txn = contract.constructor().buildTransaction({
         # 'from': acct_addr,
@@ -55,11 +57,7 @@ def compile_contract(w3Factory):
     print("deployed contract with address: " + str(contr_address))
 
 
-def deploy(chain):
-    w3Factory = MakeW3(chain)
-    compile_contract(w3Factory)
-
-
 if __name__ == '__main__':
     # args: deploy local or remote
-    deploy("ropsten")
+    w3Factory = MakeW3()
+    compile_contract(w3Factory)
