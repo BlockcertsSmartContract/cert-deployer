@@ -10,7 +10,7 @@ to implement on-chain revokation of certificates and a persistent identity
 ## set up
 1. Clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
 2. Start ganache
-3. Deploy smart contract to ganache test blockchain `$ truffle deploy --reset`
+3. Deploy smart contract `$ deploy.py`
 
 ## arguments
 - Run `python_tools/issuer.py --issue someBatchHash someCertHash` to issue

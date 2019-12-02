@@ -2,55 +2,62 @@
 
 import random
 import sys
-
-import onchaining_tools.path_tools as tools
-from onchaining_tools.cert import Certificate
 from onchaining_tools.connections import ContractConnection
 
-def issue(merkle_root_hash=random.randint(100, 999), cert_hash=random.randint(100, 999)):
-    cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
-    cert_mock.issue()
-    cert_mock.is_cert_valid()
+
+def issue(merkle_root_hash=random.randint(100, 999)):
+    sc.functions.issue(merkle_root_hash)
 
 
-def revoke_cert(merkle_root_hash, cert_hash):
-    cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
-    cert_mock.revoke_cert()
-    cert_mock.is_cert_valid()
+def revoke(hash_val):
+    sc.functions.revoke(hash_val)
 
 
-def revoke_batch(merkle_root_hash, cert_hash):
-    cert_mock = Certificate(merkle_root_hash, cert_hash, contract_obj)
-    cert_mock.revoke_batch()
-    cert_mock.is_cert_valid()
+def verify(merkle_root_hash, cert_hash):
+    batch_status = sc.functions.get_status(merkle_root_hash)
+    cert_status = sc.functions.get_status(cert_hash)
 
+    valid = False
+    if batch_status is False and cert_status is False:
+        valid = True
+
+    print("> batch with merkleRootHash: " + str(merkle_root_hash) + " is revoked: "
+          + str(batch_status))
+    print("> cert with certHash " + str(cert_hash) + " from batch "
+          + str(merkle_root_hash) + " is revoked: " + str(cert_status))
+    print("> cert is valid: " + str(valid))
+
+
+sc = ContractConnection()
 
 if __name__ == '__main__':
     arguments = len(sys.argv) - 1
     position = 1
 
-    contract_obj = ContractConnection("ropsten").get_contract_object()
-
     while arguments >= position:
         if sys.argv[position] == "--issue":
             try:
-                issue(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
+                issue(int(sys.argv[position + 1]))
             except IndexError:
-                print("Error missing arguments for issuing (--issue int int), issuing some random cert")
+                print("Error missing arguments for issuing (--issue [int]), issuing some random cert")
                 issue()
-        if sys.argv[position] == "--revokeCert":
+
+        if sys.argv[position] == "--revoke":
             try:
-                revoke_cert(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
+                revoke(int(sys.argv[position + 1]))
             except IndexError:
-                print("Error missing arguments for revocation (--revokeCert int int)")
+                print("Error missing arguments for revocation (--revokeCert [int])")
+
         if sys.argv[position] == "--revokeBatch":
             try:
-                revoke_cert(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
+                revoke(int(sys.argv[position + 1]))
             except IndexError:
-                print("Error missing arguments for revocation (--revokeBatch int int)")
-        if sys.argv[position] == "--verifyCert":
+                print("Error missing arguments for revocation (--revokeBatch [int])")
+
+        if sys.argv[position] == "--verify":
             try:
-                Certificate(int(sys.argv[position + 1]), int(sys.argv[position + 2]), contract_obj).is_cert_valid()
+                verify(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
             except IndexError:
-                print("Error missing arguments for verifying (--verifyCert int int)")
+                print("Error missing arguments for verifying (--verify [merkle_root_hash] [cert_hash])")
+
         position = position + 1

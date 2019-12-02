@@ -1,18 +1,13 @@
 import json
+import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from web3 import Web3, HTTPProvider
 
 
 class MakeW3:
-    def __init__(self, chain):
-        path = tools.get_chain_data_path()
-        with open(path, "r") as raw_json:
-            self.wallet_info = json.loads(raw_json.read())
-
-        self.url = self.wallet_info[chain]["url"]
-        self.privkey = self.wallet_info[chain]["privkey"]
-        self.pubkey = self.wallet_info[chain]["pubkey"]
-
+    def __init__(self):
+        self.privkey = config.config["wallets"][config.config["currentChain"]]["privkey"]
+        self.url = config.config["wallets"][config.config["currentChain"]]["url"]
         self.w3 = self.create_w3_obj()
 
     def create_w3_obj(self):
@@ -26,25 +21,25 @@ class MakeW3:
 
 
 class ContractConnection:
-    def __init__(self, chain):
-        self.w3 = MakeW3(chain).get_w3_obj()
+    def __init__(self):
+        chain = config.config["currentChain"]
+        self.w3 = MakeW3().get_w3_obj()
 
-        self.contract_info_path = contract_info_path
         self.contract_info = self.get_contract_info()
+        self.contract_obj = self.create_contract_object()
 
-        self.create_contract_object()
-        self.contract_obj = self.get_contract_object()
+        self.functions = ContractFunctions(self.w3, self.contract_obj)
 
     def create_contract_object(self):
         address = self.get_address()
         abi = self.get_abi()
-        self.contract_obj = self.w3.eth.contract(address=address, abi=abi)
+        return self.w3.eth.contract(address=address, abi=abi)
 
     def get_contract_object(self):
         return self.contract_obj
 
     def get_contract_info(self):
-        with open(self.contract_info_path) as file:
+        with open(tools.get_config_data_path()) as file:
             data = file.read()
             contract_info = json.loads(data)
         return contract_info
@@ -54,3 +49,34 @@ class ContractConnection:
 
     def get_address(self):
         return self.contract_info["address"]
+
+class ContractFunctions:
+    def __init__(self, w3, contract_obj):
+        self.w3 = w3
+        self.contract_obj = contract_obj
+
+        currentChain = config.config["currentChain"]
+        self.privkey = config.config["wallets"][currentChain]["privkey"]
+        self.acct_addr = config.config["wallets"][currentChain]["pubkey"]
+
+    def issue(self, hashVal):
+        self.method("issue_hash", hashVal)
+
+    def revoke(self, hashVal):
+        self.method("revoke_hash", hashVal)
+
+    def method(self, method, hashVal):
+        acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
+
+        construct_txn = self.contract_obj.functions[method](hashVal).buildTransaction({
+            'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
+            'gasPrice': self.w3.toWei('50', 'gwei'),
+            'gas': 1000000
+        })
+
+        signed = acct.signTransaction(construct_txn)
+        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+
+    def get_status(self, hash_val):
+        return self.contract_obj.functions.hashes(hash_val).call()

@@ -2,6 +2,7 @@
 
 import json
 import onchaining_tools.path_tools as tools
+import onchaining_tools.config as config
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
 
@@ -19,42 +20,37 @@ def compile_contract(w3Factory):
 
     opt["sources"]["BlockCertsOnchaining.sol"]["content"] = source_raw
     compiled_sol = compile_standard(opt)
-    bytecode = compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
-    abi = \
-        json.loads(compiled_sol['contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
+    bytecode = compiled_sol[
+        'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
+    abi = json.loads(compiled_sol[
+        'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
-    acct_addr = w3Factory.pubkey
+    currentChain = config.config["currentChain"]
+    acct_addr = config.config["wallets"][currentChain]["pubkey"]
 
     construct_txn = contract.constructor().buildTransaction({
-        'from': acct_addr,
+        # 'from': acct_addr,
         'nonce': w3.eth.getTransactionCount(acct_addr),
-        #'gasPrice': w3.toWei('21', 'gwei')
+        'gasPrice': w3.toWei('50', 'gwei'),
+        'gas': 1000000
     })
 
     signed = acct.signTransaction(construct_txn)
     tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
-    # tx_hash = contract.constructor().transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
     contr_address = tx_receipt.contractAddress
-    blockcerts_onchaining = w3.eth.contract(address=contr_address, abi=abi)
-
     data = {'abi': abi, 'address': contr_address}
 
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
 
-
-    return blockcerts_onchaining
-
-
-def deploy(chain):
-    w3Factory = MakeW3(chain)
-    compile_contract(w3Factory)
+    print("deployed contract with address: " + str(contr_address))
 
 
 if __name__ == '__main__':
     # args: deploy local or remote
-    deploy("ropsten")
+    w3Factory = MakeW3()
+    compile_contract(w3Factory)

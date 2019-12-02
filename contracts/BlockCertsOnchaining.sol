@@ -9,7 +9,7 @@ contract BlockCertsOnchaining {
 	// key: hash, value: Batch/Cert
 	mapping(uint256 => Hash) public hashes;
 
-	modifier onlyOwner() {
+	modifier only_owner() {
 		require(
 			msg.sender == owner,
 			"only contract owner can issue"
@@ -21,11 +21,11 @@ contract BlockCertsOnchaining {
 		owner = msg.sender;
 	}
 
-	function issueHash(uint256 _hash) public onlyOwner {
+	function issue_hash(uint256 _hash) public only_owner {
 		hashes[_hash] = Hash(false);
 	}
 
-	function revokeHash(uint256 _hash) public onlyOwner {
+	function revoke_hash(uint256 _hash) public only_owner {
 		hashes[_hash]._revoked = true;
 	}
 }
