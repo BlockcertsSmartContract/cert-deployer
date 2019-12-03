@@ -1,5 +1,5 @@
 config = {
-    "currentChain": "ganache",
+    "current_chain": "ganache",
     "wallets":
     {
         "ropsten":

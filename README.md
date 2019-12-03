@@ -1,25 +1,27 @@
 # Extending BlockCerts' ethereum backend
-to implement on-chain revokation of certificates and a persistent identity
+to implement on-chain revocation of certificates and a persistent identity using ENS
 
 ## dependencies
-- truffle framework
 - python3 with web3py
-- ganache(-cli)
+- ganache
 - (optional) python virtualenv
 
 ## set up
-1. Clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
-2. Start ganache and add your keys in `config.py`
-3. Deploy smart contract `$ deploy.py`
+1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
+1. install dependencies (see: `requirements.txt`)
+1. in `config.py`:
+  1. add url and keypair for desired ethereum network
+  1. set `current_chain` to reflect your changes
+1. (optional) start ganache
+1. deploy smart contract `$ deploy.py`
 
 ## arguments
-- Run `python_tools/issuer.py --issue someBatchHash someCertHash` to issue
-- Run `python_tools/issuer.py --revokeCert someBatchHash someCertHash` to revoke a certificate
-- Run `python_tools/issuer.py --revokeBatch someBatchHash someCertHash` to revoke a batch
-- Run `python_tools/issuer.py --verifyCert someBatchHash someCertHash` to verify a certificate
+- run `python_tools/issuer.py --issue [merkle_root_hash]` to issue
+- run `python_tools/issuer.py --revoke [hash]` to revoke a certificate or batch by its hash
+- run `python_tools/issuer.py --verifyCert [merkle_root_hash] [cert_hash]` to verify a certificate
 
 ## style guides
 - PEP8
-- Tests should be test_whenSomeThing_thenSomeThing
-- variables and functions should be all lowercase 
+- tests should be test_whenSomeThing_thenSomeThing
+- variables and functions should be all lowercase
 - clarify function returns

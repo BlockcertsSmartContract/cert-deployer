@@ -6,8 +6,8 @@ from web3 import Web3, HTTPProvider
 
 class MakeW3:
     def __init__(self):
-        self.privkey = config.config["wallets"][config.config["currentChain"]]["privkey"]
-        self.url = config.config["wallets"][config.config["currentChain"]]["url"]
+        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
+        self.url = config.config["wallets"][config.config["current_chain"]]["url"]
         self.w3 = self.create_w3_obj()
 
     def create_w3_obj(self):
@@ -22,7 +22,6 @@ class MakeW3:
 
 class ContractConnection:
     def __init__(self):
-        chain = config.config["currentChain"]
         self.w3 = MakeW3().get_w3_obj()
 
         self.contract_info = self.get_contract_info()
@@ -50,14 +49,15 @@ class ContractConnection:
     def get_address(self):
         return self.contract_info["address"]
 
+
 class ContractFunctions:
     def __init__(self, w3, contract_obj):
         self.w3 = w3
         self.contract_obj = contract_obj
 
-        currentChain = config.config["currentChain"]
-        self.privkey = config.config["wallets"][currentChain]["privkey"]
-        self.acct_addr = config.config["wallets"][currentChain]["pubkey"]
+        current_chain = config.config["current_chain"]
+        self.privkey = config.config["wallets"][current_chain]["privkey"]
+        self.acct_addr = config.config["wallets"][current_chain]["pubkey"]
 
     def issue(self, hashVal):
         self.method("issue_hash", hashVal)
@@ -76,7 +76,7 @@ class ContractFunctions:
 
         signed = acct.signTransaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        self.w3.eth.waitForTransactionReceipt(tx_hash)
 
     def get_status(self, hash_val):
         return self.contract_obj.functions.hashes(hash_val).call()
