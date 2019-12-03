@@ -27,8 +27,8 @@ def compile_contract(w3Factory):
 
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
-    currentChain = config.config["currentChain"]
-    acct_addr = config.config["wallets"][currentChain]["pubkey"]
+    current_chain = config.config["current_chain"]
+    acct_addr = config.config["wallets"][current_chain]["pubkey"]
 
     construct_txn = contract.constructor().buildTransaction({
         # 'from': acct_addr,

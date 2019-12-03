@@ -23,5 +23,6 @@ def get_compile_data_path() -> str:
 def get_config_data_path() -> str:
     return get_root_dir() + "/data/contr_info.json"
 
+
 def get_chain_data_path() -> str:
     return get_root_dir() + "/data/wallets.json"
