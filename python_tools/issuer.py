@@ -1,7 +1,6 @@
 #! /usr/bin/python
 
 import argparse
-import random
 
 from onchaining_tools.connections import ContractConnection
 
@@ -9,12 +8,16 @@ parser = argparse.ArgumentParser()
 sc = ContractConnection()
 
 
-def issue(merkle_root_hash=random.randint(100, 999)):
-    sc.functions.issue(merkle_root_hash)
+def issue(hash_val):
+    print("> following hash gets issued : " + hash_val)
+    sc.functions.issue(hash_val)
+    print("> successfully issued : " + hash_val)
 
 
 def revoke(hash_val):
+    print("> following hash gets revoked : " + hash_val)
     sc.functions.revoke(hash_val)
+    print("> successfully revoked : " + hash_val)
 
 
 def verify(merkle_root_hash, cert_hash):
@@ -41,23 +44,10 @@ if __name__ == '__main__':
     parser.add_argument("-v", "--verify", help="revoke cert or batch hash", action="store_true")
     arguments = parser.parse_args()
     if arguments.issue:
-        try:
-            issue(arguments.cert_hash)
-        except IndexError:
-            print("Error missing arguments for issuing (--issue [int]), issuing some random cert")
-            issue()
+        issue(arguments.cert_hash)
     elif arguments.revokeCert:
-        try:
-            revoke(arguments.cert_hash)
-        except IndexError:
-            print("Error missing arguments for revocation (--revokeCert [int])")
+        revoke(arguments.cert_hash)
     elif arguments.revokeBatch:
-        try:
-            revoke(arguments.batch_hash)
-        except IndexError:
-            print("Error missing arguments for revocation (--revokeBatch [int])")
-    if arguments.verify:
-        try:
-            verify(arguments.batch_hash, arguments.cert_hash)
-        except IndexError:
-            print("Error missing arguments for verifying (--verify [merkle_root_hash] [cert_hash])")
+        revoke(arguments.batch_hash)
+    elif arguments.verify:
+        verify(arguments.batch_hash, arguments.cert_hash)
