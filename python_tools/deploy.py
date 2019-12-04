@@ -51,12 +51,11 @@ def compile_contract(w3Factory):
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
 
-    #Get ENS Name WITH .test/.eth!
-    desiredEnsName = input("Enter your Desired ENS Name here: ")
-    desiredEnsNameOwner = ns.owner(desiredEnsName)
-    print("deployed contract with address: " + str(contr_address) + ", and ENS Entry: " + str(desiredEnsNameOwner))
+    name = ns.name("")#find ens domain according to wallet
+    ns.setup_addres(name, contr_address)#store new contract at domain 
 
-
+    
+    print("deployed contract with address: " + str(contr_address) + ", and ENS Entry at: " + str(ns.name(contr_address))
 
 if __name__ == '__main__':
     # args: deploy local or remote
