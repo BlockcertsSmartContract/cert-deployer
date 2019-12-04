@@ -5,11 +5,15 @@ import onchaining_tools.path_tools as tools
 import onchaining_tools.config as config
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
+from ens import ENS
 
 
 def compile_contract(w3Factory):
     w3 = w3Factory.get_w3_obj()
     acct = w3Factory.get_w3_wallet()
+
+    #ns object necessary for ENS calls with connection to ropsten registry
+    ns = ENS.fromWeb3(w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
 
     with open(tools.get_contract_path()) as source_file:
         source_raw = source_file.read()
@@ -28,10 +32,10 @@ def compile_contract(w3Factory):
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
     current_chain = config.config["current_chain"]
-    acct_addr = config.config["wallets"][current_chain]["pubkey"]
+    acct_addr = config.config["wallets"][current_chain]["pubkey"]#["ens"]
 
     construct_txn = contract.constructor().buildTransaction({
-        # 'from': acct_addr,
+        'from': acct_addr,
         'nonce': w3.eth.getTransactionCount(acct_addr),
         'gasPrice': w3.toWei('50', 'gwei'),
         'gas': 1000000
@@ -47,7 +51,11 @@ def compile_contract(w3Factory):
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
 
-    print("deployed contract with address: " + str(contr_address))
+    #Get ENS Name WITH .test/.eth!
+    desiredEnsName = input("Enter your Desired ENS Name here: ")
+    desiredEnsNameOwner = ns.owner(desiredEnsName)
+    print("deployed contract with address: " + str(contr_address) + ", and ENS Entry: " + str(desiredEnsNameOwner))
+
 
 
 if __name__ == '__main__':

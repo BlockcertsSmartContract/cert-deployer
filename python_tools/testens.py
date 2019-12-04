@@ -6,16 +6,15 @@ from ens import ENS
 
 class testens:
 	web3 = Web3(Web3.HTTPProvider("https://ropsten.infura.io/v3/a70de76e3fd748cbb6dbb2ed49dda183"))
-	acct = web3.eth.account.privateKeyToAccount("50f3dca79d43c17c0b58b88baf57f0d91212f7ca6a9edc4781c96a5e99fb573d")
 	ns = ENS.fromWeb3(web3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010") #registry
 	#"0x12299799a50340FB860D276805E78550cBaD3De3") #resolver
 	#"0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3") #metamask
 
 	#TO DO
-	eth_address = ns.address('flo.eth')
+	eth_address = ns.address('flo.test')
 	print("Address is: " + str(eth_address))
 
-	domain = ns.name('0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3')
+	domain = ns.name('0x6bAa91389760dCCf2F476b8B59282E54B190C068')
 	print("Domain is: " + str(domain))
 
 	#WORKS
