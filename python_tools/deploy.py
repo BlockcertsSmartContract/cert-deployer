@@ -51,11 +51,10 @@ def compile_contract(w3Factory):
     with open(tools.get_config_data_path(), "w+") as outfile:
         json.dump(data, outfile)
 
-
-    name = ns.name(config.config["wallets"][config.config["current_chain"]]["pubkey"])#find ens domain according to wallet
+    name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))#find ens domain according to wallet
     #ns.setup_addres(name, contr_address)#store new contract at domain 
 
-    print("deployed contract with address: " + str(contr_address) + ", and ENS Entry at: " + str(ns.name(contr_address))
+    print("deployed contract with address: " + str(contr_address) + ", and ENS Entry at Domain: " + name)
 
 if __name__ == '__main__':
     w3Factory = MakeW3()
