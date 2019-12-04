@@ -24,7 +24,7 @@ class MakeW3:
         return self.w3
 
     def get_w3_wallet(self):
-        '''Connects a private key to the account'''
+        '''Connects a private key to the account that is going to be used for the transaction'''
         return self.w3.eth.account.privateKeyToAccount(self.privkey)
 
 
@@ -47,6 +47,7 @@ class ContractConnection:
         return self.contract_obj
 
     def get_contract_info(self):
+        '''gets transaction data from a config file'''
         with open(tools.get_config_data_path()) as file:
             data = file.read()
             contract_info = json.loads(data)
@@ -64,6 +65,7 @@ class ContractFunctions:
         self.w3 = w3
         self.contract_obj = contract_obj
 
+        '''getting data about ethereum chain, public and private keys of the ethereum wallet, that will be used for the transaction'''
         current_chain = config.config["current_chain"]
         self.privkey = config.config["wallets"][current_chain]["privkey"]
         self.acct_addr = config.config["wallets"][current_chain]["pubkey"]
@@ -76,14 +78,17 @@ class ContractFunctions:
 
     def method(self, method, hashVal):
 
+        '''connecting a private key to the account that is going to be used for the transaction'''
         acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
 
+        '''creating a transaction'''
         construct_txn = self.contract_obj.functions[method](hashVal).buildTransaction({
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
             'gasPrice': self.w3.toWei('50', 'gwei'),
             'gas': 1000000
         })
 
+        '''signing raw transaction, sending it to the ethereum node and receiving the transaction hash'''
         signed = acct.signTransaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         self.w3.eth.waitForTransactionReceipt(tx_hash)

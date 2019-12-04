@@ -37,7 +37,7 @@ def compile_contract(w3Factory):
         'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])['output']['abi']
     contract = w3.eth.contract(abi=abi, bytecode=bytecode)
 
-    '''getting data about ethereum chain and puclic key of the ethereum wallet, that will be used for the transaction'''
+    '''getting data about ethereum chain and public key of the ethereum wallet, that will be used for the transaction'''
     current_chain = config.config["current_chain"]
     acct_addr = config.config["wallets"][current_chain]["pubkey"]
 

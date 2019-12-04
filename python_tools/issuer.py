@@ -6,7 +6,7 @@ from onchaining_tools.connections import ContractConnection
 
 
 def issue(merkle_root_hash=random.randint(100, 999)):
-    '''calls out issuing fuction'''
+    '''calls out issuing function'''
     sc.functions.issue(merkle_root_hash)
 
 
