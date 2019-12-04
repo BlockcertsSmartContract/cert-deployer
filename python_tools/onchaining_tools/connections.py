@@ -5,12 +5,19 @@ from web3 import Web3, HTTPProvider
 
 
 class MakeW3:
+    '''This class defines private key of an ethereum wallet to be used for the transaction, 
+        node url to be used for communication with ethereum blockchain and instantiates the
+        web3 connection with ethereum node '''
     def __init__(self):
+        '''Defining private key and ethereum node url'''
         self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
         self.url = config.config["wallets"][config.config["current_chain"]]["url"]
+        '''Calling function to instantiate a web3 connection with ethereum node'''
         self.w3 = self.create_w3_obj()
 
     def create_w3_obj(self):
+        '''Returns:
+                instantiated web3 connection with ethereum node'''
         return Web3(HTTPProvider(self.url))
 
     def get_w3_obj(self):
@@ -21,6 +28,7 @@ class MakeW3:
 
 
 class ContractConnection:
+    ''''''
     def __init__(self):
         self.w3 = MakeW3().get_w3_obj()
 
