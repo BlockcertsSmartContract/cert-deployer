@@ -80,7 +80,7 @@ if __name__ == '__main__':
             try:
                 get_latest_contract()
             except IndexError:
-                print("Error missing arguments for getting contract")
+                print("Error ")
                 issue()
 
         position = position + 1
