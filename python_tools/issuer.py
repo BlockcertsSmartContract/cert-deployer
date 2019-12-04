@@ -6,10 +6,12 @@ from onchaining_tools.connections import ContractConnection
 
 
 def issue(merkle_root_hash=random.randint(100, 999)):
+    '''calls out issuing fuction'''
     sc.functions.issue(merkle_root_hash)
 
 
 def revoke(hash_val):
+    '''calls out revokation function'''
     sc.functions.revoke(hash_val)
 
 

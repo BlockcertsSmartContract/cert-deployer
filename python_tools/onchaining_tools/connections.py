@@ -5,7 +5,7 @@ from web3 import Web3, HTTPProvider
 
 
 class MakeW3:
-    '''This class defines private key of an ethereum wallet to be used for the transaction, 
+    '''This class defines a private key of an ethereum wallet to be used for the transaction, 
         node url to be used for communication with ethereum blockchain and instantiates the
         web3 connection with ethereum node '''
     def __init__(self):
@@ -16,14 +16,15 @@ class MakeW3:
         self.w3 = self.create_w3_obj()
 
     def create_w3_obj(self):
-        '''Returns:
-                instantiated web3 connection with ethereum node'''
+        '''Instantiates a web3 connection with ethereum node'''
         return Web3(HTTPProvider(self.url))
 
     def get_w3_obj(self):
+        ''''''
         return self.w3
 
     def get_w3_wallet(self):
+        '''Connects a private key to the account'''
         return self.w3.eth.account.privateKeyToAccount(self.privkey)
 
 
@@ -74,6 +75,7 @@ class ContractFunctions:
         self.method("revoke_hash", hashVal)
 
     def method(self, method, hashVal):
+
         acct = self.w3.eth.account.privateKeyToAccount(self.privkey)
 
         construct_txn = self.contract_obj.functions[method](hashVal).buildTransaction({
