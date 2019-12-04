@@ -23,5 +23,6 @@ class issuerTest(unittest.TestCase):
         sc.functions.revoke(cert_hash)
         self.assertTrue(sc.functions.get_status(cert_hash))
 
-    if __name__ == '__main__':
-        unittest.main()
+
+if __name__ == '__main__':
+    unittest.main()
