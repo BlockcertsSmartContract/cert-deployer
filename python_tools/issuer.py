@@ -4,6 +4,10 @@ import random
 import sys
 from onchaining_tools.connections import ContractConnection
 
+from ens import ENS
+from onchaining_tools.connections import MakeW3
+import onchaining_tools.config as config
+
 
 def issue(merkle_root_hash=random.randint(100, 999)):
     sc.functions.issue(merkle_root_hash)
@@ -11,6 +15,18 @@ def issue(merkle_root_hash=random.randint(100, 999)):
 
 def revoke(hash_val):
     sc.functions.revoke(hash_val)
+
+
+def get_latest_contract():
+    w3Factory = MakeW3()
+    w3 = w3Factory.get_w3_obj()
+
+    acct = w3Factory.get_w3_wallet()
+    ns = ENS.fromWeb3(w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
+    
+    name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))
+    address = ns.address(name)
+    print(address)
 
 
 def verify(merkle_root_hash, cert_hash):
@@ -59,5 +75,12 @@ if __name__ == '__main__':
                 verify(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
             except IndexError:
                 print("Error missing arguments for verifying (--verify [merkle_root_hash] [cert_hash])")
+
+        if sys.argv[position] == "--contract":
+            try:
+                get_latest_contract()
+            except IndexError:
+                print("Error missing arguments for getting contract")
+                issue()
 
         position = position + 1
