@@ -16,9 +16,7 @@ to implement on-chain revocation of certificates and a persistent identity using
 1. deploy smart contract `$ deploy.py`
 
 ## arguments
-- run `python_tools/issuer.py --issue [merkle_root_hash]` to issue
-- run `python_tools/issuer.py --revoke [hash]` to revoke a certificate or batch by its hash
-- run `python_tools/issuer.py --verifyCert [merkle_root_hash] [cert_hash]` to verify a certificate
+- run `python_tools/issuer.py -h` to get descriptions
 
 ## style guides
 - PEP8

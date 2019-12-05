@@ -1,8 +1,9 @@
 # Based on: https://web3py.readthedocs.io/en/stable/contracts.html
 
 import json
-import onchaining_tools.path_tools as tools
+
 import onchaining_tools.config as config
+import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
 from ens import ENS
@@ -41,7 +42,7 @@ def compile_contract(w3Factory):
         'gas': 1000000
     })
 
-    signed = acct.signTransaction(construct_txn)
+    signed = acct.sign_transaction(construct_txn)
     tx_hash = w3.eth.sendRawTransaction(signed.rawTransaction)
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 

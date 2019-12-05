@@ -1,20 +1,26 @@
 #! /usr/bin/python
 
-import random
-import sys
-from onchaining_tools.connections import ContractConnection
+import argparse
 
+from onchaining_tools.connections import ContractConnection
 from ens import ENS
 from onchaining_tools.connections import MakeW3
 import onchaining_tools.config as config
 
+parser = argparse.ArgumentParser()
+sc = ContractConnection()
 
-def issue(merkle_root_hash=random.randint(100, 999)):
-    sc.functions.issue(merkle_root_hash)
+
+def issue(hash_val):
+    print("> following hash gets issued : " + hash_val)
+    sc.functions.issue(hash_val)
+    print("> successfully issued : " + hash_val)
 
 
 def revoke(hash_val):
+    print("> following hash gets revoked : " + hash_val)
     sc.functions.revoke(hash_val)
+    print("> successfully revoked : " + hash_val)
 
 
 def get_latest_contract():
@@ -45,43 +51,22 @@ def verify(merkle_root_hash, cert_hash):
     print("> cert is valid: " + str(valid))
 
 
-sc = ContractConnection()
-
 if __name__ == '__main__':
-    arguments = len(sys.argv) - 1
-    position = 1
-
-    while arguments >= position:
-        if sys.argv[position] == "--issue":
-            try:
-                issue(int(sys.argv[position + 1]))
-            except IndexError:
-                print("Error missing arguments for issuing (--issue [int]), issuing some random cert")
-                issue()
-
-        if sys.argv[position] == "--revoke":
-            try:
-                revoke(int(sys.argv[position + 1]))
-            except IndexError:
-                print("Error missing arguments for revocation (--revokeCert [int])")
-
-        if sys.argv[position] == "--revokeBatch":
-            try:
-                revoke(int(sys.argv[position + 1]))
-            except IndexError:
-                print("Error missing arguments for revocation (--revokeBatch [int])")
-
-        if sys.argv[position] == "--verify":
-            try:
-                verify(int(sys.argv[position + 1]), int(sys.argv[position + 2]))
-            except IndexError:
-                print("Error missing arguments for verifying (--verify [merkle_root_hash] [cert_hash])")
-
-        if sys.argv[position] == "--contract":
-            try:
-                get_latest_contract()
-            except IndexError:
-                print("Error ")
-                issue()
-
-        position = position + 1
+    parser.add_argument("cert_hash", help="cert or batch hash", type=int)
+    parser.add_argument("batch_hash", help="batch hash", type=int)
+    parser.add_argument("-rb", "--revokeBatch", help="revoke batch hash", action="store_true")
+    parser.add_argument("-rc", "--revokeCert", help="revoke cert hash", action="store_true")
+    parser.add_argument("-i", "--issue", help="revoke cert or batch hash", action="store_true")
+    parser.add_argument("-v", "--verify", help="revoke cert or batch hash", action="store_true")
+    parser.add_argument("-c", "--contract", help="get info about most recently deployed contract", action="store_true")
+    arguments = parser.parse_args()
+    if arguments.issue:
+        issue(arguments.cert_hash)
+    elif arguments.revokeCert:
+        revoke(arguments.cert_hash)
+    elif arguments.revokeBatch:
+        revoke(arguments.batch_hash)
+    elif arguments.verify:
+        verify(arguments.batch_hash, arguments.cert_hash)
+    elif arguments.contract:
+        get_latest_contract()
