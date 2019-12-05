@@ -13,7 +13,6 @@ class MakeW3:
         self.w3 = self.create_w3_obj()
         self.w3.eth.defaultAccount = self.pubkey
 
-
     def create_w3_obj(self):
         return Web3(HTTPProvider(self.url))
 

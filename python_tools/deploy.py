@@ -4,15 +4,18 @@ import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
 from ens import ENS
-from eth_utils import keccak
+
 
 class ContractDeployer(object):
     def __init__(self):
+        current_chain = config.config["current_chain"]
+        self.pubkey = config.config["wallets"][current_chain]["pubkey"]
+
         w3Factory = MakeW3()
         self.w3 = w3Factory.get_w3_obj()
         self.acct = w3Factory.get_w3_wallet()
-        # self.compile_contract()
-        # self.deploy()
+        self.compile_contract()
+        self.deploy()
         self.assign_ens()
 
     def compile_contract(self):
@@ -34,7 +37,7 @@ class ContractDeployer(object):
         contract = self.w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
 
         current_chain = config.config["current_chain"]
-        acct_addr = config.config["wallets"][current_chain]["pubkey"]#["ens"]
+        acct_addr = config.config["wallets"][current_chain]["pubkey"]
 
         construct_txn = contract.constructor().buildTransaction({
             # 'from': acct_addr,
@@ -52,18 +55,15 @@ class ContractDeployer(object):
         with open(tools.get_contr_info_path(), "w+") as outfile:
             json.dump(data, outfile)
 
+        print(f"deployed contr <{self.contr_address}>")
 
     def assign_ens(self):
         with open(tools.get_contr_info_path()) as f:
             contr_info_raw = f.read()
         contr_info = json.loads(contr_info_raw)
         self.contr_address = contr_info["address"]
-        print("")
 
         ns = ENS.fromWeb3(self.w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
-
-        current_chain = config.config["current_chain"]
-        pubkey = config.config["wallets"][current_chain]["pubkey"]
 
         ens_path = tools.get_ens_abi_path()
         with open(ens_path) as f:
@@ -71,16 +71,18 @@ class ContractDeployer(object):
 
         abi = json.loads(ens_abi)
 
-        address = "0x112234455C3a32FD11230C42E7Bccd4A84e02010"
+        address = "0x112234455C3a32FD11230C42E7Bccd4A84e02010"  # registry addr
+        address = "0x12299799a50340FB860D276805E78550cBaD3De3"  # resolver addr
         address = self.w3.toChecksumAddress(address)
 
         node = ns.namehash("blockcerts.eth")
+        self.contr_address = self.w3.toChecksumAddress(self.contr_address)
 
-        contract = self.w3.eth.contract(address = address, abi = abi)
-        result = contract.functions.owner(node).call()
-        construct_txn = contract.functions.setOwner(node, self.contr_address).buildTransaction({
-            'from': pubkey,
-            'nonce': self.w3.eth.getTransactionCount(pubkey),
+        contract = self.w3.eth.contract(address=address, abi=abi)
+
+        construct_txn = contract.functions["setAddr"](node, self.contr_address).buildTransaction({
+            'from': self.pubkey,
+            'nonce': self.w3.eth.getTransactionCount(self.pubkey),
             'gas': 1000000
         })
 
@@ -88,11 +90,21 @@ class ContractDeployer(object):
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
 
-        # # find ens domain according to wallet and store new contract at domain
-        # name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))
-        # print(name)
+        construct_txn = contract.functions["setName"](node, "blockcerts.eth").buildTransaction({
+            'from': self.pubkey,
+            'nonce': self.w3.eth.getTransactionCount(self.pubkey),
+            'gas': 1000000
+        })
 
-        # print("deployed contract with address: " + str(self.contr_address) + ", and ENS Entry at Domain: " + name)
+        signed = self.acct.signTransaction(construct_txn)
+        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+
+        name = contract.functions.name(node).call()
+        addr = contract.functions.addr(node).call()
+
+        print(f"set contr <{addr}> to name '{name}'")
+
 
 if __name__ == '__main__':
     ContractDeployer()
