@@ -8,8 +8,11 @@ from web3 import Web3, HTTPProvider
 class MakeW3:
     def __init__(self):
         self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
+        self.pubkey = config.config["wallets"][config.config["current_chain"]]["pubkey"]
         self.url = config.config["wallets"][config.config["current_chain"]]["url"]
         self.w3 = self.create_w3_obj()
+        self.w3.eth.defaultAccount = self.pubkey
+
 
     def create_w3_obj(self):
         return Web3(HTTPProvider(self.url))
@@ -24,10 +27,8 @@ class MakeW3:
 class ContractConnection:
     def __init__(self):
         self.w3 = MakeW3().get_w3_obj()
-
         self.contract_info = self.get_contract_info()
         self.contract_obj = self.create_contract_object()
-
         self.functions = ContractFunctions(self.w3, self.contract_obj)
 
     def create_contract_object(self):
@@ -39,7 +40,7 @@ class ContractConnection:
         return self.contract_obj
 
     def get_contract_info(self):
-        with open(tools.get_config_data_path()) as file:
+        with open(tools.get_contr_info_path()) as file:
             data = file.read()
             contract_info = json.loads(data)
         return contract_info

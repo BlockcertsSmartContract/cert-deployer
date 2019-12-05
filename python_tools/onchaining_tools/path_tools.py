@@ -8,10 +8,6 @@ def get_root_dir() -> str:
     return root_dir
 
 
-def get_contract_as_json_path() -> str:
-    return get_root_dir() + '/build/contracts/BlockCertsOnchaining.json'
-
-
 def get_contract_path() -> str:
     return get_root_dir() + "/contracts/BlockCertsOnchaining.sol"
 
@@ -20,9 +16,9 @@ def get_compile_data_path() -> str:
     return get_root_dir() + "/data/compile_opt.json"
 
 
-def get_config_data_path() -> str:
+def get_contr_info_path() -> str:
     return get_root_dir() + "/data/contr_info.json"
 
 
-def get_chain_data_path() -> str:
-    return get_root_dir() + "/data/wallets.json"
+def get_ens_abi_path() -> str:
+    return get_root_dir() + "/data/ens_abi.json"
