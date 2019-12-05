@@ -12,15 +12,15 @@ sc = ContractConnection()
 
 
 def issue(hash_val):
-    print("> following hash gets issued : " + hash_val)
+    print("> following hash gets issued : " + str(hash_val))
     sc.functions.issue(hash_val)
-    print("> successfully issued : " + hash_val)
+    print("> successfully issued : " + str(hash_val))
 
 
 def revoke(hash_val):
-    print("> following hash gets revoked : " + hash_val)
+    print("> following hash gets revoked : " + str(hash_val))
     sc.functions.revoke(hash_val)
-    print("> successfully revoked : " + hash_val)
+    print("> successfully revoked : " + str(hash_val))
 
 
 def get_latest_contract():
