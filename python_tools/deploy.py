@@ -62,12 +62,14 @@ if __name__ == '__main__':
     if arguments.provider == "ropsten":
         try:
             config.config["current_chain"] = "ropsten"
+            print("Deploying contract on ropsten")
             compile_contract()
         except ValueError:
             print("Something went wrong you should check your config.py")
     elif arguments.provider == "ganache":
         try:
             config.config["current_chain"] = "ganache"
+            print("Deploying contract on ganache")
             compile_contract()
         except ValueError:
             print("Something went wrong you should check your config.py")
