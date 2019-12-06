@@ -1,5 +1,6 @@
 # Based on: https://web3py.readthedocs.io/en/stable/contracts.html
 
+import argparse
 import json
 
 import onchaining_tools.config as config
@@ -7,10 +8,13 @@ import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3
 from solc import compile_standard
 
+parser = argparse.ArgumentParser()
 
-def compile_contract(w3Factory):
-    w3 = w3Factory.get_w3_obj()
-    acct = w3Factory.get_w3_wallet()
+
+def compile_contract():
+    w3_factory = MakeW3()
+    w3 = w3_factory.get_w3_obj()
+    acct = w3_factory.get_w3_wallet()
 
     with open(tools.get_contract_path()) as source_file:
         source_raw = source_file.read()
@@ -53,5 +57,19 @@ def compile_contract(w3Factory):
 
 if __name__ == '__main__':
     # args: deploy local or remote
-    w3Factory = MakeW3()
-    compile_contract(w3Factory)
+    parser.add_argument("provider", help="supported providers are ropsten and ganache", type=str)
+    arguments = parser.parse_args()
+    if arguments.provider == "ropsten":
+        try:
+            config.config["current_chain"] = "ropsten"
+            compile_contract()
+        except ValueError:
+            print("Something went wrong you should check your config.py")
+    elif arguments.provider == "ganache":
+        try:
+            config.config["current_chain"] = "ganache"
+            compile_contract()
+        except ValueError:
+            print("Something went wrong you should check your config.py")
+    else:
+        print("Please choose ropsten or ganache as provider")
