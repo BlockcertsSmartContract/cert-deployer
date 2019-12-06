@@ -41,7 +41,6 @@ class ContractDeployer(object):
         acct_addr = config.config["wallets"][current_chain]["pubkey"]
 
         construct_txn = contract.constructor().buildTransaction({
-            # 'from': acct_addr,
             'nonce': self.w3.eth.getTransactionCount(acct_addr),
             'gas': 1000000
         })
@@ -49,7 +48,6 @@ class ContractDeployer(object):
         signed = self.acct.sign_transaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-
 
         with open(tools.get_contr_info_path(), "r") as f:
             raw = f.read()
@@ -60,7 +58,7 @@ class ContractDeployer(object):
         contr_info["blockcertsonchaining"] = data
 
         with open(tools.get_contr_info_path(), "w+") as f:
-            json.dump(data, f)
+            json.dump(contr_info, f)
 
         print(f"deployed contr <{self.contr_address}>")
 

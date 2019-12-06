@@ -24,7 +24,7 @@ class MakeW3(object):
 
 
 class ContractConnection(object):
-    def __init__(self, contract_name):  # "blockcertsonchaining", "ropsten_ens_registry", "ropsten_ens_resolver"
+    def __init__(self, contract_name="ropsten"):  # "blockcertsonchaining", "ropsten_ens_registry", "ropsten_ens_resolver"
         self.contract_name = contract_name
         self.w3 = MakeW3().get_w3_obj()
         self.contract_info = self.get_contract_info()
@@ -61,13 +61,11 @@ class ContractFunctions(object):
         self.privkey = config.config["wallets"][current_chain]["privkey"]
         self.acct_addr = config.config["wallets"][current_chain]["pubkey"]
 
-        print(self.contract_obj.all_functions())
-
     def get_tx_options(self):
         return {
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-            'gasPrice': self.w3.toWei('50', 'gwei'),
-            'gas': 1000000
+            'gas': 100000
+            # 'gas': self.contract_obj.functions[method](*argv).estimateGas(),  # not working yet
         }
 
     def transact(self, method, *argv):
@@ -85,7 +83,6 @@ class ContractFunctions(object):
         signed = acct.sign_transaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         self.w3.eth.waitForTransactionReceipt(tx_hash)
-
 
     def call(self, method, *argv):
         return self.contract_obj.functions[method](*argv).call()
