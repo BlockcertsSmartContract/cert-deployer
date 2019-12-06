@@ -1,3 +1,4 @@
+import argparse
 import json
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
@@ -81,6 +82,24 @@ class ContractDeployer(object):
 
         print(f"set contr <{addr}> to name '{name}'")
 
-
 if __name__ == '__main__':
-    ContractDeployer()
+	parser = argparse.ArgumentParser()
+    # args: deploy local or remote
+    parser.add_argument("provider", help="supported providers are ropsten and ganache", type=str)
+    arguments = parser.parse_args()
+    if arguments.provider == "ropsten":
+        try:
+            config.config["current_chain"] = "ropsten"
+            print("Deploying contract on ropsten")
+			ContractDeployer()
+        except ValueError:
+            print("Something went wrong you should check your config.py")
+    elif arguments.provider == "ganache":
+        try:
+            config.config["current_chain"] = "ganache"
+            print("Deploying contract on ganache")
+            ContractDeployer()
+        except ValueError:
+            print("Something went wrong you should check your config.py")
+    else:
+        print("Please choose ropsten or ganache as provider")

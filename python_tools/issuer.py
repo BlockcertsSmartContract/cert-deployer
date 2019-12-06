@@ -1,26 +1,18 @@
-#! /usr/bin/python
-
 import argparse
-
-from onchaining_tools.connections import ContractConnection
-from ens import ENS
-from onchaining_tools.connections import MakeW3
 import onchaining_tools.config as config
-
-parser = argparse.ArgumentParser()
-sc = ContractConnection("blockcertsonchaining")
-
+from onchaining_tools.connections import ContractConnection, MakeW3
+from ens import ENS
 
 def issue(hash_val):
     print("> following hash gets issued : " + str(hash_val))
     sc.functions.transact("issue_hash", hash_val)
-    print("> successfully issued : " + str(hash_val))
+    print("> successfully issued " + str(hash_val) + " on " + config.config["current_chain"])
 
 
 def revoke(hash_val):
     print("> following hash gets revoked : " + str(hash_val))
     sc.functions.transact("revoke_hash", hash_val)
-    print("> successfully revoked : " + str(hash_val))
+    print("> successfully revoked " + str(hash_val) + " on " + config.config["current_chain"])
 
 
 def get_latest_contract():
@@ -32,7 +24,6 @@ def get_latest_contract():
     name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))
     address = ns.address(name)
     print(address)
-
 
 def verify(merkle_root_hash, cert_hash):
     batch_status = sc.functions.call("hashes", merkle_root_hash)
@@ -46,7 +37,10 @@ def verify(merkle_root_hash, cert_hash):
           + str(batch_status))
     print("> cert with certHash " + str(cert_hash) + " from batch "
           + str(merkle_root_hash) + " is revoked: " + str(cert_status))
-    print("> cert is valid: " + str(valid))
+    if valid:
+        print("> cert is valid on " + config.config["current_chain"])
+    else:
+        print("> cert is not valid on " + config.config["current_chain"])
 
 
 if __name__ == '__main__':
