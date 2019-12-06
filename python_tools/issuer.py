@@ -8,18 +8,18 @@ from onchaining_tools.connections import MakeW3
 import onchaining_tools.config as config
 
 parser = argparse.ArgumentParser()
-sc = ContractConnection()
+sc = ContractConnection("blockcertsonchaining")
 
 
 def issue(hash_val):
     print("> following hash gets issued : " + str(hash_val))
-    sc.functions.issue(hash_val)
+    sc.functions.transact("issue_hash", hash_val)
     print("> successfully issued : " + str(hash_val))
 
 
 def revoke(hash_val):
     print("> following hash gets revoked : " + str(hash_val))
-    sc.functions.revoke(hash_val)
+    sc.functions.transact("revoke_hash", hash_val)
     print("> successfully revoked : " + str(hash_val))
 
 
@@ -35,8 +35,8 @@ def get_latest_contract():
 
 
 def verify(merkle_root_hash, cert_hash):
-    batch_status = sc.functions.get_status(merkle_root_hash)
-    cert_status = sc.functions.get_status(cert_hash)
+    batch_status = sc.functions.call("hashes", merkle_root_hash)
+    cert_status = sc.functions.call("hashes", cert_hash)
 
     valid = False
     if batch_status is False and cert_status is False:

@@ -1,7 +1,7 @@
 import json
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
-from onchaining_tools.connections import MakeW3
+from onchaining_tools.connections import MakeW3, ContractConnection
 from solc import compile_standard
 from ens import ENS
 
@@ -16,7 +16,8 @@ class ContractDeployer(object):
         self.acct = w3Factory.get_w3_wallet()
         self.compile_contract()
         self.deploy()
-        self.assign_ens()
+        if current_chain == "ropsten":
+            self.assign_ens()
 
     def compile_contract(self):
         with open(tools.get_contract_path()) as source_file:
@@ -49,59 +50,36 @@ class ContractDeployer(object):
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
 
+
+        with open(tools.get_contr_info_path(), "r") as f:
+            raw = f.read()
+            contr_info = json.loads(raw)
+
         self.contr_address = tx_receipt.contractAddress
         data = {'abi': self.abi, 'address': self.contr_address}
+        contr_info["blockcertsonchaining"] = data
 
-        with open(tools.get_contr_info_path(), "w+") as outfile:
-            json.dump(data, outfile)
+        with open(tools.get_contr_info_path(), "w+") as f:
+            json.dump(data, f)
 
         print(f"deployed contr <{self.contr_address}>")
 
     def assign_ens(self):
-        with open(tools.get_contr_info_path()) as f:
-            contr_info_raw = f.read()
-        contr_info = json.loads(contr_info_raw)
-        self.contr_address = contr_info["address"]
+        ens_domain = "blockcerts.eth"
+        ens_resolver = ContractConnection("ropsten_ens_resolver")
 
-        ns = ENS.fromWeb3(self.w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
-
-        ens_path = tools.get_ens_abi_path()
-        with open(ens_path) as f:
-            ens_abi = f.read()
-
-        abi = json.loads(ens_abi)
-
-        address = "0x112234455C3a32FD11230C42E7Bccd4A84e02010"  # registry addr
-        address = "0x12299799a50340FB860D276805E78550cBaD3De3"  # resolver addr
-        address = self.w3.toChecksumAddress(address)
-
-        node = ns.namehash("blockcerts.eth")
+        # for testing purposes
+        # self.contr_address = "0x01a616157b59d75a1d62f3913c105f443232a1f6"
         self.contr_address = self.w3.toChecksumAddress(self.contr_address)
 
-        contract = self.w3.eth.contract(address=address, abi=abi)
+        ns = ENS.fromWeb3(self.w3)
+        node = ns.namehash(ens_domain)
 
-        construct_txn = contract.functions["setAddr"](node, self.contr_address).buildTransaction({
-            'from': self.pubkey,
-            'nonce': self.w3.eth.getTransactionCount(self.pubkey),
-            'gas': 1000000
-        })
+        ens_resolver.functions.transact("setAddr", node, self.contr_address)
+        ens_resolver.functions.transact("setName", node, ens_domain)
 
-        signed = self.acct.signTransaction(construct_txn)
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-
-        construct_txn = contract.functions["setName"](node, "blockcerts.eth").buildTransaction({
-            'from': self.pubkey,
-            'nonce': self.w3.eth.getTransactionCount(self.pubkey),
-            'gas': 1000000
-        })
-
-        signed = self.acct.signTransaction(construct_txn)
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-
-        name = contract.functions.name(node).call()
-        addr = contract.functions.addr(node).call()
+        addr = ens_resolver.functions.call("addr", node)
+        name = ens_resolver.functions.call("name", node)
 
         print(f"set contr <{addr}> to name '{name}'")
 
