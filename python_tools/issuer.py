@@ -50,8 +50,8 @@ def verify(merkle_root_hash, cert_hash):
 
 
 if __name__ == '__main__':
-    parser.add_argument("cert_hash", help="cert or batch hash", type=int)
-    parser.add_argument("batch_hash", help="batch hash", type=int)
+    parser.add_argument("cert_hash", nargs='?', default=0, help="cert hash", type=int)
+    parser.add_argument("batch_hash", nargs='?', default=0, help="batch hash", type=int)
     parser.add_argument("-rb", "--revokeBatch", help="revoke batch hash", action="store_true")
     parser.add_argument("-rc", "--revokeCert", help="revoke cert hash", action="store_true")
     parser.add_argument("-i", "--issue", help="revoke cert or batch hash", action="store_true")
