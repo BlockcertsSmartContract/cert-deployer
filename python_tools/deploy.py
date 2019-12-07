@@ -22,7 +22,6 @@ class ContractDeployer(object):
         self.acct = w3Factory.get_w3_wallet()
         self.compile_contract()
         self.deploy()
-        #
         if current_chain == "ropsten":
             self.assign_ens()
 

@@ -82,7 +82,6 @@ class ContractFunctions(object):
         }
 
     def transact(self, method, *argv):
-        ''''''
         acct = self.w3.eth.account.from_key(self.privkey)
         tx_options = self.get_tx_options()
         construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
