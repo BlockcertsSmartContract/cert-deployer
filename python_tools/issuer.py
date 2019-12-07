@@ -1,10 +1,15 @@
 import argparse
+
 import onchaining_tools.config as config
-from onchaining_tools.connections import ContractConnection, MakeW3
 from ens import ENS
+from onchaining_tools.connections import ContractConnection, MakeW3
+
+parser = argparse.ArgumentParser()
+sc = ContractConnection("blockcertsonchaining")
+
 
 def issue(hash_val):
-    print("> following hash gets issued : " + str(hash_val))
+    print("> following hash gets issued: " + str(hash_val))
     sc.functions.transact("issue_hash", hash_val)
     print("> successfully issued " + str(hash_val) + " on " + config.config["current_chain"])
 
@@ -16,14 +21,15 @@ def revoke(hash_val):
 
 
 def get_latest_contract():
-    w3Factory = MakeW3()
-    w3 = w3Factory.get_w3_obj()
+    w3_factory = MakeW3()
+    w3 = w3_factory.get_w3_obj()
 
-    ns = ENS.fromWeb3(w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
+    ns = ENS.fromWeb3(w3, sc.get_contract_info()["blockcertsonchaining"]["address"])
 
     name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))
     address = ns.address(name)
     print(address)
+
 
 def verify(merkle_root_hash, cert_hash):
     batch_status = sc.functions.call("hashes", merkle_root_hash)
