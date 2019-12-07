@@ -1,10 +1,11 @@
 import argparse
 import json
+
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
+from ens import ENS
 from onchaining_tools.connections import MakeW3, ContractConnection
 from solc import compile_standard
-from ens import ENS
 
 
 class ContractDeployer(object):
@@ -82,8 +83,9 @@ class ContractDeployer(object):
 
         print(f"set contr <{addr}> to name '{name}'")
 
+
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     # args: deploy local or remote
     parser.add_argument("provider", help="supported providers are ropsten and ganache", type=str)
     arguments = parser.parse_args()
@@ -91,7 +93,7 @@ if __name__ == '__main__':
         try:
             config.config["current_chain"] = "ropsten"
             print("Deploying contract on ropsten")
-			ContractDeployer()
+            ContractDeployer()
         except ValueError:
             print("Something went wrong you should check your config.py")
     elif arguments.provider == "ganache":
