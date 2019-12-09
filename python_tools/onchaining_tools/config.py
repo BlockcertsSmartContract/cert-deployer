@@ -11,8 +11,8 @@ config = {
         "ganache":
         {
                 "url": "http://localhost:8545",
-                "privkey": "f697ebc75977177784aef6c33fc90429df59d69dcf304140678083b8ab5b4365",
-                "pubkey": "0xb04Ad1f0785E9be95a5b8C85a676431340b6Ac1D"
+            "privkey": "7eccfafe502e3bb9ead6b928a0b9403c49c249a64bc7256b0bcfab4d20efef87",
+            "pubkey": "0xb3967C7E984Ea3e391513Fc212843956f33cB6C9"
         }
     }
 }
