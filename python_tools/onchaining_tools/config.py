@@ -1,3 +1,11 @@
+usb_path="/home/kleapaci/"
+pk_file="pk.txt"
+
+privateKey= open(usb_path+pk_file,"r")
+privateKey=privateKey.read()
+
+
+
 config = {
     "current_chain": "ropsten",
     "wallets":
@@ -5,8 +13,8 @@ config = {
         "ropsten":
         {
                 "url": "https://ropsten.infura.io/v3/a70de76e3fd748cbb6dbb2ed49dda183",
-                "privkey": "50f3dca79d43c17c0b58b88baf57f0d91212f7ca6a9edc4781c96a5e99fb573d",
-                "pubkey": "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3"
+                "privkey": privateKey,
+                #"pubkey": "0x9867aDD8f564119752F72a4b6638B3b883268718"
         },
         "ganache":
         {
