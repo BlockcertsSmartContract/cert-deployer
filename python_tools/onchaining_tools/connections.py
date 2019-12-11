@@ -12,9 +12,11 @@ class MakeW3(object):
     def __init__(self):
         '''Defines public & private keys of a wallet, defines an ethereum node, that will be used for communication with blockchain'''
         self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
-        self.pubkey = config.config["wallets"][config.config["current_chain"]]["pubkey"]
+        #self.pubkey = config.config["wallets"][config.config["current_chain"]]["pubkey"]
         self.url = config.config["wallets"][config.config["current_chain"]]["url"]
         self.w3 = self.create_w3_obj()
+        account=self.get_w3_wallet()
+        self.pubkey=account.address
         self.w3.eth.defaultAccount = self.pubkey
 
     def create_w3_obj(self):
@@ -71,7 +73,9 @@ class ContractFunctions(object):
 
         current_chain = config.config["current_chain"]
         self.privkey = config.config["wallets"][current_chain]["privkey"]
-        self.acct_addr = config.config["wallets"][current_chain]["pubkey"]
+        #self.acct_addr = config.config["wallets"][current_chain]["pubkey"]
+        account=self.w3.eth.account.from_key(self.privkey)
+        self.acct_addr=account.address
 
     def get_tx_options(self):
         '''Returns raw transaction'''
