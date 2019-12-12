@@ -23,10 +23,9 @@ def revoke(hash_val):
 def get_latest_contract():
     w3_factory = MakeW3()
     w3 = w3_factory.get_w3_obj()
-    account= w3_factory.get_w3_wallet()
+    account = w3_factory.get_w3_wallet()
     ns = ENS.fromWeb3(w3, "0x112234455C3a32FD11230C42E7Bccd4A84e02010")
 
-    #name = ns.name(str(config.config["wallets"][config.config["current_chain"]]["pubkey"]))
     name = ns.name(account.address)
     address = ns.address(name)
     print(address)
