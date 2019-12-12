@@ -21,7 +21,6 @@ contract BlockCertsOnchaining {
 
 	constructor() public {
 		owner = msg.sender;
-		
 	}
 
 	function issue_hash(uint256 _hash) public only_owner {

@@ -34,8 +34,10 @@ def get_latest_contract():
 def verify(hash):
     cert_status = sc.functions.call("hashes", hash)
 
+    print(hash)
+
     valid = False
-    if hash is False:
+    if !hash() && hash(1):
         valid = True
 
     print("> hash: " + str(hash) + " is revoked: "
