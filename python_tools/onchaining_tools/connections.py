@@ -31,7 +31,7 @@ class MakeW3(object):
 
 class ContractConnection(object):
     '''Collects abi, address, contract data and instantiates a contract object'''
-    def __init__(self, contract_name= config.config["current_chain"]): #maybe have to change 'name =' back to "ropsten"
+    def __init__(self, contract_name= "ropsten"):
         self.contract_name = contract_name
         self.w3 = MakeW3().get_w3_obj()
         self.contract_info = self.get_contract_info()
