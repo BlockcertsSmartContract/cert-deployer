@@ -34,7 +34,7 @@ def get_latest_contract():
 def verify(hash):
     cert_status = sc.functions.call("hashes", hash)
 
-    print(hash)
+    print(cert_status)
     exit()
     valid = False
     # if !hash() && hash(1):

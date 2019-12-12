@@ -1,10 +1,9 @@
 pragma solidity >0.5.0;
 
 contract BlockCertsOnchaining {
-    enum State {not_issued, valid, revoked}
-    
 	struct Hash {
-		State status;
+		bool _revoked;
+		bool _issued;
 	}
 
 	address internal owner;
@@ -24,10 +23,12 @@ contract BlockCertsOnchaining {
 	}
 
 	function issue_hash(uint256 _hash) public only_owner {
-		hashes[_hash].status = State.valid;
+		hashes[_hash]._revoked = false;
+		hashes[_hash]._issued = true;
+		
 	}
 
 	function revoke_hash(uint256 _hash) public only_owner {
-		hashes[_hash].status = State.revoked;
+		hashes[_hash]._revoked = true;
 	}
 }
