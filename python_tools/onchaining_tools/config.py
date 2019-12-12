@@ -1,8 +1,8 @@
-usb_path="/home/kleapaci/"
-pk_file="pk.txt"
+usb_path = "/home/kleapaci/"
+pk_file = "pk.txt"
 
-privateKey= open(usb_path+pk_file,"r")
-privateKey=privateKey.read()
+privateKey = open(usb_path+pk_file,"r")
+privateKey = privateKey.read()
 
 
 
