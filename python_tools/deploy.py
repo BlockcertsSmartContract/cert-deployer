@@ -54,15 +54,18 @@ class ContractDeployer(object):
         acct_addr = self.pubkey
 
         #building raw transaction
+        estimated_gas = contract.constructor().estimateGas()
+        print("Estimated gas: " , estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
             'nonce': self.w3.eth.getTransactionCount(acct_addr),
-            'gas': 1000000
+            'gas': estimated_gas
         })
 
         #signing & sending a signed transaction, saving transaction hash
         signed = self.acct.sign_transaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        print ("Gas used: " , tx_receipt.gasUsed)
 
         #saving contract data
         with open(tools.get_contr_info_path(), "r") as f:

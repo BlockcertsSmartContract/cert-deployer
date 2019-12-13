@@ -69,27 +69,36 @@ class ContractFunctions(object):
     def __init__(self, w3, contract_obj):
         self.w3 = w3
         self.contract_obj = contract_obj
-
         current_chain = config.config["current_chain"]
+
         self.privkey = config.privateKey
         account = self.w3.eth.account.from_key(self.privkey)
         self.acct_addr = account.address
 
-    def get_tx_options(self):
+
+    def get_tx_options(self, estimated_gas):
         '''Returns raw transaction'''
+        
         return {
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-            'gas': 100000
-            # 'gas': self.contract_obj.functions[method](*argv).estimateGas(),  # not working yet
+            'gas': estimated_gas
         }
 
     def transact(self, method, *argv):
         acct = self.w3.eth.account.from_key(self.privkey)
-        tx_options = self.get_tx_options()
+        #gas estimation
+        estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
+        print("Estimated gas: ", estimated_gas)
+        tx_options = self.get_tx_options(estimated_gas)
+        #building a transaction
         construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
+        #signing a transaction
         signed = acct.sign_transaction(construct_txn)
+        #sendint a transaction to the blockchain and waiting for a response
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        self.w3.eth.waitForTransactionReceipt(tx_hash)
+        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        print("Gas used: ", tx_receipt.gasUsed)
+
 
     def constructor(self):
         acct = self.w3.eth.account.from_key(self.privkey)
@@ -98,6 +107,7 @@ class ContractFunctions(object):
         signed = acct.sign_transaction(construct_txn)
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         self.w3.eth.waitForTransactionReceipt(tx_hash)
+        
 
     def call(self, method, *argv):
         return self.contract_obj.functions[method](*argv).call()
