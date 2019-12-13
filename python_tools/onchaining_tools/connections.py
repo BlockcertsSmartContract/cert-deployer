@@ -11,7 +11,7 @@ class MakeW3(object):
         web3 connection with ethereum node '''
     def __init__(self):
         '''Defines public & private keys of a wallet, defines an ethereum node, that will be used for communication with blockchain'''
-        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
+        self.privkey = config.privateKey
         self.url = config.config["wallets"][config.config["current_chain"]]["url"]
         self.w3 = self.create_w3_obj()
         account = self.get_w3_wallet()
@@ -71,7 +71,7 @@ class ContractFunctions(object):
         self.contract_obj = contract_obj
 
         current_chain = config.config["current_chain"]
-        self.privkey = config.config["wallets"][current_chain]["privkey"]
+        self.privkey = config.privateKey
         account = self.w3.eth.account.from_key(self.privkey)
         self.acct_addr = account.address
 
