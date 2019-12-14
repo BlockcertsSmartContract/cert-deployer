@@ -1,6 +1,7 @@
 import argparse
 import json
 
+import ipfshttpclient
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from ens import ENS
@@ -77,6 +78,13 @@ class ContractDeployer(object):
         with open(tools.get_contr_info_path(), "w+") as f:
             json.dump(contr_info, f)
 
+        try:
+            client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
+            res = client.add(tools.get_contr_info_path())
+            print("Uploaded " + str(res))
+            print("cat : " + str(client.cat(res['Hash'])))
+        except:
+            print("ipfs daemon is not running contract info cant be uploaded")
         #print transaction hash
         print(f"deployed contr <{self.contr_address}>")
 
