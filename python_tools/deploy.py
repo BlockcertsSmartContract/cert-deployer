@@ -110,17 +110,16 @@ class ContractDeployer(object):
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)
         if self._client is not None:
-            try:
-                checksum_hash = self.w3.toChecksumAddress(self.ipfs_hash)
-                ens_resolver.functions.transact("setContenthash", node, checksum_hash)
-            except:
-                print(" ")
+            checksum_ipfs_hash = self.w3.toChecksumAddress(self.ipfs_hash)
+            ens_resolver.functions.transact("setContenthash", node, checksum_ipfs_hash)
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
+        content = "that is empty"
         if self._client is not None:
             content = ens_resolver.functions.call("contenthash", node)
+            print(content)
 
-        print(f"set contr <{addr}> to name '{name}'")
+        print(f"set contr <{addr}> to name '{name}' with contenthash '{content}'")
 
 
 if __name__ == '__main__':
@@ -136,14 +135,14 @@ if __name__ == '__main__':
             config.config["current_chain"] = "ropsten"
             print("Deploying contract on ropsten")
             ContractDeployer()
-        except ValueError:
-            print("Something went wrong you should check your config.py")
+        except ValueError as e:
+            print("Something went wrong :", e)
     elif arguments.provider == "ganache":
         try:
             config.config["current_chain"] = "ganache"
             print("Deploying contract on ganache")
             ContractDeployer()
-        except ValueError:
-            print("Something went wrong you should check your config.py")
+        except ValueError as e:
+            print("Something went wrong :", e)
     else:
         print("Please choose ropsten or ganache as provider")
