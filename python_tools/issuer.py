@@ -39,13 +39,6 @@ def get_contr_info_from_ens(address="blockcerts.eth"):
     client.close()
 
 
-def load_contr_info(hash_val):
-    '''Loads contract info.json from ipfs'''
-    print("> following hash gets issued: " + str(hash_val))
-    sc.functions.transact("issue_hash", hash_val)
-    print("> successfully issued " + str(hash_val) + " on " + config.config["current_chain"])
-
-
 def issue(hash_val):
     '''Issues a certificate on the blockchain'''
     print("> following hash gets issued: " + str(hash_val))
