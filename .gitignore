@@ -5,4 +5,4 @@ package*
 build/*
 *.DS_Store*
 .vscode
-config.py
+*config*

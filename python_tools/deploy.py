@@ -1,6 +1,7 @@
 import argparse
 import json
 
+import content_hash
 import ipfshttpclient
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
@@ -38,6 +39,7 @@ class ContractDeployer(object):
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
             abi_as_json_str = str(self._client.cat(self.ipfs_hash))[2:-1]
+            print(abi_as_json_str[0])
         if current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
@@ -106,18 +108,23 @@ class ContractDeployer(object):
 
         ns = ENS.fromWeb3(self.w3)
         node = ns.namehash(ens_domain)
+        codec = 'ipfs-ns'
 
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)
         if self._client is not None:
-            checksum_ipfs_hash = self.w3.toChecksumAddress(self.ipfs_hash)
-            ens_resolver.functions.transact("setContenthash", node, checksum_ipfs_hash)
+            chash = content_hash.encode(codec, self.ipfs_hash)
+            ens_resolver.functions.transact("setContenthash", node, chash)
+            value = content_hash.decode(chash)
+            print(value)
+
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
         content = "that is empty"
         if self._client is not None:
-            content = ens_resolver.functions.call("contenthash", node)
-            print(content)
+            print(ens_resolver.functions.call("contenthash", node))
+            chash = content_hash.encode(codec, str(ens_resolver.functions.call("contenthash", node)))
+            content = content_hash.decode(chash)
 
         print(f"set contr <{addr}> to name '{name}' with contenthash '{content}'")
 
