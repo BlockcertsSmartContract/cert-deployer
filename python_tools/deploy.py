@@ -16,10 +16,10 @@ class ContractDeployer(object):
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
         current_chain = config.config["current_chain"]
-        self.pubkey = config.config["wallets"][current_chain]["pubkey"]
         w3Factory = MakeW3()
         self.w3 = w3Factory.get_w3_obj()
         self.acct = w3Factory.get_w3_wallet()
+        self.pubkey = self.acct.address
         self.compile_contract()
         self.deploy()
         if current_chain == "ropsten":
@@ -51,7 +51,7 @@ class ContractDeployer(object):
 
         #defining blockchain and public key of the ethereum wallet
         current_chain = config.config["current_chain"]
-        acct_addr = config.config["wallets"][current_chain]["pubkey"]
+        acct_addr = self.pubkey
 
         #building raw transaction
         estimated_gas = contract.constructor().estimateGas()
