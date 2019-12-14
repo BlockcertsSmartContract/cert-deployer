@@ -9,12 +9,14 @@ sc = ContractConnection("blockcertsonchaining")
 
 
 def issue(hash_val):
+    '''Issues a certificate on the blockchain'''
     print("> following hash gets issued: " + str(hash_val))
     sc.functions.transact("issue_hash", hash_val)
     print("> successfully issued " + str(hash_val) + " on " + config.config["current_chain"])
 
 
 def revoke(hash_val):
+    '''Revokes a certficate by putting the certificate hash into smart contract revocation list'''
     print("> following hash gets revoked : " + str(hash_val))
     sc.functions.transact("revoke_hash", hash_val)
     print("> successfully revoked " + str(hash_val) + " on " + config.config["current_chain"])
@@ -32,6 +34,7 @@ def get_latest_contract():
 
 
 def verify(hash):
+    '''Checks if the smart contract was issued and if it is on the revocation list'''
     cert_status = sc.functions.call("hashes", hash)
 
     valid = False
@@ -47,6 +50,7 @@ def verify(hash):
 
 
 if __name__ == '__main__':
+    '''Handles arguments and calls out respective functions'''
     parser.add_argument("hash", nargs='?', default=0, help="cert hash", type=int)
     parser.add_argument("-r", "--revoke", help="revoke hash", action="store_true")
     parser.add_argument("-i", "--issue", help="issue hash", action="store_true")
