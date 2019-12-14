@@ -11,7 +11,7 @@ class MakeW3(object):
         web3 connection with ethereum node '''
     def __init__(self):
         '''Defines public & private keys of a wallet, defines an ethereum node, that will be used for communication with blockchain'''
-        self.privkey = config.privateKey
+        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
         self.url = config.config["wallets"][config.config["current_chain"]]["url"]
         self.w3 = self.create_w3_obj()
         account = self.get_w3_wallet()
@@ -71,7 +71,7 @@ class ContractFunctions(object):
         self.contract_obj = contract_obj
         current_chain = config.config["current_chain"]
 
-        self.privkey = config.privateKey
+        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
         account = self.w3.eth.account.from_key(self.privkey)
         self.acct_addr = account.address
 
@@ -88,7 +88,7 @@ class ContractFunctions(object):
         acct = self.w3.eth.account.from_key(self.privkey)
         #gas estimation
         estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
-        print("Estimated gas: ", estimated_gas)
+        print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
         tx_options = self.get_tx_options(estimated_gas)
         #building a transaction
         construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
@@ -97,7 +97,7 @@ class ContractFunctions(object):
         #sendint a transaction to the blockchain and waiting for a response
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-        print("Gas used: ", tx_receipt.gasUsed)
+        print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
 
 
     def constructor(self):
