@@ -118,7 +118,7 @@ class ContractDeployer(object):
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
         if self._client is not None:
-            content = ens_resolver.functions.call("content", node)
+            content = ens_resolver.functions.call("contenthash", node)
 
         print(f"set contr <{addr}> to name '{name}'")
 
