@@ -18,23 +18,25 @@ except (KeyError, JSONDecodeError):
 
 def get_contr_info_from_ens(address="blockcerts.eth"):
     client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-    ens_domain = str(address)
-    ens_resolver = ContractConnection("ropsten_ens_resolver")
+    try:
+        ens_domain = str(address)
+        ens_resolver = ContractConnection("ropsten_ens_resolver")
 
-    w3 = MakeW3().get_w3_obj()
-    ns = ENS.fromWeb3(w3)
-    node = ns.namehash(ens_domain)
+        w3 = MakeW3().get_w3_obj()
+        ns = ENS.fromWeb3(w3)
+        node = ns.namehash(ens_domain)
 
-    contr_info = ""
-    if client is not None:
-        content = (ens_resolver.functions.call("contenthash", node)).hex()
-        content = content_hash.decode(content)
-        contr_info = str(client.cat(content))[2:-1]
-    print(contr_info)
-    with open(tools.get_contr_info_path(), "w+") as f:
-        json.dump(json.loads(contr_info), f)
+        contr_info = ""
+        if client is not None:
+            content = (ens_resolver.functions.call("contenthash", node)).hex()
+            content = content_hash.decode(content)
+            contr_info = str(client.cat(content))[2:-1]
+        print(contr_info)
+        with open(tools.get_contr_info_path(), "w+") as f:
+            json.dump(json.loads(contr_info), f)
+    except:
+        print("couldnt init contract info")
     client.close()
-    return contr_info
 
 
 def load_contr_info(hash_val):
