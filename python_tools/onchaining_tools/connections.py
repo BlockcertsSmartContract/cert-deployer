@@ -99,7 +99,7 @@ class ContractFunctions(object):
         print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
 
 
-    def constructor(self)
+    def constructor(self):
         acct = self.w3.eth.account.from_key(self.privkey)
         tx_options = self.get_tx_options()
         construct_txn = self.contract_obj.constructor().buildTransaction(tx_options)
