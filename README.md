@@ -5,7 +5,7 @@ to implement on-chain revocation of certificates and a persistent identity using
 - python3 with web3py
 - ganache
 - (optional) python virtualenv
-- ipfs daemon
+- (optional) ipfs daemon
 
 ## set up
 1. [Optional] To have decentralization of contract info you have to run ipfs daemon locally while using this tool
