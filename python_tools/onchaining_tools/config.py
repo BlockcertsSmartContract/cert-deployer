@@ -1,7 +1,7 @@
 usb_path = "/home/flamestro/"
 pk_file = "pk.txt"
 
-privateKey = open(usb_path + pk_file, "r").read()
+privateKey = open(usb_path + pk_file, "r").read().rstrip('\n')
 
 config = {
     "current_chain": "ropsten",
