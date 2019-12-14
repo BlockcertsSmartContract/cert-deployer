@@ -70,7 +70,6 @@ class ContractFunctions(object):
         self.w3 = w3
         self.contract_obj = contract_obj
         current_chain = config.config["current_chain"]
-
         self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
         account = self.w3.eth.account.from_key(self.privkey)
         self.acct_addr = account.address
@@ -78,13 +77,13 @@ class ContractFunctions(object):
 
     def get_tx_options(self, estimated_gas):
         '''Returns raw transaction'''
-        
         return {
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
             'gas': estimated_gas
         }
 
     def transact(self, method, *argv):
+        '''Sends a signed transaction on the blockchain and waits for a response'''
         acct = self.w3.eth.account.from_key(self.privkey)
         #gas estimation
         estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
@@ -94,7 +93,7 @@ class ContractFunctions(object):
         construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
         #signing a transaction
         signed = acct.sign_transaction(construct_txn)
-        #sendint a transaction to the blockchain and waiting for a response
+        #sending a transaction to the blockchain and waiting for a response
         tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
         print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
