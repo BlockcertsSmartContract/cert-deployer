@@ -37,7 +37,7 @@ class ContractDeployer(object):
             print("IPFS Hash is :" + self.ipfs_hash)
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
-            # print(self._client.cat(self.ipfs_hash))
+            abi_as_json_str = str(self._client.cat(self.ipfs_hash))[2:-1]
         if current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
