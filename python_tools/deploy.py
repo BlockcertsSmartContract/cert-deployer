@@ -38,7 +38,6 @@ class ContractDeployer(object):
             print("IPFS Hash is :" + self.ipfs_hash)
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
-            abi_as_json_str = str(self._client.cat(self.ipfs_hash))[2:-1]
         if current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
@@ -114,16 +113,17 @@ class ContractDeployer(object):
         if self._client is not None:
             chash = content_hash.encode(codec, self.ipfs_hash)
             ens_resolver.functions.transact("setContenthash", node, chash)
-            print(chash)
 
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
+
         content = "that is empty"
         if self._client is not None:
             content = (ens_resolver.functions.call("contenthash", node)).hex()
+            content = content_hash.decode(content)
 
-        print(f"set contr <{addr}> to name '{name}' with contenthash '{content}'")
-
+        print(f"set contr <{addr}> to name '{name}' with content '{content}'")
+        
 
 if __name__ == '__main__':
     '''Parses arguments and calls out respective functionatilites.

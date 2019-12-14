@@ -1,11 +1,47 @@
 import argparse
+import json
+from json import JSONDecodeError
 
+import content_hash
+import ipfshttpclient
 import onchaining_tools.config as config
+import onchaining_tools.path_tools as tools
 from ens import ENS
 from onchaining_tools.connections import ContractConnection, MakeW3
 
 parser = argparse.ArgumentParser()
-sc = ContractConnection("blockcertsonchaining")
+try:
+    sc = ContractConnection("blockcertsonchaining")
+except (KeyError, JSONDecodeError):
+    print("Init your contr info first with deploy.py or issuer.py --init")
+
+
+def get_contr_info_from_ens(address="blockcerts.eth"):
+    client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
+    ens_domain = str(address)
+    ens_resolver = ContractConnection("ropsten_ens_resolver")
+
+    w3 = MakeW3().get_w3_obj()
+    ns = ENS.fromWeb3(w3)
+    node = ns.namehash(ens_domain)
+
+    contr_info = ""
+    if client is not None:
+        content = (ens_resolver.functions.call("contenthash", node)).hex()
+        content = content_hash.decode(content)
+        contr_info = str(client.cat(content))[2:-1]
+    print(contr_info)
+    with open(tools.get_contr_info_path(), "w+") as f:
+        json.dump(json.loads(contr_info), f)
+    client.close()
+    return contr_info
+
+
+def load_contr_info(hash_val):
+    '''Loads contract info.json from ipfs'''
+    print("> following hash gets issued: " + str(hash_val))
+    sc.functions.transact("issue_hash", hash_val)
+    print("> successfully issued " + str(hash_val) + " on " + config.config["current_chain"])
 
 
 def issue(hash_val):
@@ -52,12 +88,15 @@ def verify(hash):
 if __name__ == '__main__':
     '''Handles arguments and calls out respective functions'''
     parser.add_argument("hash", nargs='?', default=0, help="cert hash", type=int)
+    parser.add_argument("-init", "--init", help="init contract info", action="store_true")
     parser.add_argument("-r", "--revoke", help="revoke hash", action="store_true")
     parser.add_argument("-i", "--issue", help="issue hash", action="store_true")
     parser.add_argument("-v", "--verify", help="verify cert", action="store_true")
     parser.add_argument("-c", "--contract", help="get info about most recently deployed contract", action="store_true")
     arguments = parser.parse_args()
-    if arguments.issue:
+    if arguments.init:
+        get_contr_info_from_ens()
+    elif arguments.issue:
         issue(arguments.hash)
     elif arguments.revoke:
         revoke(arguments.hash)
