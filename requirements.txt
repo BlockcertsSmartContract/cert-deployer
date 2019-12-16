@@ -1,6 +1,6 @@
-ens==0.6.1
-ipfshttpclient==0.4.12
-content_hash==1.1.0
-web3==3.16.1
+ens
+ipfshttpclient
+content_hash
+web3==5.3.0
 py-solc==3.2.0
 json5==0.8.5
