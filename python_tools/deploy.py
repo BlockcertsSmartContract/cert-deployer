@@ -1,4 +1,3 @@
-import argparse
 import json
 import subprocess
 import time
@@ -24,17 +23,17 @@ class ContractDeployer(object):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
         self.current_chain = config.config["current_chain"]
         w3Factory = MakeW3()
-        self.w3 = w3Factory.get_w3_obj()
-        self.acct = w3Factory.get_w3_wallet()
-        self.pubkey = self.acct.address
+        self._w3 = w3Factory.w3
+        self._acct = w3Factory.account
+        self._pubkey = self._acct.address
 
     def do_deploy(self):
-        self.open_ipfs_connection()
-        self.compile_contract()
-        self.deploy()
-        self.update_ens_content()
+        self._open_ipfs_connection()
+        self._compile_contract()
+        self._deploy()
+        self._update_ens_content()
 
-    def open_ipfs_connection(self):
+    def _open_ipfs_connection(self):
         try:
             subprocess.Popen(["ipfs", "daemon"])
             time.sleep(10)
@@ -48,10 +47,11 @@ class ContractDeployer(object):
             self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
             print("connected to IPFS")
         except:
+            # what type of exception?
             print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
             self._client = None
 
-    def update_ens_content(self):
+    def _update_ens_content(self):
         self.ipfs_hash = ""
         if self._client is not None:
             self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
@@ -59,12 +59,12 @@ class ContractDeployer(object):
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
         if self.current_chain == "ropsten":
-            self.assign_ens()
+            self._assign_ens()
         if self._client is not None:
             subprocess.run(["ipfs", "shutdown"])
             self._client.close()
 
-    def compile_contract(self):
+    def _compile_contract(self):
         '''Compiles smart contract, creates bytecode and abi'''
 
         # loading contract file data
@@ -85,26 +85,25 @@ class ContractDeployer(object):
                                   'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])[
             'output']['abi']
 
-    def deploy(self):
+    def _deploy(self):
         '''Signes raw transaction and deploys it on the blockchain'''
-        contract = self.w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
+        contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
 
         # defining blockchain and public key of the ethereum wallet
-        current_chain = config.config["current_chain"]
-        acct_addr = self.pubkey
+        acct_addr = self._pubkey
 
         # building raw transaction
         estimated_gas = contract.constructor().estimateGas()
         print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
-            'nonce': self.w3.eth.getTransactionCount(acct_addr),
+            'nonce': self._w3.eth.getTransactionCount(acct_addr),
             'gas': estimated_gas
         })
 
         # signing & sending a signed transaction, saving transaction hash
-        signed = self.acct.sign_transaction(construct_txn)
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
+        signed = self._acct.sign_transaction(construct_txn)
+        tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
+        tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
         print("Gas used: ", tx_receipt.gasUsed)
 
         # saving contract data
@@ -122,13 +121,13 @@ class ContractDeployer(object):
         # print transaction hash
         print(f"deployed contr <{self.contr_address}>")
 
-    def assign_ens(self):
+    def _assign_ens(self):
         ens_domain = "blockcerts.eth"
         ens_resolver = ContractConnection("ropsten_ens_resolver")
 
-        self.contr_address = self.w3.toChecksumAddress(self.contr_address)
+        self.contr_address = self._w3.toChecksumAddress(self.contr_address)
 
-        ns = ENS.fromWeb3(self.w3)
+        ns = ENS.fromWeb3(self._w3)
         node = ns.namehash(ens_domain)
         codec = 'ipfs-ns'
 
