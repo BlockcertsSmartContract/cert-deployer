@@ -68,11 +68,11 @@ def verify(hash_val):
     '''Checks if the smart contract was issued and if it is on the revocation list'''
     cert_status = sc.functions.call("hashes", hash_val)
 
-    if cert_status is 0:
+    if cert_status == 0:
         print("> hash is not issued on " + config.config["current_chain"])
-    elif cert_status is 1:
+    elif cert_status == 1:
         print("> hash is valid on " + config.config["current_chain"])
-    elif cert_status is 2:
+    elif cert_status == 2:
         print("> hash is revoked on " + config.config["current_chain"])
 
 
