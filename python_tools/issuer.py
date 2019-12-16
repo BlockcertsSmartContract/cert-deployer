@@ -70,7 +70,7 @@ def verify(hash):
 
     valid = False
     if cert_status == 0:
-    print("> hash is not issued on " + config.config["current_chain"])
+        print("> hash is not issued on " + config.config["current_chain"])
 
     elif cert_status == 1:
         valid = True
