@@ -1,7 +1,7 @@
 import json
 
-import onchaining_tools.config as config
-import onchaining_tools.path_tools as tools
+import config as config
+import path_tools as tools
 from web3 import Web3, HTTPProvider
 
 
