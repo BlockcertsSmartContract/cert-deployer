@@ -1,8 +1,9 @@
 import json
 
-import config as config
-import path_tools as tools
 from web3 import Web3, HTTPProvider
+
+import python_tools.onchaining_tools.config as config
+import python_tools.onchaining_tools.path_tools as tools
 
 
 class MakeW3(object):
