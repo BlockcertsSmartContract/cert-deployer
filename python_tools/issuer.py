@@ -34,7 +34,7 @@ def get_contr_info_from_ens(address="blockcerts.eth"):
         print(contr_info)
         with open(tools.get_contr_info_path(), "w+") as f:
             json.dump(json.loads(contr_info), f)
-    except:
+    except Exception:
         print("couldnt init contract info")
     client.close()
 
