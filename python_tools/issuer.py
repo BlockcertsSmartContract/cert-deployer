@@ -69,15 +69,15 @@ def verify(hash):
     cert_status = sc.functions.call("hashes", hash)
 
     valid = False
-    if hash is False:
-        valid = True
+    if cert_status == 0:
+    print("> hash is not issued on " + config.config["current_chain"])
 
-    print("> hash: " + str(hash) + " is revoked: "
-          + str(cert_status))
-    if valid:
+    elif cert_status == 1:
+        valid = True
         print("> hash is valid on " + config.config["current_chain"])
-    else:
-        print("> hash is not valid on " + config.config["current_chain"])
+
+    elif cert_status == 2:
+        print("> hash is revoked on " + config.config["current_chain"])
 
 
 if __name__ == '__main__':
