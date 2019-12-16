@@ -5,8 +5,10 @@ to implement on-chain revocation of certificates and a persistent identity using
 - python3 with web3py
 - ganache
 - (optional) python virtualenv
+- (optional) ipfs daemon
 
 ## set up
+1. (Optional) To have decentralization of contract info you have to run ipfs daemon locally while using this tool
 1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
 1. install dependencies (see: `requirements.txt`)
 1. in `config.py`:
