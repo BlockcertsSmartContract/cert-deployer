@@ -1,5 +1,7 @@
 import argparse
 import json
+import subprocess
+import time
 
 import content_hash
 import ipfshttpclient
@@ -20,6 +22,8 @@ class ContractDeployer(object):
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
         try:
+            subprocess.Popen(["ipfs", "daemon"])
+            time.sleep(10)
             self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
             print("connected to IPFS")
         except:
@@ -41,6 +45,7 @@ class ContractDeployer(object):
         if current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
+            subprocess.run(["ipfs", "shutdown"])
             self._client.close()
 
     def compile_contract(self):
