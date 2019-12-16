@@ -22,7 +22,7 @@ class ContractDeployer(object):
 
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
-        current_chain = config.config["current_chain"]
+        self.current_chain = config.config["current_chain"]
         w3Factory = MakeW3()
         self.w3 = w3Factory.get_w3_obj()
         self.acct = w3Factory.get_w3_wallet()
@@ -58,7 +58,7 @@ class ContractDeployer(object):
             print("IPFS Hash is :" + self.ipfs_hash)
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
-        if current_chain == "ropsten":
+        if self.current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
             subprocess.run(["ipfs", "shutdown"])
@@ -111,11 +111,14 @@ class ContractDeployer(object):
         with open(tools.get_contr_info_path(), "r") as f:
             raw = f.read()
             contr_info = json.loads(raw)
+
         self.contr_address = tx_receipt.contractAddress
         data = {'abi': self.abi, 'address': self.contr_address}
         contr_info["blockcertsonchaining"] = data
+
         with open(tools.get_contr_info_path(), "w+") as f:
             json.dump(contr_info, f)
+
         # print transaction hash
         print(f"deployed contr <{self.contr_address}>")
 
@@ -150,4 +153,4 @@ if __name__ == '__main__':
     '''
         Calls out respective functionatilites.
     '''
-    ContractDeployer.do_deploy()
+    ContractDeployer().do_deploy()
