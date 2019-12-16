@@ -3,11 +3,12 @@ import json
 
 import content_hash
 import ipfshttpclient
-import onchaining_tools.config as config
-import onchaining_tools.path_tools as tools
 from ens import ENS
-from onchaining_tools.connections import MakeW3, ContractConnection
 from solc import compile_standard
+
+import python_tools.onchaining_tools.config as config
+import python_tools.onchaining_tools.path_tools as tools
+from python_tools.onchaining_tools.connections import MakeW3, ContractConnection
 
 
 class ContractDeployer(object):
