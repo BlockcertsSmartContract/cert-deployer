@@ -22,3 +22,7 @@ def get_contr_info_path():
 
 def get_ens_abi_path():
     return get_root_dir() + "/data/ens_abi.json"
+
+
+def get_pk_path() -> str:
+    return get_root_dir() + "/data/pk.key"

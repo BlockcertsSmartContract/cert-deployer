@@ -22,6 +22,19 @@ class ContractDeployer(object):
 
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
+        current_chain = config.config["current_chain"]
+        w3Factory = MakeW3()
+        self.w3 = w3Factory.get_w3_obj()
+        self.acct = w3Factory.get_w3_wallet()
+        self.pubkey = self.acct.address
+
+    def do_deploy(self):
+        self.open_ipfs_connection()
+        self.compile_contract()
+        self.deploy()
+        self.update_ens_content()
+
+    def open_ipfs_connection(self):
         try:
             subprocess.Popen(["ipfs", "daemon"])
             time.sleep(10)
@@ -30,13 +43,15 @@ class ContractDeployer(object):
         except:
             print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
             self._client = None
-        current_chain = config.config["current_chain"]
-        w3Factory = MakeW3()
-        self.w3 = w3Factory.get_w3_obj()
-        self.acct = w3Factory.get_w3_wallet()
-        self.pubkey = self.acct.address
-        self.compile_contract()
-        self.deploy()
+
+        try:
+            self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
+            print("connected to IPFS")
+        except:
+            print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
+            self._client = None
+
+    def update_ens_content(self):
         self.ipfs_hash = ""
         if self._client is not None:
             self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
@@ -129,29 +144,10 @@ class ContractDeployer(object):
             content = content_hash.decode(content)
 
         print(f"set contr <{addr}> to name '{name}' with content '{content}'")
-        
+
 
 if __name__ == '__main__':
-    '''Parses arguments and calls out respective functionatilites.
-        Args: [ropsten/ganache] 
     '''
-    parser = argparse.ArgumentParser()
-    # args: deploy local or remote
-    parser.add_argument("provider", help="supported providers are ropsten and ganache", type=str)
-    arguments = parser.parse_args()
-    if arguments.provider == "ropsten":
-        try:
-            config.config["current_chain"] = "ropsten"
-            print("Deploying contract on ropsten")
-            ContractDeployer()
-        except ValueError as e:
-            print("Something went wrong :", e)
-    elif arguments.provider == "ganache":
-        try:
-            config.config["current_chain"] = "ganache"
-            print("Deploying contract on ganache")
-            ContractDeployer()
-        except ValueError as e:
-            print("Something went wrong :", e)
-    else:
-        print("Please choose ropsten or ganache as provider")
+        Calls out respective functionatilites.
+    '''
+    ContractDeployer.do_deploy()
