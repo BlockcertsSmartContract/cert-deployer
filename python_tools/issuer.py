@@ -1,5 +1,7 @@
 import argparse
 import json
+import subprocess
+import time
 from json import JSONDecodeError
 
 import content_hash
@@ -18,8 +20,10 @@ except (KeyError, JSONDecodeError):
 
 
 def get_contr_info_from_ens(address="blockcerts.eth"):
-    client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
     try:
+        subprocess.Popen(["ipfs", "daemon"])
+        time.sleep(10)
+        client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
         ens_domain = str(address)
         ens_resolver = ContractConnection("ropsten_ens_resolver")
 
@@ -32,12 +36,12 @@ def get_contr_info_from_ens(address="blockcerts.eth"):
             content = (ens_resolver.functions.call("contenthash", node)).hex()
             content = content_hash.decode(content)
             contr_info = str(client.cat(content))[2:-1]
-        print(contr_info)
         with open(tools.get_contr_info_path(), "w+") as f:
             json.dump(json.loads(contr_info), f)
+        subprocess.run(["ipfs", "shutdown"])
+        client.close()
     except Exception:
         print("couldnt init contract info")
-    client.close()
 
 
 def issue(hash_val):
