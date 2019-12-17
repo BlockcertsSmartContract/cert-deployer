@@ -132,7 +132,7 @@ class ContractDeployer(object):
 
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
-
+        
         content = "that is empty"
         if self._client is not None:
             content = (ens_resolver.functions.call("contenthash", node)).hex()
