@@ -7,9 +7,9 @@ import ipfshttpclient
 from ens import ENS
 from solc import compile_standard
 
-import python_tools.onchaining_tools.config as config
-import python_tools.onchaining_tools.path_tools as tools
-from python_tools.onchaining_tools.connections import MakeW3, ContractConnection
+import onchaining_tools.config as config
+import onchaining_tools.path_tools as tools
+from onchaining_tools.connections import MakeW3, ContractConnection
 
 
 class ContractDeployer(object):
@@ -35,6 +35,7 @@ class ContractDeployer(object):
 
     def _open_ipfs_connection(self):
         try:
+            subprocess.Popen(["ipfs", "init"])
             subprocess.Popen(["ipfs", "daemon"])
             time.sleep(10)
             self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
@@ -43,19 +44,11 @@ class ContractDeployer(object):
             print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
             self._client = None
 
-        try:
-            self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-            print("connected to IPFS")
-        except:
-            # what type of exception?
-            print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
-            self._client = None
-
     def _update_ens_content(self):
         self.ipfs_hash = ""
         if self._client is not None:
             self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
-            print("IPFS Hash is :" + self.ipfs_hash)
+            print("IPFS Hash is: " + self.ipfs_hash)
             print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
             print("You can check the abi on: ipfs://" + self.ipfs_hash)
         if self.current_chain == "ropsten":
