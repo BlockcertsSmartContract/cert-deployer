@@ -87,10 +87,10 @@ class ContractDeployer(object):
 
         # building raw transaction
         estimated_gas = contract.constructor().estimateGas()
-        print("Estimated gas: ", estimated_gas)
+        #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
             'nonce': self._w3.eth.getTransactionCount(acct_addr),
-            'gas': estimated_gas
+            'gas': 500000
         })
 
         # signing & sending a signed transaction, saving transaction hash
@@ -132,7 +132,7 @@ class ContractDeployer(object):
 
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
-        
+
         content = "that is empty"
         if self._client is not None:
             content = (ens_resolver.functions.call("contenthash", node)).hex()
