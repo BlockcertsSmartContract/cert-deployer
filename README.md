@@ -24,4 +24,3 @@ to implement on-chain revocation of certificates and a persistent identity using
 - PEP8
 - tests should be test_whenSomeThing_thenSomeThing
 - variables and functions should be all lowercase
-- clarify function returns
