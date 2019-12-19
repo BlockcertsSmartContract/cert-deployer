@@ -1,13 +1,16 @@
 import argparse
 import json
+import subprocess
+import time
 
 import content_hash
 import ipfshttpclient
-import onchaining_tools.config as config
-import onchaining_tools.path_tools as tools
 from ens import ENS
-from onchaining_tools.connections import MakeW3, ContractConnection
 from solc import compile_standard
+
+import python_tools.onchaining_tools.config as config
+import python_tools.onchaining_tools.path_tools as tools
+from python_tools.onchaining_tools.connections import MakeW3, ContractConnection
 
 
 class ContractDeployer(object):
@@ -20,6 +23,8 @@ class ContractDeployer(object):
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
         try:
+            subprocess.Popen(["ipfs", "daemon"])
+            time.sleep(10)
             self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
             print("connected to IPFS")
         except:
@@ -45,6 +50,7 @@ class ContractDeployer(object):
         if current_chain == "ropsten":
             self.assign_ens()
         if self._client is not None:
+            subprocess.run(["ipfs", "shutdown"])
             self._client.close()
 
     def compile_contract(self):

@@ -1,13 +1,16 @@
 import argparse
 import json
+import subprocess
+import time
 from json import JSONDecodeError
 
 import content_hash
 import ipfshttpclient
-import onchaining_tools.config as config
-import onchaining_tools.path_tools as tools
 from ens import ENS
-from onchaining_tools.connections import ContractConnection, MakeW3
+
+import python_tools.onchaining_tools.config as config
+import python_tools.onchaining_tools.path_tools as tools
+from python_tools.onchaining_tools.connections import ContractConnection, MakeW3
 
 parser = argparse.ArgumentParser()
 try:
@@ -17,8 +20,10 @@ except (KeyError, JSONDecodeError):
 
 
 def get_contr_info_from_ens(address="blockcerts.eth"):
-    client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
     try:
+        subprocess.Popen(["ipfs", "daemon"])
+        time.sleep(10)
+        client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
         ens_domain = str(address)
         ens_resolver = ContractConnection("ropsten_ens_resolver")
 
@@ -31,12 +36,12 @@ def get_contr_info_from_ens(address="blockcerts.eth"):
             content = (ens_resolver.functions.call("contenthash", node)).hex()
             content = content_hash.decode(content)
             contr_info = str(client.cat(content))[2:-1]
-        print(contr_info)
         with open(tools.get_contr_info_path(), "w+") as f:
             json.dump(json.loads(contr_info), f)
+        subprocess.run(["ipfs", "shutdown"])
+        client.close()
     except Exception:
         print("couldnt init contract info")
-    client.close()
 
 
 def issue(hash_val):
@@ -64,18 +69,14 @@ def get_latest_contract():
     print(address)
 
 
-def verify(hash):
+def verify(hash_val):
     '''Checks if the smart contract was issued and if it is on the revocation list'''
-    cert_status = sc.functions.call("hashes", hash)
+    cert_status = sc.functions.call("hashes", hash_val)
 
-    valid = False
     if cert_status == 0:
         print("> hash is not issued on " + config.config["current_chain"])
-
     elif cert_status == 1:
-        valid = True
         print("> hash is valid on " + config.config["current_chain"])
-
     elif cert_status == 2:
         print("> hash is revoked on " + config.config["current_chain"])
 

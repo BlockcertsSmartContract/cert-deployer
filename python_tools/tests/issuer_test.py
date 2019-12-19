@@ -1,6 +1,6 @@
 import unittest
 
-from onchaining_tools.connections import ContractConnection
+from python_tools.onchaining_tools.connections import ContractConnection
 
 sc = ContractConnection("blockcertsonchaining")
 
