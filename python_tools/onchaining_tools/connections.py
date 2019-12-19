@@ -2,115 +2,101 @@ import json
 
 from web3 import Web3, HTTPProvider
 
-import python_tools.onchaining_tools.config as config
-import python_tools.onchaining_tools.path_tools as tools
+import onchaining_tools.config as config
+import onchaining_tools.path_tools as tools
 
 
 class MakeW3(object):
-    '''Defines a private key of an ethereum wallet to be used for the transaction, 
-        node url to be used for communication with ethereum blockchain and instantiates the
-        web3 connection with ethereum node '''
+    '''
+    Defines a private key of an ethereum wallet to be used for the transaction,
+    node url to be used for communication with ethereum blockchain and instantiates the
+    web3 connection with ethereum node
+    '''
     def __init__(self):
-        '''Defines public & private keys of a wallet, defines an ethereum node, that will be used for communication with blockchain'''
-        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
-        self.url = config.config["wallets"][config.config["current_chain"]]["url"]
-        self.w3 = self.create_w3_obj()
-        account = self.get_w3_wallet()
-        self.pubkey = account.address
+        '''
+        Defines public & private keys of a wallet, defines an ethereum node
+        that will be used for communication with blockchain
+        '''
+        current_chain = config.config["current_chain"]
+        self._privkey = config.config["wallets"][current_chain]["privkey"]
+        self._url = config.config["wallets"][current_chain]["url"]
+
+        self.w3 = self._create_w3_obj()
+        self.account = self._get_w3_wallet()
+        self.pubkey = self.account.address
         self.w3.eth.defaultAccount = self.pubkey
 
-    def create_w3_obj(self):
+    def _create_w3_obj(self):
         '''Instantiates a web3 connection with ethereum node'''
-        return Web3(HTTPProvider(self.url))
+        return Web3(HTTPProvider(self._url))
 
-    def get_w3_obj(self):
-        return self.w3
-
-    def get_w3_wallet(self):
+    def _get_w3_wallet(self):
         '''Connects a private key to the account that is going to be used for the transaction'''
-        return self.w3.eth.account.from_key(self.privkey)
+        return self.w3.eth.account.from_key(self._privkey)
 
 
 class ContractConnection(object):
     '''Collects abi, address, contract data and instantiates a contract object'''
-    def __init__(self, contract_name= "ropsten"):
+    def __init__(self, contract_name):
         self.contract_name = contract_name
-        self.w3 = MakeW3().get_w3_obj()
-        self.contract_info = self.get_contract_info()
-        self.contract_obj = self.create_contract_object()
-        self.functions = ContractFunctions(self.w3, self.contract_obj)
+        self._w3Factory = MakeW3()
+        self.w3 = self._w3Factory.w3
+        self._contract_info = self._get_contract_info()
+        self.contract_obj = self._create_contract_object()
+        self.functions = self.ContractFunctions(self._w3Factory, self.contract_obj)
 
-    def create_contract_object(self):
+    def _create_contract_object(self):
         '''Returns contract address and abi'''
-        address = self.get_address()
-        abi = self.get_abi()
+        address = self._get_address()
+        abi = self._get_abi()
         return self.w3.eth.contract(address=address, abi=abi)
 
-    def get_contract_object(self):
-        '''Returns instantiated contract'''
-        return self.contract_obj
-
-    def get_contract_info(self):
+    def _get_contract_info(self):
         '''Returns transaction data from a config file'''
         with open(tools.get_contr_info_path()) as file:
             data = file.read()
             contract_info = json.loads(data)
         return contract_info
 
-    def get_abi(self):
+    def _get_abi(self):
         '''Returns transaction abi'''
-        return self.contract_info[self.contract_name]["abi"]
+        return self._contract_info[self.contract_name]["abi"]
 
-    def get_address(self):
+    def _get_address(self):
         '''Returns transaction address'''
-        return self.contract_info[self.contract_name]["address"]
+        return self._contract_info[self.contract_name]["address"]
 
+    class ContractFunctions(object):
+        def __init__(self, w3Factory, contract_obj):
+            self._w3Factory = w3Factory
+            self._w3 = self._w3Factory.w3
+            self._contract_obj = contract_obj
+            current_chain = config.config["current_chain"]
+            self._privkey = config.config["wallets"][current_chain]["privkey"]
+            self.acct = self._w3Factory.account
+            self.acct_addr = self.acct.address
 
-class ContractFunctions(object):
-    def __init__(self, w3, contract_obj):
-        self.w3 = w3
-        self.contract_obj = contract_obj
-        current_chain = config.config["current_chain"]
-        self.privkey = config.config["wallets"][config.config["current_chain"]]["privkey"]
-        account = self.w3.eth.account.from_key(self.privkey)
-        self.acct_addr = account.address
+        def _get_tx_options(self, estimated_gas):
+            '''Returns raw transaction'''
+            return {
+                'nonce': self._w3.eth.getTransactionCount(self.acct_addr),
+                'gas': estimated_gas
+            }
 
+        def transact(self, method, *argv):
+            '''Sends a signed transaction on the blockchain and waits for a response'''
+            # gas estimation
+            estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
+            print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
+            tx_options = self._get_tx_options(estimated_gas)
+            # building a transaction
+            construct_txn = self._contract_obj.functions[method](*argv).buildTransaction(tx_options)
+            # signing a transaction
+            signed = self.acct.sign_transaction(construct_txn)
+            # sending a transaction to the blockchain and waiting for a response
+            tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
+            tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
+            print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
 
-    def get_tx_options(self):
-        '''Returns raw transaction'''
-        return {
-            'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-            'gas': 1000000
-        }
-
-    def transact(self, method, *argv):
-        '''Sends a signed transaction on the blockchain and waits for a response'''
-        acct = self.w3.eth.account.from_key(self.privkey)
-        acct_gas = self.w3.eth.getBalance(self.acct_addr)
-        if (acct_gas <= 1000000):
-            exit('Your gas balance is insufficiant for perfoming this transaction')
-        #gas estimation
-        #estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
-        #print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
-        tx_options = self.get_tx_options()
-        #building a transaction
-        construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
-        #signing a transaction
-        signed = acct.sign_transaction(construct_txn)
-        #sending a transaction to the blockchain and waiting for a response
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        tx_receipt = self.w3.eth.waitForTransactionReceipt(tx_hash)
-        print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
-
-
-    def constructor(self):
-        acct = self.w3.eth.account.from_key(self.privkey)
-        tx_options = self.get_tx_options()
-        construct_txn = self.contract_obj.constructor().buildTransaction(tx_options)
-        signed = acct.sign_transaction(construct_txn)
-        tx_hash = self.w3.eth.sendRawTransaction(signed.rawTransaction)
-        self.w3.eth.waitForTransactionReceipt(tx_hash)
-        
-
-    def call(self, method, *argv):
-        return self.contract_obj.functions[method](*argv).call()
+        def call(self, method, *argv):
+            return self._contract_obj.functions[method](*argv).call()
