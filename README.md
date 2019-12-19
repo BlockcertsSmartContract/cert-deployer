@@ -15,7 +15,7 @@ to implement on-chain revocation of certificates and a persistent identity using
   1. add url and keypair for desired ethereum network
   1. set `current_chain` to reflect your changes
 1. (optional) start ganache
-1. deploy smart contract `$ deploy.py ropsten` or `$ deploy.py ganache` (you will still have to set `current_chain` in config.py atm)
+1. deploy smart contract `$ deploy.py`
 
 ## arguments
 - run `python_tools/issuer.py -h` to get descriptions
