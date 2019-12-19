@@ -85,13 +85,11 @@ class ContractDeployer(object):
         # defining blockchain and public key of the ethereum wallet
         acct_addr = self._pubkey
 
-        
-
         # building raw transaction
         estimated_gas = contract.constructor().estimateGas()
         #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
-            'nonce': self.w3.eth.getTransactionCount(acct_addr),
+            'nonce': self._w3.eth.getTransactionCount(acct_addr),
             'gas': 500000
         })
 
@@ -134,7 +132,7 @@ class ContractDeployer(object):
 
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
-        
+
         content = "that is empty"
         if self._client is not None:
             content = (ens_resolver.functions.call("contenthash", node)).hex()
