@@ -85,12 +85,14 @@ class ContractDeployer(object):
         # defining blockchain and public key of the ethereum wallet
         acct_addr = self._pubkey
 
+        
+
         # building raw transaction
         estimated_gas = contract.constructor().estimateGas()
-        print("Estimated gas: ", estimated_gas)
+        #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
-            'nonce': self._w3.eth.getTransactionCount(acct_addr),
-            'gas': estimated_gas
+            'nonce': self.w3.eth.getTransactionCount(acct_addr),
+            'gas': 500000
         })
 
         # signing & sending a signed transaction, saving transaction hash
