@@ -35,6 +35,10 @@ class ContractDeployer(object):
         self.w3 = w3Factory.get_w3_obj()
         self.acct = w3Factory.get_w3_wallet()
         self.pubkey = self.acct.address
+        acct_addr = self.pubkey
+        acct_gas = self.w3.eth.getBalance(acct_addr)
+        if (acct_gas <= 1000000):
+            exit('Your gas balance is insufficiant for perfoming this transaction')
         self.compile_contract()
         self.deploy()
         self.ipfs_hash = ""
@@ -78,12 +82,14 @@ class ContractDeployer(object):
         current_chain = config.config["current_chain"]
         acct_addr = self.pubkey
 
+        
+
         # building raw transaction
         estimated_gas = contract.constructor().estimateGas()
-        print("Estimated gas: ", estimated_gas)
+        #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
             'nonce': self.w3.eth.getTransactionCount(acct_addr),
-            'gas': estimated_gas
+            'gas': 500000
         })
 
         # signing & sending a signed transaction, saving transaction hash
@@ -146,6 +152,7 @@ if __name__ == '__main__':
             ContractDeployer()
         except ValueError as e:
             print("Something went wrong :", e)
+
     elif arguments.provider == "ganache":
         try:
             config.config["current_chain"] = "ganache"

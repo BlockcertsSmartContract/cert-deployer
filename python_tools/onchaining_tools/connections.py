@@ -76,20 +76,23 @@ class ContractFunctions(object):
         self.acct_addr = account.address
 
 
-    def get_tx_options(self, estimated_gas):
+    def get_tx_options(self):
         '''Returns raw transaction'''
         return {
             'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-            'gas': estimated_gas
+            'gas': 1000000
         }
 
     def transact(self, method, *argv):
         '''Sends a signed transaction on the blockchain and waits for a response'''
         acct = self.w3.eth.account.from_key(self.privkey)
+        acct_gas = self.w3.eth.getBalance(self.acct_addr)
+        if (acct_gas <= 1000000):
+            exit('Your gas balance is insufficiant for perfoming this transaction')
         #gas estimation
-        estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
-        print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
-        tx_options = self.get_tx_options(estimated_gas)
+        #estimated_gas = self.contract_obj.functions[method](*argv).estimateGas()
+        #print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
+        tx_options = self.get_tx_options()
         #building a transaction
         construct_txn = self.contract_obj.functions[method](*argv).buildTransaction(tx_options)
         #signing a transaction

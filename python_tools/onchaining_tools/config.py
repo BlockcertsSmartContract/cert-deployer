@@ -1,4 +1,4 @@
-usb_path = "/home/flamestro/dev/pas/"
+usb_path = "/home/xenia/"
 pk_file = "pk.txt"
 
 privateKey = open(usb_path + pk_file, "r").read().rstrip('\n')
