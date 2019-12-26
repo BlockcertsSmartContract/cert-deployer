@@ -127,7 +127,7 @@ class ContractDeployer(object):
         ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0x9867aDD8f564119752F72a4b6638B3b883268718")
         
         #set Public Resolver
-        ens_subdomain = label +"."+ ens_domain
+        ens_subdomain = label + "." + ens_domain
         subnode = ns.namehash(ens_subdomain)
         ens_registry.functions.transact("setResolver", subnode, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
