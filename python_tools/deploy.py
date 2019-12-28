@@ -116,7 +116,7 @@ class ContractDeployer(object):
 
     def _assign_ens(self):
 
-        ens_domain = "klea.eth"
+        ens_domain = "blockcerts.eth"
         label = "tub"
         ens_registry = ContractConnection ("ropsten_ens_registry")
         ns = ENS.fromWeb3(self._w3)
@@ -124,7 +124,7 @@ class ContractDeployer(object):
         subdomain = self._w3.keccak(text=label)
 
         #add Subdomain
-        ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0x9867aDD8f564119752F72a4b6638B3b883268718")
+        ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3")
         
         #set Public Resolver
         ens_subdomain = label + "." + ens_domain
