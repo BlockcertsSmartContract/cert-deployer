@@ -80,7 +80,7 @@ class ContractConnection(object):
             '''Returns raw transaction'''
             return {
                 'nonce': self._w3.eth.getTransactionCount(self.acct_addr),
-                'gas': estimated_gas
+                'gas': estimated_gas*2
             }
 
         def transact(self, method, *argv):

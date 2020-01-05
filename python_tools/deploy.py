@@ -26,6 +26,10 @@ class ContractDeployer(object):
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
+        gas_balance = self._w3.eth.getBalance(self._pubkey)
+        if gas_balance < 400000:
+            exit('Your gas balance is not sufficient for performing all transactions.')
+
 
     def do_deploy(self):
         self._open_ipfs_connection()
@@ -90,7 +94,7 @@ class ContractDeployer(object):
         #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
             'nonce': self._w3.eth.getTransactionCount(acct_addr),
-            'gas': 500000
+            'gas': estimated_gas*2
         })
 
         # signing & sending a signed transaction, saving transaction hash
