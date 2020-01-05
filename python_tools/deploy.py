@@ -38,7 +38,6 @@ class ContractDeployer(object):
         self._update_ens_content()
 
     def _open_ipfs_connection(self):
-        ''''''
         try:
             subprocess.Popen(["ipfs", "init"])
             subprocess.Popen(["ipfs", "daemon"])
