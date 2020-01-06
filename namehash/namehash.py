@@ -1,7 +1,8 @@
+# adapted from https://github.com/ConsenSys/ens-namehash-py commit aa51dba29a1a4a7595795626f76d2ab35f132be7
 import codecs
 import functools
 
-from sha3 import keccak_256 as sha3_256 
+from sha3 import keccak_256 as sha3_256
 
 
 def is_bytes(value):
