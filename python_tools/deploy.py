@@ -4,9 +4,10 @@ import time
 
 import content_hash
 import ipfshttpclient
-from ens import ENS
-from solc import compile_standard
+# from ens import ENS
 
+from solc import compile_standard
+from namehash.namehash import namehash
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3, ContractConnection
@@ -119,12 +120,11 @@ class ContractDeployer(object):
         print(f"deployed contr <{self.contr_address}>")
 
     def _assign_ens(self):
-
         ens_domain = "blockcerts.eth"
         label = "tub"
         ens_registry = ContractConnection ("ropsten_ens_registry")
         ns = ENS.fromWeb3(self._w3)
-        node = ns.namehash(ens_domain)
+        node = namehash(ens_domain)
         subdomain = self._w3.keccak(text=label)
 
         #add Subdomain
@@ -132,7 +132,7 @@ class ContractDeployer(object):
         
         #set Public Resolver
         ens_subdomain = label + "." + ens_domain
-        subnode = ns.namehash(ens_subdomain)
+        subnode = namehash(ens_subdomain)
         ens_registry.functions.transact("setResolver", subnode, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
         #set Address
