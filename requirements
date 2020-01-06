@@ -1,0 +1,7 @@
+# generate list with $ pip-compile requirements
+web3==5.4.0
+py-solc==3.2.0
+json5==0.8.5
+content-hash==1.1.1
+ipfshttpclient==0.4.12
+pysha3==1.0.2
