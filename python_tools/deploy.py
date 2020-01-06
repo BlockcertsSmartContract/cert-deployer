@@ -123,7 +123,7 @@ class ContractDeployer(object):
         ens_domain = "blockcerts.eth"
         label = "tub"
         ens_registry = ContractConnection ("ropsten_ens_registry")
-        ns = ENS.fromWeb3(self._w3)
+        # ns = ENS.fromWeb3(self._w3)
         node = namehash(ens_domain)
         subdomain = self._w3.keccak(text=label)
 
