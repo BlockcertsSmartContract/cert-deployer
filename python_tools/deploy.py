@@ -4,9 +4,10 @@ import time
 
 import content_hash
 import ipfshttpclient
-from ens import ENS
-from solc import compile_standard
+# from ens import ENS
 
+from solc import compile_standard
+from namehash.namehash import namehash
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3, ContractConnection
@@ -120,8 +121,9 @@ class ContractDeployer(object):
 
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
 
-        ns = ENS.fromWeb3(self._w3)
-        node = ns.namehash(ens_domain)
+        # ns = ENS.fromWeb3(self._w3)
+        # node = ns.namehash(ens_doain)
+        node = namehash(ens_domain)
         codec = 'ipfs-ns'
 
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
