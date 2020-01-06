@@ -27,6 +27,10 @@ class ContractDeployer(object):
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
+        gas_balance = self._w3.eth.getBalance(self._pubkey)
+        if gas_balance < 400000:
+            exit('Your gas balance is not sufficient for performing all transactions.')
+
 
     def do_deploy(self):
         self._open_ipfs_connection()
@@ -91,7 +95,7 @@ class ContractDeployer(object):
         #print("Estimated gas: ", estimated_gas)
         construct_txn = contract.constructor().buildTransaction({
             'nonce': self._w3.eth.getTransactionCount(acct_addr),
-            'gas': 500000
+            'gas': estimated_gas*2
         })
 
         # signing & sending a signed transaction, saving transaction hash
@@ -117,27 +121,38 @@ class ContractDeployer(object):
 
     def _assign_ens(self):
         ens_domain = "blockcerts.eth"
-        ens_resolver = ContractConnection("ropsten_ens_resolver")
-
-        self.contr_address = self._w3.toChecksumAddress(self.contr_address)
-
-        # ns = ENS.fromWeb3(self._w3)
-        # node = ns.namehash(ens_doain)
+        label = "tub"
+        ens_registry = ContractConnection ("ropsten_ens_registry")
+        ns = ENS.fromWeb3(self._w3)
         node = namehash(ens_domain)
-        codec = 'ipfs-ns'
+        subdomain = self._w3.keccak(text=label)
 
-        ens_resolver.functions.transact("setAddr", node, self.contr_address)
-        ens_resolver.functions.transact("setName", node, ens_domain)
+        #add Subdomain
+        ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3")
+        
+        #set Public Resolver
+        ens_subdomain = label + "." + ens_domain
+        subnode = namehash(ens_subdomain)
+        ens_registry.functions.transact("setResolver", subnode, "0x12299799a50340FB860D276805E78550cBaD3De3")
+
+        #set Address
+        ens_resolver = ContractConnection("ropsten_ens_resolver")
+        self.contr_address = self._w3.toChecksumAddress(self.contr_address)
+        ens_resolver.functions.transact("setAddr", subnode, self.contr_address)
+        ens_resolver.functions.transact("setName", subnode, ens_subdomain)
+        
+        #set Content
+        codec = 'ipfs-ns'
         if self._client is not None:
             chash = content_hash.encode(codec, self.ipfs_hash)
-            ens_resolver.functions.transact("setContenthash", node, chash)
+            ens_resolver.functions.transact("setContenthash", subnode, chash)
 
-        addr = ens_resolver.functions.call("addr", node)
-        name = ens_resolver.functions.call("name", node)
-
+        addr = ens_resolver.functions.call("addr", subnode)
+        name = ens_resolver.functions.call("name", subnode)
+        
         content = "that is empty"
         if self._client is not None:
-            content = (ens_resolver.functions.call("contenthash", node)).hex()
+            content = (ens_resolver.functions.call("contenthash", subnode)).hex()
             content = content_hash.decode(content)
 
         print(f"set contr <{addr}> to name '{name}' with content '{content}'")
