@@ -27,8 +27,10 @@ class ContractDeployer(object):
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
+        gas_limit = 600000
+        gas_price = self._w3.eth.gasPrice
         gas_balance = self._w3.eth.getBalance(self._pubkey)
-        if gas_balance < 400000:
+        if gas_balance < gas_limit*gas_price:
             exit('Your gas balance is not sufficient for performing all transactions.')
 
 
