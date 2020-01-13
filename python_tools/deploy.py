@@ -27,6 +27,10 @@ class ContractDeployer(object):
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
+        self.check_balance()
+        
+
+    def check_balance(self):
         gas_limit = 600000
         gas_price = self._w3.eth.gasPrice
         gas_balance = self._w3.eth.getBalance(self._pubkey)
