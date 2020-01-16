@@ -1,9 +1,9 @@
 import json
-
-from web3 import Web3, HTTPProvider
+import logging
 
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
+from web3 import Web3, HTTPProvider
 
 
 class MakeW3(object):
@@ -87,7 +87,7 @@ class ContractConnection(object):
             '''Sends a signed transaction on the blockchain and waits for a response'''
             # gas estimation
             estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
-            print("Estimated gas for " + str(method) + ": " + str(estimated_gas))
+            logging.info("Estimated gas for {} : {}".format(method, estimated_gas))
             tx_options = self._get_tx_options(estimated_gas)
             # building a transaction
             construct_txn = self._contract_obj.functions[method](*argv).buildTransaction(tx_options)
@@ -96,7 +96,7 @@ class ContractConnection(object):
             # sending a transaction to the blockchain and waiting for a response
             tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
             tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
-            print("Gas used: " + str(method) + ": " + str(tx_receipt.gasUsed))
+            logging.info("Gas used: {} : {}".format(method, tx_receipt.gasUsed))
 
         def call(self, method, *argv):
             return self._contract_obj.functions[method](*argv).call()
