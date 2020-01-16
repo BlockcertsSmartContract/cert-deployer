@@ -9,9 +9,9 @@
       {
         "inputs": [
           {
-            "internalType": "uint256",
+            "internalType": "bytes32",
             "name": "",
-            "type": "uint256"
+            "type": "bytes32"
           }
         ],
         "name": "hashes",
@@ -28,9 +28,9 @@
       {
         "inputs": [
           {
-            "internalType": "uint256",
+            "internalType": "bytes32",
             "name": "_hash",
-            "type": "uint256"
+            "type": "bytes32"
           }
         ],
         "name": "issue_hash",
@@ -41,9 +41,9 @@
       {
         "inputs": [
           {
-            "internalType": "uint256",
+            "internalType": "bytes32",
             "name": "_hash",
-            "type": "uint256"
+            "type": "bytes32"
           }
         ],
         "name": "revoke_hash",
@@ -52,7 +52,7 @@
         "type": "function"
       }
     ],
-    "address": "0xdDf569Feb6473Ef52d889774Bc718705408C5e8e"
+    "address": "0xcE590ef6E64fD13c626E860D008d7604aCe220a6"
   },
   "ropsten_ens_resolver": {
     "abi": [

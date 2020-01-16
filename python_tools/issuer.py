@@ -14,6 +14,7 @@ import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from ens import ENS
 from onchaining_tools.connections import ContractConnection, MakeW3
+from web3 import Web3
 
 sessionid = uuid.uuid4()
 logging.basicConfig(filename="onchainging.log", level=logging.INFO,
@@ -95,7 +96,7 @@ def verify(hash_val):
 
 if __name__ == '__main__':
     '''Handles arguments and calls out respective functions'''
-    parser.add_argument("hash", nargs='?', default=0, help="cert hash", type=int)
+    parser.add_argument("hash", nargs='?', default=0, help="cert hash", type=str)
     parser.add_argument("-init", "--init", help="init contract info", action="store_true")
     parser.add_argument("-r", "--revoke", help="revoke hash", action="store_true")
     parser.add_argument("-i", "--issue", help="issue hash", action="store_true")
@@ -105,10 +106,11 @@ if __name__ == '__main__':
     if arguments.init:
         get_contr_info_from_ens()
     elif arguments.issue:
-        issue(arguments.hash)
+
+        issue(Web3.toBytes(hexstr=arguments.hash))
     elif arguments.revoke:
-        revoke(arguments.hash)
+        revoke(Web3.toBytes(hexstr=arguments.hash))
     elif arguments.verify:
-        verify(arguments.hash)
+        verify(Web3.toBytes(hexstr=arguments.hash))
     elif arguments.contract:
         get_latest_contract()
