@@ -10,3 +10,4 @@ venv/*
 dist/*
 blockcertsonchaining.egg-info/*
 build/*
+.log
