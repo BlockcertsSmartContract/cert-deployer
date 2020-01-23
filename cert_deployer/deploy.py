@@ -1,29 +1,24 @@
 import json
 import subprocess
 import time
-
+import logging
 import content_hash
 import ipfshttpclient
-# from ens import ENS
 
 from solc import compile_standard
-from onchaining_tools.namehash import namehash
-import onchaining_tools.path_tools as tools
+from blockchain_handlers.namehash import namehash
+import blockchain_handlers.path_tools as tools
+from blockchain_handlers.connections import MakeW3, ContractConnection
 import config
-from onchaining_tools.connections import MakeW3, ContractConnection
-
 
 class ContractDeployer(object):
-    ''' Compiles, signes and deploys a smart contract on the ethereum blockchain
-    Args:
-        object(web3 object): instantiated web3 connection to ethereum node
-            print("cat : " + str(client.cat(res['Hash'])))
-    '''
+    ''' Compiles, signes and deploys a smart contract on the ethereum blockchain '''
 
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
-        self.current_chain = "ropsten"
-        w3Factory = MakeW3()
+        self.parsed_config = config.get_config()
+        self.current_chain = self.parsed_config.chain #"ropsten"
+        w3Factory = MakeW3(self.parsed_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
@@ -40,9 +35,10 @@ class ContractDeployer(object):
 
     def do_deploy(self):
         self._open_ipfs_connection()
-        self._compile_contract()
-        self._deploy()
-        self._update_ens_content()
+        # self._compile_contract()
+        # self._deploy()
+        # self._update_ens_content()
+
 
     def _open_ipfs_connection(self):
         try:
@@ -50,23 +46,11 @@ class ContractDeployer(object):
             subprocess.Popen(["ipfs", "daemon"])
             time.sleep(10)
             self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-            print("connected to IPFS")
+            logging.info('Connected to IPFS')
         except:
-            print("Not connected to IPFS -> start daemon to deploy contract info on IPFS")
+            logging.info('Not connected to IPFS -> start daemon to deploy contract info on IPFS')
             self._client = None
 
-    def _update_ens_content(self):
-        self.ipfs_hash = ""
-        if self._client is not None:
-            self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
-            print("IPFS Hash is: " + self.ipfs_hash)
-            print("You can check the abi on: https://ipfs.io/ipfs/" + self.ipfs_hash)
-            print("You can check the abi on: ipfs://" + self.ipfs_hash)
-        if self.current_chain == "ropsten":
-            self._assign_ens()
-        if self._client is not None:
-            subprocess.run(["ipfs", "shutdown"])
-            self._client.close()
 
     def _compile_contract(self):
         '''Compiles smart contract, creates bytecode and abi'''
@@ -108,7 +92,7 @@ class ContractDeployer(object):
         signed = self._acct.sign_transaction(construct_txn)
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
-        print("Gas used: ", tx_receipt.gasUsed)
+        logging.info('Gas used: %s', tx_receipt.gasUsed)
 
         # saving contract data
         with open(tools.get_contr_info_path(), "r") as f:
@@ -125,10 +109,26 @@ class ContractDeployer(object):
         # print transaction hash
         print(f"deployed contr <{self.contr_address}>")
 
+
+    def _update_ens_content(self):
+        self.ipfs_hash = ""
+        if self._client is not None:
+            self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
+            logging.info('IPFS Hash is: %s', self.ipfs_hash)
+            logging.info('You can check the abi on: https://ipfs.io/ipfs/ %s', self.ipfs_hash)
+            logging.info('You can check the abi on: ipfs:// %s', self.ipfs_hash)
+        if self.current_chain == "ropsten":
+            self._assign_ens()
+        if self._client is not None:
+            subprocess.run(["ipfs", "shutdown"])
+            self._client.close()
+
+
     def _assign_ens(self):
+        #TODO: that part needs to be abstracted again!
         ens_domain = "blockcerts.eth"
         label = "tub"
-        ens_registry = ContractConnection ("ropsten_ens_registry")
+        ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
         # ns = ENS.fromWeb3(self._w3)
         node = namehash(ens_domain)
         subdomain = self._w3.keccak(text=label)
@@ -142,7 +142,7 @@ class ContractDeployer(object):
         ens_registry.functions.transact("setResolver", subnode, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
         #set Address
-        ens_resolver = ContractConnection("ropsten_ens_resolver")
+        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", subnode, self.contr_address)
         ens_resolver.functions.transact("setName", subnode, ens_subdomain)
@@ -161,8 +161,8 @@ class ContractDeployer(object):
             content = (ens_resolver.functions.call("contenthash", subnode)).hex()
             content = content_hash.decode(content)
 
-        print(f"set contr <{addr}> to name '{name}' with content '{content}'")
-
+        #print(f"set contr <{addr}> to name '{name}' with content '{content}'")
+        logging.info('set contr %s to name %s with content %s', addr, name, content)
 
 if __name__ == '__main__':
     '''

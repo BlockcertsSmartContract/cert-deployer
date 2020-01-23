@@ -2,7 +2,7 @@ import json
 
 from web3 import Web3, HTTPProvider
 
-import onchaining_tools.path_tools as tools
+import blockchain_handlers.path_tools as tools
 import config
 
 
@@ -12,15 +12,15 @@ class MakeW3(object):
     node url to be used for communication with ethereum blockchain and instantiates the
     web3 connection with ethereum node
     '''
-    def __init__(self):
+    def __init__(self, parsed_config):
         '''
         Defines public & private keys of a wallet, defines an ethereum node
         that will be used for communication with blockchain
         '''
-        parsed_config = config.get_config() #maybe redundant?
+
         current_chain = parsed_config.chain
-        #TODO
-        self._privkey = "dummyTodoSecretManager"
+        #TODO: use secret manager
+        self._privkey = "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D"
         self._url = parsed_config.infura_node
 
         self.w3 = self._create_w3_obj()
@@ -32,6 +32,7 @@ class MakeW3(object):
         '''Instantiates a web3 connection with ethereum node'''
         return Web3(HTTPProvider(self._url))
 
+    #do we still want to do that? wouldnt it be safer to just use the pubkey we have anyway?
     def _get_w3_wallet(self):
         '''Connects a private key to the account that is going to be used for the transaction'''
         return self.w3.eth.account.from_key(self._privkey)
@@ -39,13 +40,13 @@ class MakeW3(object):
 
 class ContractConnection(object):
     '''Collects abi, address, contract data and instantiates a contract object'''
-    def __init__(self, contract_name):
+    def __init__(self, contract_name, parsed_config):
         self.contract_name = contract_name
-        self._w3Factory = MakeW3()
+        self._w3Factory = MakeW3(parsed_config)
         self.w3 = self._w3Factory.w3
         self._contract_info = self._get_contract_info()
         self.contract_obj = self._create_contract_object()
-        self.functions = self.ContractFunctions(self._w3Factory, self.contract_obj)
+        self.functions = self.ContractFunctions(self._w3Factory, self.contract_obj, parsed_config)
 
     def _create_contract_object(self):
         '''Returns contract address and abi'''
@@ -69,12 +70,13 @@ class ContractConnection(object):
         return self._contract_info[self.contract_name]["address"]
 
     class ContractFunctions(object):
-        def __init__(self, w3Factory, contract_obj):
+        def __init__(self, w3Factory, contract_obj, parsed_config):
             self._w3Factory = w3Factory
             self._w3 = self._w3Factory.w3
             self._contract_obj = contract_obj
-            current_chain = config.config["current_chain"]
-            self._privkey = config.config["wallets"][current_chain]["privkey"]
+            current_chain = parsed_config.chain
+            #TODO get from secret_manager
+            self._privkey = "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D"
             self.acct = self._w3Factory.account
             self.acct_addr = self.acct.address
 
