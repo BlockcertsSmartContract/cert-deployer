@@ -8,8 +8,8 @@ import ipfshttpclient
 
 from solc import compile_standard
 from onchaining_tools.namehash import namehash
-import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
+import config
 from onchaining_tools.connections import MakeW3, ContractConnection
 
 
@@ -22,7 +22,7 @@ class ContractDeployer(object):
 
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
-        self.current_chain = config.config["current_chain"]
+        self.current_chain = "ropsten"
         w3Factory = MakeW3()
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account

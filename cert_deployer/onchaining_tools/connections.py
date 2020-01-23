@@ -2,8 +2,8 @@ import json
 
 from web3 import Web3, HTTPProvider
 
-import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
+import config
 
 
 class MakeW3(object):
@@ -17,13 +17,15 @@ class MakeW3(object):
         Defines public & private keys of a wallet, defines an ethereum node
         that will be used for communication with blockchain
         '''
-        current_chain = config.config["current_chain"]
-        self._privkey = config.config["wallets"][current_chain]["privkey"]
-        self._url = config.config["wallets"][current_chain]["url"]
+        parsed_config = config.get_config() #maybe redundant?
+        current_chain = parsed_config.chain
+        #TODO
+        self._privkey = "dummyTodoSecretManager"
+        self._url = parsed_config.infura_node
 
         self.w3 = self._create_w3_obj()
         self.account = self._get_w3_wallet()
-        self.pubkey = self.account.address
+        self.pubkey = parsed_config.deploying_address
         self.w3.eth.defaultAccount = self.pubkey
 
     def _create_w3_obj(self):
