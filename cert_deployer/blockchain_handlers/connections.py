@@ -4,7 +4,14 @@ from web3 import Web3, HTTPProvider
 
 import blockchain_handlers.path_tools as tools
 import config
+import os
 
+def get_secret(parsed_config):
+    path_to_secret = os.path.join(parsed_config.usb_name, parsed_config.key_file)
+
+    with open(path_to_secret) as key_file:
+        key = key_file.read().strip()
+    return key
 
 class MakeW3(object):
     '''
@@ -17,10 +24,8 @@ class MakeW3(object):
         Defines public & private keys of a wallet, defines an ethereum node
         that will be used for communication with blockchain
         '''
-
         current_chain = parsed_config.chain
-        #TODO: use secret manager
-        self._privkey = "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D"
+        self._privkey = get_secret(parsed_config)
         self._url = parsed_config.infura_node
 
         self.w3 = self._create_w3_obj()
@@ -75,8 +80,7 @@ class ContractConnection(object):
             self._w3 = self._w3Factory.w3
             self._contract_obj = contract_obj
             current_chain = parsed_config.chain
-            #TODO get from secret_manager
-            self._privkey = "50F3DCA79D43C17C0B58B88BAF57F0D91212F7CA6A9EDC4781C96A5E99FB573D"
+            self._privkey = get_secret(parsed_config)
             self.acct = self._w3Factory.account
             self.acct_addr = self.acct.address
 
