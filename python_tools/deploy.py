@@ -7,7 +7,7 @@ import ipfshttpclient
 # from ens import ENS
 
 from solc import compile_standard
-from namehash.namehash import namehash
+from onchaining_tools.namehash import namehash
 import onchaining_tools.config as config
 import onchaining_tools.path_tools as tools
 from onchaining_tools.connections import MakeW3, ContractConnection
@@ -28,7 +28,7 @@ class ContractDeployer(object):
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
         self.check_balance()
-        
+
 
     def check_balance(self):
         gas_limit = 600000
@@ -135,7 +135,7 @@ class ContractDeployer(object):
 
         #add Subdomain
         ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3")
-        
+
         #set Public Resolver
         ens_subdomain = label + "." + ens_domain
         subnode = namehash(ens_subdomain)
@@ -146,7 +146,7 @@ class ContractDeployer(object):
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", subnode, self.contr_address)
         ens_resolver.functions.transact("setName", subnode, ens_subdomain)
-        
+
         #set Content
         codec = 'ipfs-ns'
         if self._client is not None:
@@ -155,7 +155,7 @@ class ContractDeployer(object):
 
         addr = ens_resolver.functions.call("addr", subnode)
         name = ens_resolver.functions.call("name", subnode)
-        
+
         content = "that is empty"
         if self._client is not None:
             content = (ens_resolver.functions.call("contenthash", subnode)).hex()
