@@ -23,14 +23,17 @@ logging.basicConfig(filename="onchainging.log", level=logging.INFO,
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 class ContractDeployer(object):
-    ''' Compiles, signes and deploys a smart contract on the ethereum blockchain
+    """
+    Compiles, signes and deploys a smart contract on the ethereum blockchain
     Args:
         object(web3 object): instantiated web3 connection to ethereum node
             print("cat : " + str(client.cat(res['Hash'])))
-    '''
+    """
 
     def __init__(self):
-        '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
+        """
+        Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions
+        """
         self.current_chain = config.config["current_chain"]
         w3Factory = MakeW3()
         self._w3 = w3Factory.w3
@@ -39,6 +42,9 @@ class ContractDeployer(object):
         self.check_balance()
 
     def check_balance(self):
+        """
+        Checks if the wallet balance is enough to cover all transactions
+        """
         gas_limit = 600000
         gas_price = self._w3.eth.gasPrice
         gas_balance = self._w3.eth.getBalance(self._pubkey)
@@ -46,12 +52,18 @@ class ContractDeployer(object):
             exit('Your gas balance is not sufficient for performing all transactions.')
 
     def do_deploy(self):
+        """
+        Starts IPFS connection, compiles contract, deploys it on the blockchain and assigns an ENS name to it.
+        """
         self._open_ipfs_connection()
         self._compile_contract()
         self._deploy()
         self._update_ens_content()
 
     def _open_ipfs_connection(self):
+        """
+        Opens IPFS Connection
+        """
         try:
             logging.info("trying to start IPFS Daemon")
             FNULL = open(os.devnull, 'w')
@@ -79,8 +91,9 @@ class ContractDeployer(object):
             self._client.close()
 
     def _compile_contract(self):
-        '''Compiles smart contract, creates bytecode and abi'''
-
+        """
+        Compiles smart contract, creates bytecode and abi
+        """
         # loading contract file data
         with open(tools.get_contract_path()) as source_file:
             source_raw = source_file.read()
@@ -100,7 +113,9 @@ class ContractDeployer(object):
             'output']['abi']
 
     def _deploy(self):
-        '''Signes raw transaction and deploys it on the blockchain'''
+        """
+        Signes raw transaction and deploys it on the blockchain
+        """
         contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
 
         # defining blockchain and public key of the ethereum wallet
@@ -135,6 +150,9 @@ class ContractDeployer(object):
         logging.info("deployed contr <{}>".format(self.contr_address))
 
     def _assign_ens(self):
+        """
+        Assigns ENS to smart contract
+        """
         ens_domain = "blockcerts.eth"
         label = "tub"
         ens_registry = ContractConnection("ropsten_ens_registry")
@@ -176,6 +194,6 @@ class ContractDeployer(object):
 
 if __name__ == '__main__':
     '''
-        Calls out respective functionatilites.
+    Calls out deployer
     '''
     ContractDeployer().do_deploy()
