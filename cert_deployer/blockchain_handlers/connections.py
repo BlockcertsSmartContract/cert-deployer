@@ -74,6 +74,7 @@ class ContractConnection(object):
         '''Returns transaction address'''
         return self._contract_info[self.contract_name]["address"]
 
+
     class ContractFunctions(object):
         def __init__(self, w3Factory, contract_obj, parsed_config):
             self._w3Factory = w3Factory

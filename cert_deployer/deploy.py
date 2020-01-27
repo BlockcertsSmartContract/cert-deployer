@@ -12,18 +12,19 @@ from blockchain_handlers.connections import MakeW3, ContractConnection
 import config
 
 class ContractDeployer(object):
-    ''' Compiles, signes and deploys a smart contract on the ethereum blockchain '''
+    '''
+        Compiles, signes and deploys a smart contract on the ethereum blockchain
+    '''
 
     def __init__(self):
         '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
         self.parsed_config = config.get_config()
-        self.current_chain = self.parsed_config.chain #"ropsten"
+        self.current_chain = self.parsed_config.chain
         w3Factory = MakeW3(self.parsed_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
         self.check_balance()
-
 
     def check_balance(self):
         gas_limit = 600000
@@ -32,25 +33,10 @@ class ContractDeployer(object):
         if gas_balance < gas_limit*gas_price:
             exit('Your gas balance is not sufficient for performing all transactions.')
 
-
     def do_deploy(self):
-        self._open_ipfs_connection()
-        # self._compile_contract()
-        # self._deploy()
-        # self._update_ens_content()
-
-
-    def _open_ipfs_connection(self):
-        try:
-            subprocess.Popen(["ipfs", "init"])
-            subprocess.Popen(["ipfs", "daemon"])
-            time.sleep(10)
-            self._client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001/http')
-            logging.info('Connected to IPFS')
-        except:
-            logging.info('Not connected to IPFS -> start daemon to deploy contract info on IPFS')
-            self._client = None
-
+        self._compile_contract()
+        self._deploy()
+        self._update_ens_content()
 
     def _compile_contract(self):
         '''Compiles smart contract, creates bytecode and abi'''
@@ -107,65 +93,37 @@ class ContractDeployer(object):
             json.dump(contr_info, f)
 
         # print transaction hash
-        print(f"deployed contr <{self.contr_address}>")
-
+        logging.info("deployed contr %s", self.contr_address)
 
     def _update_ens_content(self):
-        self.ipfs_hash = ""
-        if self._client is not None:
-            self.ipfs_hash = self._client.add(tools.get_contr_info_path())['Hash']
-            logging.info('IPFS Hash is: %s', self.ipfs_hash)
-            logging.info('You can check the abi on: https://ipfs.io/ipfs/ %s', self.ipfs_hash)
-            logging.info('You can check the abi on: ipfs:// %s', self.ipfs_hash)
-        if self.current_chain == "ropsten":
+        if self.current_chain == "ethereum_ropsten" or self.current_chain == "ethereum_mainnet":
             self._assign_ens()
-        if self._client is not None:
-            subprocess.run(["ipfs", "shutdown"])
-            self._client.close()
-
 
     def _assign_ens(self):
-        #TODO: that part needs to be abstracted again!
-        ens_domain = "blockcerts.eth"
-        label = "tub"
+        ens_domain = self.parsed_config.ens_name
         ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
-        # ns = ENS.fromWeb3(self._w3)
         node = namehash(ens_domain)
-        subdomain = self._w3.keccak(text=label)
 
-        #add Subdomain
-        ens_registry.functions.transact("setSubnodeOwner", node, subdomain, "0xB4d9313EE835b3d3eE7759826e1F3C3Ac23dFaf3")
-
-        #set Public Resolver
-        ens_subdomain = label + "." + ens_domain
-        subnode = namehash(ens_subdomain)
-        ens_registry.functions.transact("setResolver", subnode, "0x12299799a50340FB860D276805E78550cBaD3De3")
+        ens_registry.functions.transact("setResolver", "0x12299799a50340FB860D276805E78550cBaD3De3")
 
         #set Address
         ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
-        ens_resolver.functions.transact("setAddr", subnode, self.contr_address)
-        ens_resolver.functions.transact("setName", subnode, ens_subdomain)
+        ens_resolver.functions.transact("setAddr", node, self.contr_address)
+        ens_resolver.functions.transact("setName", node, ens_domain)
 
-        #set Content
-        codec = 'ipfs-ns'
-        if self._client is not None:
-            chash = content_hash.encode(codec, self.ipfs_hash)
-            ens_resolver.functions.transact("setContenthash", subnode, chash)
-
-        addr = ens_resolver.functions.call("addr", subnode)
-        name = ens_resolver.functions.call("name", subnode)
+        addr = ens_resolver.functions.call("addr", node)
+        name = ens_resolver.functions.call("name", node)
 
         content = "that is empty"
         if self._client is not None:
-            content = (ens_resolver.functions.call("contenthash", subnode)).hex()
+            content = (ens_resolver.functions.call("contenthash", node)).hex()
             content = content_hash.decode(content)
 
-        #print(f"set contr <{addr}> to name '{name}' with content '{content}'")
         logging.info('set contr %s to name %s with content %s', addr, name, content)
 
 if __name__ == '__main__':
     '''
-        Calls out respective functionatilites.
+        Calls respective functionatilites.
     '''
     ContractDeployer().do_deploy()
