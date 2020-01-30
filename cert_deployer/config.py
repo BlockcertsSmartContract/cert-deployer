@@ -2,7 +2,6 @@ import logging
 import os
 
 import configargparse
-from cert_core import BlockchainType, Chain, chain_to_bitcoin_network, UnknownChainError
 
 PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
