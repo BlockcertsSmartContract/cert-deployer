@@ -2,7 +2,6 @@ import json
 import subprocess
 import time
 import logging
-import content_hash
 
 from solc import compile_standard
 from blockchain_handlers.namehash import namehash
@@ -36,16 +35,16 @@ class ContractDeployer(object):
             exit('Your gas balance is not sufficient for performing all transactions.')
 
     def do_deploy(self):
+        '''
+        Starts deployment process step-by-step
+        '''
         ens_domain = self.parsed_config.ens_name
         ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
-        # check if ens address link should be changed  intensionally
+        # check if ens address link should be changed intensionally
         temp = ens_resolver.functions.call("addr", node)
-        print(temp)
-        exit()
-
-        if temp == "" or self.parsed_config.change_ens_link != True:
+        if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.change_ens_link != True:
             logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
             exit()
 
@@ -115,6 +114,9 @@ class ContractDeployer(object):
         logging.info("deployed contr %s", self.contr_address)
 
     def _update_ens_content(self):
+        '''
+        Starts ens updates
+        '''
         if self.current_chain == "ethereum_ropsten" or self.current_chain == "ethereum_mainnet":
             self._assign_ens()
 
@@ -124,10 +126,10 @@ class ContractDeployer(object):
         ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
-        #set resolver
+        # set resolver
         ens_registry.functions.transact("setResolver", node, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
-        #set Address
+        # set Address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)
@@ -135,16 +137,11 @@ class ContractDeployer(object):
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
 
-        content = "none"
-        if self._client is not None:
-            content = (ens_resolver.functions.call("contenthash", node)).hex()
-            content = content_hash.decode(content)
-
-        logging.info('set contr %s to name %s with content %s', addr, name, content)
+        logging.info('set contr %s to name %s', addr, name)
 
 
 if __name__ == '__main__':
     '''
-    Calls respective functionatilites.
+    Calls respective functionatilites
     '''
     ContractDeployer().do_deploy()

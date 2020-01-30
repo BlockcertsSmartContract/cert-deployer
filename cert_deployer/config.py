@@ -28,7 +28,7 @@ def add_arguments(p):
     p.add_argument('--usb_name', required=True, help='usb path to key_file', env_var='USB_NAME')
     p.add_argument('--key_file', required=True, help='name of file on USB containing private key', env_var='KEY_FILE')
     p.add_argument('--max_retry', default=10, type=int, help='Maximum attempts to retry transaction on failure', env_var='MAX_RETRY')
-    p.add_argument('--change_ens_link', default=False, type=bool, help='Should the address link be changed?', env_var='CHANGE_ENS_LINK')
+    p.add_argument('--overwrite_ens_link', default=False, type=bool, help='Should the address link be changed?', env_var='CHANGE_ENS_LINK')
     p.add_argument('--chain', default='ethereum_ropsten',
                    help=('Which chain to use. Default is ethereum_ropsten. Other option is ethereum_mainnet'), env_var='CHAIN')
     p.add_argument('--safe_mode', dest='safe_mode', default=True, action='store_true',

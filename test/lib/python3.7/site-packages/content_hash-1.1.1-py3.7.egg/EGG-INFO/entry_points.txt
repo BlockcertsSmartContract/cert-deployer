@@ -1,0 +1,3 @@
+[console_scripts]
+content-hash = content_hash.__main__:main
+

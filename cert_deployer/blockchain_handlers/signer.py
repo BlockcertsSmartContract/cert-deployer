@@ -3,6 +3,9 @@ import os
 import logging
 
 def get_secret(parsed_config):
+    '''
+    Provides priv key access
+    '''
     path_to_secret = os.path.join(parsed_config.usb_name, parsed_config.key_file)
 
     with open(path_to_secret) as key_file:
