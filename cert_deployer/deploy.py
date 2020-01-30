@@ -38,8 +38,9 @@ class ContractDeployer(object):
         '''
         Starts deployment process step-by-step
         '''
+        #TODO: need to also distinguish between ropsten and mainnet
         ens_domain = self.parsed_config.ens_name
-        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
+        ens_resolver = ContractConnection("ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
         # check if ens address link should be changed intensionally
@@ -122,14 +123,20 @@ class ContractDeployer(object):
 
     def _assign_ens(self):
         ens_domain = self.parsed_config.ens_name
-        ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
-        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
+        if self.chain == "ethereum_ropsten":
+            ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
+
+        elif self.chain == "ethereum_mainnet":
+            ens_registry = ContractConnection("mainnet_ens_registry", self.parsed_config)
+
         node = namehash(ens_domain)
+        ens_resolver = ContractConnection("ens_resolver", self.parsed_config)
 
         # set resolver
-        ens_registry.functions.transact("setResolver", node, "0x12299799a50340FB860D276805E78550cBaD3De3")
+        ens_registry.functions.transact("setResolver", node, publicResolver.address)
+        ens_registry.functions.transact("resolver", node)
 
-        # set Address
+        # set address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)

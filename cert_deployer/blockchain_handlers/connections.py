@@ -67,7 +67,7 @@ class ContractConnection(object):
     def _get_address(self):
         '''
         Returns transaction address
-        '''
+        '''        
         return self._contract_info[self.contract_name]["address"]
 
 

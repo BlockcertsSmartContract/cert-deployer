@@ -49,7 +49,11 @@ def get_config():
         logging.warning('Your app is configured to skip the wifi check when the USB is plugged in. Read the '
                         'documentation to ensure this is what you want, since this is less secure')
 
-    logging.info('This run will try to issue on the %s chain', parsed_config.chain)
+    if parsed_config.chain == "ethereum_mainnet" or parsed_config.chain == "ethereum_ropsten":
+        logging.info('This run will try to issue on the %s chain', parsed_config.chain)
+    else:
+        logging.error('Unknown chain. Please correct conf.ini')
+        exit()
 
     global CONFIG
     CONFIG = parsed_config
