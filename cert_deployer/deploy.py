@@ -22,7 +22,7 @@ class ContractDeployer(object):
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self._acct.address
-        #self.check_balance()
+        self.check_balance()
 
     def check_balance(self):
         gas_limit = 600000
@@ -33,12 +33,13 @@ class ContractDeployer(object):
             exit('Your gas balance is not sufficient for performing all transactions.')
 
     def do_deploy(self):
-        # self._compile_contract()
-        # self._deploy()
+        self._compile_contract()
+        self._deploy()
         self._update_ens_content()
 
     def _compile_contract(self):
         '''Compiles smart contract, creates bytecode and abi'''
+        
         # loading contract file data
         with open(tools.get_contract_path()) as source_file:
             source_raw = source_file.read()
@@ -104,11 +105,11 @@ class ContractDeployer(object):
         node = namehash(ens_domain)
 
         #checking if smartcontract is already deployed and should get overwritten intensionally
-        temp = ens_resolver.functions.transact("addr", node)
+        temp = ens_resolver.functions.call("addr", node)
         if temp == self._pubkey and self.parsed_config.overwite_ens != True:
             logging.error("Smart Contract already deployed on this domain and overwrite_ens is not True.")
             exit()
-            
+
         #set resolver
         ens_registry.functions.transact("setResolver", node, "0x12299799a50340FB860D276805E78550cBaD3De3")
 

@@ -27,7 +27,7 @@ class MakeW3(object):
         '''
         current_chain = parsed_config.chain
         self._privkey = get_secret(parsed_config)
-        self._url = parsed_config.infura_node
+        self._url = parsed_config.node_url
 
         self.w3 = self._create_w3_obj()
         self.account = self._get_w3_wallet()
@@ -38,7 +38,6 @@ class MakeW3(object):
         '''Instantiates a web3 connection with ethereum node'''
         return Web3(HTTPProvider(self._url))
 
-    #do we still want to do that? wouldnt it be safer to just use the pubkey we have anyway?
     def _get_w3_wallet(self):
         '''Connects a private key to the account that is going to be used for the transaction'''
         return self.w3.eth.account.from_key(self._privkey)
@@ -95,14 +94,18 @@ class ContractConnection(object):
 
         def transact(self, method, *argv):
             '''Sends a signed transaction on the blockchain and waits for a response'''
+
             # gas estimation
             estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
             logging.info('Estimated gas for %s: %s', str(method),str(estimated_gas))
             tx_options = self._get_tx_options(estimated_gas)
+
             # building a transaction
             construct_txn = self._contract_obj.functions[method](*argv).buildTransaction(tx_options)
+
             # signing a transaction
             signed = self.acct.sign_transaction(construct_txn)
+
             # sending a transaction to the blockchain and waiting for a response
             tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
             tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
