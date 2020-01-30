@@ -100,13 +100,19 @@ class ContractDeployer(object):
     def _assign_ens(self):
         ens_domain = self.parsed_config.ens_name
         ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
+        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
+        #checking if smartcontract is already deployed and should get overwritten intensionally
+        temp = ens_resolver.functions.transact("addr", node)
+        if temp == self._pubkey and self.parsed_config.overwite_ens != True:
+            logging.error("Smart Contract already deployed on this domain and overwrite_ens is not True.")
+            exit()
+            
         #set resolver
         ens_registry.functions.transact("setResolver", node, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
         #set Address
-        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)
