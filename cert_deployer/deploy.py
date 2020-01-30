@@ -8,38 +8,56 @@ from solc import compile_standard
 from blockchain_handlers.namehash import namehash
 import blockchain_handlers.path_tools as tools
 from blockchain_handlers.connections import MakeW3, ContractConnection
+import blockchain_handlers.signer as signer
 import config
 
 class ContractDeployer(object):
-    ''' Compiles, signes and deploys a smart contract on the ethereum blockchain '''
-
+    '''
+    Compiles, signes and deploys a smart contract on the ethereum blockchain
+    '''
     def __init__(self):
-        '''Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions'''
+        '''
+        Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions
+        '''
         self.parsed_config = config.get_config()
         self.current_chain = self.parsed_config.chain
         self.ens_name = self.parsed_config.ens_name
         w3Factory = MakeW3(self.parsed_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
-        self._pubkey = self._acct.address
+        self._pubkey = self.parsed_config.deploying_address
         self.check_balance()
 
     def check_balance(self):
         gas_limit = 600000
         gas_price = self._w3.eth.gasPrice
         gas_balance = self._w3.eth.getBalance(self._pubkey)
-        print(loft)
         if gas_balance < gas_limit*gas_price:
             exit('Your gas balance is not sufficient for performing all transactions.')
 
     def do_deploy(self):
-        self._compile_contract()
-        self._deploy()
-        self._update_ens_content()
+        ens_domain = self.parsed_config.ens_name
+        ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
+        node = namehash(ens_domain)
+
+        #check if ens address link should be changed  intensionally
+        temp = ens_resolver.functions.call("addr", node)
+        print(temp)
+        exit()
+
+        if temp == "" or self.parsed_config.change_ens_link != True:
+            logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
+            exit()
+
+        else:
+            self._compile_contract()
+            self._deploy()
+            self._update_ens_content()
 
     def _compile_contract(self):
-        '''Compiles smart contract, creates bytecode and abi'''
-        
+        '''
+        Compiles smart contract, creates bytecode and abi
+        '''
         # loading contract file data
         with open(tools.get_contract_path()) as source_file:
             source_raw = source_file.read()
@@ -60,7 +78,9 @@ class ContractDeployer(object):
             'output']['abi']
 
     def _deploy(self):
-        '''Signes raw transaction and deploys it on the blockchain'''
+        '''
+        Signes raw transaction and deploys it on the blockchain
+        '''
         contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
 
         # defining blockchain and public key of the ethereum wallet
@@ -74,7 +94,7 @@ class ContractDeployer(object):
         })
 
         # signing & sending a signed transaction, saving transaction hash
-        signed = self._acct.sign_transaction(construct_txn)
+        signed = signer.sign_transaction(construct_txn)
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
         logging.info('Gas used: %s', tx_receipt.gasUsed)
@@ -104,12 +124,6 @@ class ContractDeployer(object):
         ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
-        #checking if smartcontract is already deployed and should get overwritten intensionally
-        temp = ens_resolver.functions.call("addr", node)
-        if temp == self._pubkey and self.parsed_config.overwite_ens != True:
-            logging.error("Smart Contract already deployed on this domain and overwrite_ens is not True.")
-            exit()
-
         #set resolver
         ens_registry.functions.transact("setResolver", node, "0x12299799a50340FB860D276805E78550cBaD3De3")
 
@@ -128,6 +142,9 @@ class ContractDeployer(object):
 
         logging.info('set contr %s to name %s with content %s', addr, name, content)
 
+
 if __name__ == '__main__':
-    ''' Calls respective functionatilites. '''
+    '''
+    Calls respective functionatilites.
+    '''
     ContractDeployer().do_deploy()
