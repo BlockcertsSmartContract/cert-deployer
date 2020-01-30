@@ -40,7 +40,7 @@ class ContractDeployer(object):
         ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
-        #check if ens address link should be changed  intensionally
+        # check if ens address link should be changed  intensionally
         temp = ens_resolver.functions.call("addr", node)
         print(temp)
         exit()
