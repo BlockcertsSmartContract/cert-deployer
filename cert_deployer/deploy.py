@@ -85,7 +85,7 @@ class ContractDeployer(object):
         '''
         contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
 
-        # defining blockchain and public key of the ethereum wallet
+        # defining blockchain & public key of the ethereum wallet
         acct_addr = self._pubkey
 
         # building raw transaction
@@ -139,6 +139,9 @@ class ContractDeployer(object):
             ens_registry = ContractConnection("mainnet_ens_registry", self.parsed_config)
             ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
             resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
+
+            # temporary – due to new registry contract 
+            registry_address = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 
         # set resolver
         ens_registry.functions.transact("setResolver", node, resolver_address)
