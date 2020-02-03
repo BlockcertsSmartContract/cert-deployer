@@ -124,7 +124,11 @@ class ContractDeployer(object):
             self._assign_ens()
 
     def _assign_ens(self):
+        # prepare domain
         ens_domain = self.parsed_config.ens_name
+        node = namehash(ens_domain)
+
+        # connect to registry and resolver
         if self.parsed_config.chain == "ethereum_ropsten":
             ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
             ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
@@ -135,9 +139,6 @@ class ContractDeployer(object):
             ens_registry = ContractConnection("mainnet_ens_registry", self.parsed_config)
             ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
             resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
-
-        node = namehash(ens_domain)
-        ens_resolver = ContractConnection("ens_resolver", self.parsed_config)
 
         # set resolver
         ens_registry.functions.transact("setResolver", node, resolver_address)
