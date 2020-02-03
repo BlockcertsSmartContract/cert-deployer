@@ -9,7 +9,7 @@ contract BlockCertsOnchaining {
 
 	address internal owner;
 	// key: hash, value: Batch/Cert
-	mapping(uint256 => Hash) public hashes;
+	mapping(bytes32 => Hash) public hashes;
 
 	modifier only_owner() {
 		require(
@@ -23,11 +23,11 @@ contract BlockCertsOnchaining {
 		owner = msg.sender;
 	}
 
-	function issue_hash(uint256 _hash) public only_owner {
+	function issue_hash(bytes32 _hash) public only_owner {
 		hashes[_hash].status = State.valid;
 	}
 
-	function revoke_hash(uint256 _hash) public only_owner {
+	function revoke_hash(bytes32 _hash) public only_owner {
 		hashes[_hash].status = State.revoked;
 	}
 }
