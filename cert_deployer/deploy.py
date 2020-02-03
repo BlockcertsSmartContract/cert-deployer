@@ -37,9 +37,12 @@ class ContractDeployer(object):
         '''
         Starts deployment process step-by-step
         '''
-        #TODO: need to also distinguish between ropsten and mainnet
+        if self.parsed_config.chain == "ethereum_ropsten":
+            ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
+        elif self.parsed_config.chain == "ethereum_mainnet":
+            ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
+
         ens_domain = self.parsed_config.ens_name
-        ens_resolver = ContractConnection("ens_resolver", self.parsed_config)
         node = namehash(ens_domain)
 
         # check if ens address link should be changed intensionally
