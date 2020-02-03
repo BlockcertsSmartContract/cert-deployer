@@ -108,7 +108,7 @@ class ContractConnection(object):
             construct_txn = self._contract_obj.functions[method](*argv).buildTransaction(tx_options)
 
             # signing a transaction
-            signed = signer.sign_transaction(self, construct_txn)
+            signed = signer.sign_transaction(self.parsed_config, construct_txn)
 
             # sending a transaction to the blockchain and waiting for a response
             tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)

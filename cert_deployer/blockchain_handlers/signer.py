@@ -13,11 +13,11 @@ def get_secret(parsed_config):
 
     return key
 
-def sign_transaction(self, transaction_to_sign):
+def sign_transaction(parsed_config, transaction_to_sign):
     # try to sign the transaction.
-    wif = get_secret(self.parsed_config)
-    self.w3 = Web3(HTTPProvider())
-    acct = self.w3.eth.account.from_key(wif)
+    wif = get_secret(parsed_config)
+    w3 = Web3(HTTPProvider())
+    acct = w3.eth.account.from_key(wif)
 
     signed_tx = acct.sign_transaction(transaction_to_sign)
     return signed_tx

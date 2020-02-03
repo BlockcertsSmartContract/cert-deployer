@@ -19,7 +19,6 @@ class ContractDeployer(object):
         Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions
         '''
         self.parsed_config = config.get_config()
-        self.current_chain = self.parsed_config.chain
         self.ens_name = self.parsed_config.ens_name
         w3Factory = MakeW3(self.parsed_config)
         self._w3 = w3Factory.w3
@@ -47,7 +46,7 @@ class ContractDeployer(object):
         temp = ens_resolver.functions.call("addr", node)
         if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.overwrite_ens_link != True:
             logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
-            exit()
+            exit('Stopping process.')
 
         else:
             self._compile_contract()
@@ -94,7 +93,7 @@ class ContractDeployer(object):
         })
 
         # signing & sending a signed transaction, saving transaction hash
-        signed = signer.sign_transaction(construct_txn)
+        signed = signer.sign_transaction(self.parsed_config, construct_txn)
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
         logging.info('Gas used: %s', tx_receipt.gasUsed)
@@ -118,22 +117,27 @@ class ContractDeployer(object):
         '''
         Starts ens updates
         '''
-        if self.current_chain == "ethereum_ropsten" or self.current_chain == "ethereum_mainnet":
+        if self.parsed_config.chain == "ethereum_ropsten" or self.parsed_config.chain == "ethereum_mainnet":
             self._assign_ens()
 
     def _assign_ens(self):
         ens_domain = self.parsed_config.ens_name
-        if self.chain == "ethereum_ropsten":
+        if self.parsed_config.chain == "ethereum_ropsten":
             ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
+            ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
+            resolver_address = "0x12299799a50340FB860D276805E78550cBaD3De3"
 
-        elif self.chain == "ethereum_mainnet":
+        # this needs to be added to contr_info.json! Check mainnet resolver_address!
+        elif self.parsed_config.chain == "ethereum_mainnet":
             ens_registry = ContractConnection("mainnet_ens_registry", self.parsed_config)
+            ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
+            resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
 
         node = namehash(ens_domain)
         ens_resolver = ContractConnection("ens_resolver", self.parsed_config)
 
         # set resolver
-        ens_registry.functions.transact("setResolver", node, publicResolver.address)
+        ens_registry.functions.transact("setResolver", node, resolver_address)
         ens_registry.functions.transact("resolver", node)
 
         # set address
