@@ -45,7 +45,7 @@ class ContractDeployer(object):
 
         # check if ens address link should be changed intensionally
         temp = ens_resolver.functions.call("addr", node)
-        if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.change_ens_link != True:
+        if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.overwrite_ens_link != True:
             logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
             exit()
 

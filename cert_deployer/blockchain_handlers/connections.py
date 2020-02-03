@@ -44,7 +44,9 @@ class ContractConnection(object):
         self.functions = self.ContractFunctions(self._w3Factory, self.contract_obj, parsed_config)
 
     def _create_contract_object(self):
-        '''Returns contract address and abi'''
+        '''
+        Returns contract address and abi
+        '''
         address = self._get_address()
         abi = self._get_abi()
         return self.w3.eth.contract(address=address, abi=abi)
@@ -67,7 +69,7 @@ class ContractConnection(object):
     def _get_address(self):
         '''
         Returns transaction address
-        '''        
+        '''
         return self._contract_info[self.contract_name]["address"]
 
 
