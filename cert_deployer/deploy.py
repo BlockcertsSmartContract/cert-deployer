@@ -132,7 +132,7 @@ class ContractDeployer(object):
         if self.parsed_config.chain == "ethereum_ropsten":
             ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
             ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
-            resolver_address = "0x12299799a50340FB860D276805E78550cBaD3De3"
+            resolver_address = "0x42D63ae25990889E35F215bC95884039Ba354115"
 
         # this needs to be added to contr_info.json! Check mainnet resolver_address!
         elif self.parsed_config.chain == "ethereum_mainnet":
@@ -141,7 +141,7 @@ class ContractDeployer(object):
             resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
 
             # temporary – due to new registry contract 
-            registry_address = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+            # registry_address = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 
         # set resolver
         ens_registry.functions.transact("setResolver", node, resolver_address)
