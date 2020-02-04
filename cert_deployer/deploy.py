@@ -2,13 +2,13 @@ import json
 import subprocess
 import time
 import logging
+import config
 
 from solc import compile_standard
 from blockchain_handlers.namehash import namehash
-import blockchain_handlers.path_tools as tools
 from blockchain_handlers.connections import MakeW3, ContractConnection
 import blockchain_handlers.signer as signer
-import config
+import blockchain_handlers.path_tools as tools
 
 class ContractDeployer(object):
     '''
@@ -51,10 +51,12 @@ class ContractDeployer(object):
             logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
             exit('Stopping process.')
 
-        else:
-            self._compile_contract()
-            self._deploy()
+        self._compile_contract()
+        self._deploy()
+        try:
             self._update_ens_content()
+        except:
+            logging.error("There was a problem registering the ENS domain. Please re-run the deployer to make sure everything is set up properly.")
 
     def _compile_contract(self):
         '''
@@ -140,7 +142,7 @@ class ContractDeployer(object):
             ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
             resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
 
-            # temporary – due to new registry contract 
+            # temporary – due to new registry contract
             # registry_address = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 
         # set resolver
