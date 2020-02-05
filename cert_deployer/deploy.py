@@ -10,6 +10,7 @@ from blockchain_handlers.connectors import MakeW3, ContractConnection
 import blockchain_handlers.signer as signer
 import blockchain_handlers.path_tools as tools
 
+
 class ContractDeployer(object):
     '''
     Compiles, signes and deploys a smart contract on the ethereum blockchain
@@ -19,12 +20,12 @@ class ContractDeployer(object):
         Defines blockchain, initializes ethereum wallet, calls out compilation
         and deployment functions
         '''
-        self.parsed_config = config.get_config()
-        w3Factory = MakeW3(self.parsed_config)
+        self.app_config = config.get_config()
+        w3Factory = MakeW3(self.app_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
-        self._pubkey = self.parsed_config.deploying_address
-        self._ens_name = self.parsed_config.ens_name
+        self._pubkey = self.app_config.deploying_address
+        self._ens_name = self.app_config.ens_name
         self.check_balance()
 
     def check_balance(self):
@@ -37,34 +38,33 @@ class ContractDeployer(object):
 
     def do_deploy(self):
         '''
-        Starts deployment process step-by-step
+        Starts the deployment process step-by-step
         '''
-        if self.parsed_config.chain == "ethereum_ropsten":
-            ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
-        elif self.parsed_config.chain == "ethereum_mainnet":
-            ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
-
-        node = namehash(self._ens_name)
-
-        # check if ens address link should be changed intensionally
-        temp = ens_resolver.functions.call("addr", node)
-        if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.overwrite_ens_link != True:
-            logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
-            exit("Stopping process.")
-
+        self._security_check()
         self._compile_contract()
         self._deploy()
-        try:
-            self._update_ens_content()
-        except:
-            logging.error("There was a problem registering the ENS domain. Please re-run the deployer to make sure everything is set up properly.")
+        self._update_ens_content()
+
+    def _security_check(self):
+        '''
+        Makes sure that an existing contract does not get overwritten unintensionally
+        '''
+        # connect to public resolver
+        ens_resolver = ContractConnection("ens_resolver", self.app_config)
+        node = namehash(self._ens_name)
+        temp = ens_resolver.functions.call("addr", node)
+
+        # check if ens address is already linked to a contract
+        if temp != "0x0000000000000000000000000000000000000000" and self.app_config.overwrite_ens_link != True:
+            logging.error("A smart Contract already deployed on this domain and change_ens_link is not True.")
+            exit("Stopping process.")
 
     def _compile_contract(self):
         '''
         Compiles smart contract, creates bytecode and abi
         '''
         # loading contract file data
-        with open(tools.get_contract_path()) as source_file:
+        with open(tools.get_contr_path()) as source_file:
             source_raw = source_file.read()
 
         # loading configuration data
@@ -84,7 +84,7 @@ class ContractDeployer(object):
 
     def _deploy(self):
         '''
-        Signes raw transaction and deploys it on the blockchain
+        Signes raw transaction and deploys contract on the blockchain
         '''
         # building raw transaction
         contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
@@ -94,13 +94,13 @@ class ContractDeployer(object):
             'gas': estimated_gas*2
         })
 
-        # signing & sending a signed transaction, saving transaction hash
-        signed = signer.sign_transaction(self.parsed_config, construct_txn)
+        # signing and sending transaction
+        signed = signer.sign_transaction(self.app_config, construct_txn)
         logging.info("Transaction pending...")
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
 
-        # saving contract data
+        # save contract data
         with open(tools.get_contr_info_path(), "r") as f:
             raw = f.read()
             contr_info = json.loads(raw)
@@ -117,44 +117,40 @@ class ContractDeployer(object):
 
     def _update_ens_content(self):
         '''
-        Starts ens updates
+        Handles ENS entry updates
         '''
-        if self.parsed_config.chain == "ethereum_ropsten" or self.parsed_config.chain == "ethereum_mainnet":
+        try:
             self._assign_ens()
+        except:
+            logging.error("ENS update failed! Please check conf.ini inputs.")
+            exit()
 
     def _assign_ens(self):
+        '''
+        Updates ENS entries
+        '''
         # prepare domain
         ens_domain = self._ens_name
         node = namehash(ens_domain)
 
         # connect to registry and resolver
-        if self.parsed_config.chain == "ethereum_ropsten":
-            ens_registry = ContractConnection("ropsten_ens_registry", self.parsed_config)
-            ens_resolver = ContractConnection("ropsten_ens_resolver", self.parsed_config)
-            resolver_address = "0x42D63ae25990889E35F215bC95884039Ba354115"
-
-        # this needs to be added to contr_info.json! Check mainnet resolver_address!
-        elif self.parsed_config.chain == "ethereum_mainnet":
-            ens_registry = ContractConnection("mainnet_ens_registry", self.parsed_config)
-            ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
-            resolver_address = "0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO"
-
-            # temporary – due to new registry contract
-            # registry_address = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+        ens_registry = ContractConnection("ens_registry", self.app_config)
+        ens_resolver = ContractConnection("ens_resolver", self.app_config)
 
         # set resolver
+        resolver_address = ContractConnection._get_ens_address(self.app_config.chain, "ens_resolver")
         ens_registry.functions.transact("setResolver", node, resolver_address)
-        ens_registry.functions.transact("resolver", node)
 
         # set address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", node, self.contr_address)
         ens_resolver.functions.transact("setName", node, ens_domain)
 
+        # get data for output
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
 
-        logging.info("Set contract %s to name %s.", addr, name)
+        logging.info("Set contract with address %s to name %s.", addr, name)
 
 
 if __name__ == '__main__':
