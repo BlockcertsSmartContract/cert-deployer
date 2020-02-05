@@ -38,7 +38,7 @@ class ContractDeployer(object):
 
     def do_deploy(self):
         '''
-        Starts the deployment process step-by-step
+        Guides the deployment process step-by-step
         '''
         self._security_check()
         self._compile_contract()
@@ -122,7 +122,7 @@ class ContractDeployer(object):
         try:
             self._assign_ens()
         except:
-            logging.error("ENS update failed! Please check conf.ini inputs.")
+            logging.error("ENS update failed! Please check conf.ini inputs!")
             exit()
 
     def _assign_ens(self):

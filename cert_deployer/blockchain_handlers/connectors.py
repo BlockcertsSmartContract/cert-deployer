@@ -54,6 +54,7 @@ class ContractConnection(object):
         Returns contract address and abi
         '''
         address = self._get_address()
+        address = self.w3.toChecksumAddress(address)
         abi = self._get_abi()
         return self.w3.eth.contract(address=address, abi=abi)
 
@@ -110,7 +111,7 @@ class ContractConnection(object):
             Sends a signed transaction on the blockchain and waits for a response
             '''
             # just temporal solution to avoid error
-            estimated_gas = 2000000
+            estimated_gas = 4000000
 
             # # gas estimation
             # estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
