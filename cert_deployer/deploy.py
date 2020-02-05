@@ -6,7 +6,7 @@ import config
 
 from solc import compile_standard
 from blockchain_handlers.namehash import namehash
-from blockchain_handlers.connections import MakeW3, ContractConnection
+from blockchain_handlers.connectors import MakeW3, ContractConnection
 import blockchain_handlers.signer as signer
 import blockchain_handlers.path_tools as tools
 
@@ -16,14 +16,15 @@ class ContractDeployer(object):
     '''
     def __init__(self):
         '''
-        Defines blockchain, initializes ethereum wallet, calls out compilation and deployment functions
+        Defines blockchain, initializes ethereum wallet, calls out compilation
+        and deployment functions
         '''
         self.parsed_config = config.get_config()
-        self.ens_name = self.parsed_config.ens_name
         w3Factory = MakeW3(self.parsed_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
         self._pubkey = self.parsed_config.deploying_address
+        self._ens_name = self.parsed_config.ens_name
         self.check_balance()
 
     def check_balance(self):
@@ -31,7 +32,8 @@ class ContractDeployer(object):
         gas_price = self._w3.eth.gasPrice
         gas_balance = self._w3.eth.getBalance(self._pubkey)
         if gas_balance < gas_limit*gas_price:
-            exit('Your gas balance is not sufficient for performing all transactions.')
+            logging.error("Your gas balance is not sufficient for performing all transactions.")
+            exit()
 
     def do_deploy(self):
         '''
@@ -42,14 +44,13 @@ class ContractDeployer(object):
         elif self.parsed_config.chain == "ethereum_mainnet":
             ens_resolver = ContractConnection("mainnet_ens_resolver", self.parsed_config)
 
-        ens_domain = self.parsed_config.ens_name
-        node = namehash(ens_domain)
+        node = namehash(self._ens_name)
 
         # check if ens address link should be changed intensionally
         temp = ens_resolver.functions.call("addr", node)
         if temp != "0x0000000000000000000000000000000000000000" and self.parsed_config.overwrite_ens_link != True:
             logging.error("Smart Contract already deployed on this domain and change_ens_link is not True.")
-            exit('Stopping process.')
+            exit("Stopping process.")
 
         self._compile_contract()
         self._deploy()
@@ -85,23 +86,19 @@ class ContractDeployer(object):
         '''
         Signes raw transaction and deploys it on the blockchain
         '''
-        contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
-
-        # defining blockchain & public key of the ethereum wallet
-        acct_addr = self._pubkey
-
         # building raw transaction
+        contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
         estimated_gas = contract.constructor().estimateGas()
         construct_txn = contract.constructor().buildTransaction({
-            'nonce': self._w3.eth.getTransactionCount(acct_addr),
+            'nonce': self._w3.eth.getTransactionCount(self._pubkey),
             'gas': estimated_gas*2
         })
 
         # signing & sending a signed transaction, saving transaction hash
         signed = signer.sign_transaction(self.parsed_config, construct_txn)
+        logging.info("Transaction pending...")
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
-        logging.info('Gas used: %s', tx_receipt.gasUsed)
 
         # saving contract data
         with open(tools.get_contr_info_path(), "r") as f:
@@ -116,7 +113,7 @@ class ContractDeployer(object):
             json.dump(contr_info, f)
 
         # print transaction hash
-        logging.info("deployed contr %s", self.contr_address)
+        logging.info("Deployed the contract with hash: %s, and used the following amount of gas: %s.", self.contr_address, tx_receipt.gasUsed)
 
     def _update_ens_content(self):
         '''
@@ -127,7 +124,7 @@ class ContractDeployer(object):
 
     def _assign_ens(self):
         # prepare domain
-        ens_domain = self.parsed_config.ens_name
+        ens_domain = self._ens_name
         node = namehash(ens_domain)
 
         # connect to registry and resolver
@@ -157,7 +154,7 @@ class ContractDeployer(object):
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
 
-        logging.info('set contr %s to name %s', addr, name)
+        logging.info("Set contract %s to name %s.", addr, name)
 
 
 if __name__ == '__main__':
