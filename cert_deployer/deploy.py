@@ -122,11 +122,6 @@ class ContractDeployer(object):
         Handles ENS entry updates
         '''
         self._assign_ens()
-        # try:
-            # self._assign_ens()
-        # except:
-            # logging.error("ENS update failed! Please check your config file.")
-            # exit()
 
     def _assign_ens(self):
         '''
