@@ -43,7 +43,7 @@ class ContractDeployer(object):
         self._security_check()
         self._compile_contract()
         self._deploy()
-        self._update_ens_content()
+        self._assign_ens()
 
     def _security_check(self):
         '''
@@ -116,12 +116,6 @@ class ContractDeployer(object):
 
         # print transaction hash
         logging.info("Deployed the contract at address %s, and used %s gas.", self.contr_address, tx_receipt.gasUsed)
-
-    def _update_ens_content(self):
-        '''
-        Handles ENS entry updates
-        '''
-        self._assign_ens()
 
     def _assign_ens(self):
         '''
