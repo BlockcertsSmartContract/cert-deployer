@@ -63,7 +63,7 @@ class ContractConnection(object):
         Returns smart contract abi stored in data directory
         """
         directory = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(directory, f"data/{self.current_chain}/{self.contract_name}_abi.json")
+        path = os.path.join(directory, f"data/{self.contract_name}_abi.json")
 
         with open(path, "r") as f:
             raw = f.read()
