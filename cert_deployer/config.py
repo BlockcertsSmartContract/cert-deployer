@@ -50,9 +50,9 @@ def get_config():
                         'documentation to ensure this is what you want, since this is less secure')
 
     if parsed_config.chain == "ethereum_mainnet" or parsed_config.chain == "ethereum_ropsten":
-        logging.info('This run will try to issue on the %s chain', parsed_config.chain)
+        logging.info('This will try to deploy a smart contract on the %s chain, which might take a few minutes.', parsed_config.chain)
     else:
-        logging.error('Unknown chain. Please correct conf.ini')
+        logging.error('Unknown chain. Please check your config file')
         exit()
 
     global CONFIG

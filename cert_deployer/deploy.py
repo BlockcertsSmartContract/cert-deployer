@@ -55,7 +55,7 @@ class ContractDeployer(object):
         temp = ens_resolver.functions.call("addr", node)
 
         # check if ens address is already linked to a contract
-        if temp != "0x0000000000000000000000000000000000000000" and self.app_config.overwrite_ens_link != True:
+        if temp != "0x0000000000000000000000000000000000000000" and self.app_config.overwrite_ens_link is not True:
             logging.error("A smart Contract already deployed on this domain and change_ens_link is not True.")
             exit("Stopping process.")
 
@@ -81,6 +81,7 @@ class ContractDeployer(object):
         self.abi = json.loads(compiled_sol[
                                   'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])[
             'output']['abi']
+        logging.info("Succesfully compiled contract")
 
     def _deploy(self):
         '''
@@ -96,7 +97,8 @@ class ContractDeployer(object):
 
         # signing and sending transaction
         signed = signer.sign_transaction(self.app_config, construct_txn)
-        logging.info("Transaction pending...")
+        logging.info("Deployment pending...")
+        # try:
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
 
@@ -113,17 +115,18 @@ class ContractDeployer(object):
             json.dump(contr_info, f)
 
         # print transaction hash
-        logging.info("Deployed the contract with hash: %s, and used the following amount of gas: %s.", self.contr_address, tx_receipt.gasUsed)
+        logging.info("Deployed the contract at address %s, and used %s gas.", self.contr_address, tx_receipt.gasUsed)
 
     def _update_ens_content(self):
         '''
         Handles ENS entry updates
         '''
-        try:
-            self._assign_ens()
-        except:
-            logging.error("ENS update failed! Please check conf.ini inputs!")
-            exit()
+        self._assign_ens()
+        # try:
+            # self._assign_ens()
+        # except:
+            # logging.error("ENS update failed! Please check your config file.")
+            # exit()
 
     def _assign_ens(self):
         '''
@@ -139,6 +142,7 @@ class ContractDeployer(object):
 
         # set resolver
         resolver_address = ContractConnection._get_ens_address(self.app_config.chain, "ens_resolver")
+
         ens_registry.functions.transact("setResolver", node, resolver_address)
 
         # set address
