@@ -40,8 +40,8 @@ def add_arguments(p):
 def get_config():
 
     configure_logger()
-    p = configargparse.getArgumentParser(default_config_files=[os.path.join(PATH, 'conf_ethtest.ini'),
-                                                                'conf_ethtest.ini'])
+    p = configargparse.getArgumentParser(default_config_files=[os.path.join(PATH, 'conf_eth.ini'),
+                                                                'conf_eth.ini'])
     add_arguments(p)
     parsed_config, _ = p.parse_known_args()
 
