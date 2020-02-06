@@ -136,9 +136,12 @@ class ContractDeployer(object):
         ens_resolver = ContractConnection("ens_resolver", self.app_config)
 
         # set resolver
-        resolver_address = ContractConnection._get_ens_address(self.app_config.chain, "ens_resolver")
-
-        ens_registry.functions.transact("setResolver", node, resolver_address)
+        curr_resolver = ens_registry.functions.transact("resolver", node, resolver_address)
+        if curr_resolver is not "0x0000000000000000000000000000000000000000":
+            resolver_address = ContractConnection._get_ens_address(self.app_config.chain, "ens_resolver")
+            ens_registry.functions.transact("setResolver", node, resolver_address)
+        else:
+            logging.info("Resolver already set for %s.", ens_domain)
 
         # set address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
