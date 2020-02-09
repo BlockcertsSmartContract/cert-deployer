@@ -77,7 +77,7 @@ class ContractConnection(object):
         '''
         return ENS_CONTRACTS[self.current_chain][self.contract_name]
 
-    def _get_ens_address(chain, contract_name):
+    def get_ens_address(chain, contract_name):
         '''
         Returns transaction address
         '''
