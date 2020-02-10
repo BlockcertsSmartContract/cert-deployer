@@ -1,11 +1,12 @@
 # cert-deployer
 
-This project deploys smart contracts to the ethereum blockchain enabling the
+This project deploys smart contracts to the Ethereum blockchain enabling the
 cert-issuer to modify a certificates' or certificate batches' status respectively,
 i.e. to issue or revoke, and the cert-verifier to get that status in order to verify
 its validity.
 
-Required forked repositories of the original cert-issuer and cert-verifier are linked below.
+The related forked repositories of the original cert-issuer and cert-verifier are linked
+below.
 
 https://github.com/flamestro/cert-issuer
 
@@ -13,26 +14,23 @@ https://github.com/flamestro/cert-verifier
 
 ## How deploying smart contract works
 
-Potential issuers find our suggested sample contract in the data directory in the
-repository which gets first compiled from source and deployed afterwards. This
-contracts is, again, just a suggestion and can of course be modified without limiting
-the codes functionality – adequate modifications implied and some adjustments of
-the cert-issuer and verifier may be required as well.
+Potential issuers find our suggested sample contract in the data directory which
+gets, first, compiled from source and, second, deployed afterwards. This contracts is, again,
+just a suggestion and can of course be modified without limiting the codes functionality
+– adequate modifications implied (note that some adjustments of the cert-issuer and verifier
+ may be required as a consequence).
 
 After deploying the contract, the cert-deployer links the contract to the potential
-issuer's ens domain – more specific adds the contracts address to address field
-within the ens entry. This input, can of course be changed when deploying another
-contract of course, but note that addresses can only be overwritten. A certain ens
-domain can only point to one f.e. contract.
+issuer's ENS domain – more specific sets the contract's address as the ENS entry's
+address attribute. This input, can, of course, be changed when deploying another
+contract, but please note that addresses can only be overwritten, since the ENS
+domain can point to only one (contract) address.
 
-Please make sure you enter the right inputs as i.a. connection data names and paths
-respectively.
-
-## Setting the deployer up
+## Setting the cert-deployer up
 
 The cert-deployer requires some preparation before it can be used. This preparation
-includes certain administrative as well as technical steps to be fulfilled and are
-explained more in detail below.
+includes certain administrative as well as technical steps to be fulfilled being
+explained a bit more in detail below.
 
 ### Prerequisites
 
@@ -42,16 +40,18 @@ activating the virtual environment, please execute:
 `$ python setup.py install`
 
 All necessary dependencies will be installed afterwards. Further required are also
-the setups of an ethereum wallet (the wallet has to be registered in the ethereum
-chain that being intended to be used later) and an according ens domain. Our
-recommendation for the wallet creation and management is metamask (https://metamask.io)
-which used with the chrome extension the optimum combination for an efficient
-ens name registration at https://app.ens.domains/.
+the setups of an Ethereum wallet (the wallet has to be registered in the Ethereum
+chain that being intended to be used later) and an according ENS domain.
+
+Our recommended tool for creating and managing the wallet is metamask (https://metamask.io)
+which, used as its chrome extension, is also an at least very viable option for an
+efficient ENS name registration at https://app.ens.domains/. Please make sure that
+your wallet has always access to a sufficient amount of ether.
 
 ### Configurating cert-deployer
 
-The last step do be executed is completing the configuration within the conf_eth.ini
-file and, if desired, adjusting the smart contract.
+The last step to be executed is completing the configuration inputs (optionally:
+adjusting the smart contract). The conf_eth.ini file includes the following parameters:
 
 `deploying_address = <Your Ethereum address>
 
@@ -65,49 +65,53 @@ usb_name= </Volumes/path-to-usb/>
 key_file= <file-you-saved-pk-to>`
 
 Notes:
-1. The potential issuer's ethereum address corresponds to the respective wallet
-address.
-1. Potential issuers can set their own infura nodes up or use publicly shared ones.
+1. The ethereum address corresponds to the respective wallet address.
+1. Potential issuers can set up their own infura nodes or use publicly shared ones.
 1. If a smart contract shall be deployed and used by an already to another contract
-linked ens name, the `overwrite_ens_link` has to be set to `True`.
+linked ENS name, the `overwrite_ens_link` has to be set to `True` in order to prevent
+accidental overwriting.
 1. The cert-deployer uses a separate class to access the wallet's private key which
-navigates to the path provided.
+should be stored under the path provided. Ideally, that location is not permanently
+accessible (e.g. USB stick) improving security.
 
 ### Long story short
 
-Summarizing:
+Execute these instructions step-by-step:
 1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
 1. install dependencies within virtualenv `$ python setup.py install`
-1. add required information incl. paths and connection data in conf_eth.ini
+1. add required information incl. paths and connection data into conf_eth.ini
 1. deploy smart contract `$ python deploy.py`
+
+... install the forked cert-issuer (and cert-verifier-) repository for benefitting
+from the whole framework (links above).
 
 ## Why using cert-deployer
 
-While it is possible to deploy batches to the ethereum chain separately, it is
-impossible to modify related data as e.g. attributes, since data, once deployed
-to the blockchain, is immutable by nature. As certificates' states could be
-revoked eventually after the deployment, BlockCerts v2 has addressed this issue
-with external server provided revocation lists. Unfortunately, the cert-verifier's
-functionality is determined by over either temporal or long-term offline times
-these servers, due to its inability distinguishing between valid and invalid
-certificates – thus destroying especially the availability guarantee that naturally
-come with the use of blockchains.
+While it is possible to deploy batches to the Ethereum blockchain separately, it
+is impossible to modify associated information as e.g. attributes, since the data,
+once deployed,is immutable by nature. As certificates could be revoked eventually,
+BlockCerts v2 has addressed this issue with external server provided revocation lists.
+Unfortunately, the cert-verifier's functionality is, as a consequence, determined
+by either temporal or permanent offline times of these servers. Due to its resulting
+inability distinguishing between valid and invalid certificates this design destroys
+especially the processes availability guarantee naturally coming with the use of
+blockchains.
 
 In order to restore i.a. the availability guarantee over the entire certificates'
-lifetime of we provide an extension of the existing Blockcerts implementation that
-issues and revokes certificates using a smart contracts mapping ability thus making
+lifetime, we provide an extension of the existing Blockcerts implementation that
+issues and revokes certificates using a smart contracts mapping ability, thus making
 a certificates' (or batches') status editable after being deployed (excl. for the
 issuer).
 
 Another similar issue is the original identity management including the publication
-of the issuer's identity (public key) on an external server as well. This is mostly
-disadvantageous in case of permanent server shutdown requiring the public key to
-have become public knowledge in the meantime. Otherwise, all future verifications
-of according certificates would become impossible. The usage of the ethereum name
-service constitutes an appropriate option to solve that problem, since the according
-assertion of a public key and ens domain could be e.g. stored within the contract
-itself so that information does not get lost.
+of issuer identities (public keys) on external servers. This is mostly disadvantageous
+in case of a permanent server shutdown requiring the public key to have become public
+knowledge in the meantime. Otherwise, all future verifications of associated certificates
+would become impossible. The usage of the Ethereum name service constitutes an
+efficient option solving that problem, since the according assertion of a public
+key and ENS domain could be e.g. stored within the contract itself so that this
+information does not get lost over time.
 
 In conclusion, using the cert-deployer, paired with the cert-issuer and -verifier
-linked above, restores the natural blockchain guarantees by moving the revocation
+linked above, the natural blockchain guarantees are restored by moving the revocation
 and identity administration to the blockchain – i.e. to a smart contract.
