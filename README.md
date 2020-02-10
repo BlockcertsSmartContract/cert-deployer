@@ -33,7 +33,7 @@ of the issuer's identity (public key) on an external server as well. This is mos
 disadvantageous in case of permanent server shutdown requiring the public key to
 have become public knowledge in the meantime. Otherwise, all future verifications
 of according certificates would become impossible. The usage of the ethereum name
-system constitutes an appropriate option to solve that problem, since the according
+service constitutes an appropriate option to solve that problem, since the according
 assertion of a public key and ens domain could be e.g. stored within the contract
 itself so that information does not get lost.
 
@@ -41,33 +41,39 @@ In conclusion, using the cert-deployer, paired with the cert-issuer and -verifie
 linked above, restores the natural blockchain guarantees by moving the revocation
 and identity administration to the blockchain – i.e. to a smart contract.
 
-
 ## How deploying smart contract works
 
+Potential issuers find our suggested sample contract in the data directory in the
+repository which gets first compiled from source and deployed afterwards. This
+contracts is, again, just a suggestion and can of course be modified without limiting
+the codes functionality – adequate modifications implied and some adjustments of
+the cert-issuer and verifier may be required as well.
 
-# Extending BlockCerts' ethereum backend
-to implement on-chain revocation of certificates and a persistent identity using ENS
+After deploying the contract, the cert-deployer links the contract to the potential
+issuer's ens domain – more specific adds the contracts address to address field
+within the ens entry. This input, can of course be changed when deploying another
+contract of course, but note that addresses can only be overwritten. A certain ens
+domain can only point to one f.e. contract.
 
-## dependencies
-- python3 with web3py
-- ganache
-- (optional) python virtualenv
-- (optional) ipfs daemon
+Please make sure you enter the right inputs as i.a. connection data names and paths
+respectively.
 
-## set up
-1. (optional) To have decentralization of contract info you have to run ipfs daemon locally while using this tool
+## Setting the deployer up
+
+We highly recommend to use the cert-deployer within a virtual environment! After
+activating the virtual environment, please execute:
+
+python setup.py install
+
+All necessary dependencies will be installed afterwards. Further required are also
+the setups of an ethereum wallet (the wallet has to be registered in the ethereum
+chain that being intended to be used later) and an according ens domain.
+
+The last step do be executed is completing the configuration within the conf_eth.ini
+file and, if desired, adjusting the smart contract.
+
+Summarizing:
 1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
-1. install dependencies (see: `requirements.txt`)
-1. in `config.py`:
-  1. add url and keypair for desired ethereum network
-  1. set `current_chain` to reflect your changes
-1. (optional) start ganache
-1. deploy smart contract `$ deploy.py`
-
-## arguments
-- run `python_tools/issuer.py -h` to get descriptions
-
-## style guides
-- PEP8
-- tests should be test_whenSomeThing_thenSomeThing
-- variables and functions should be all lowercase
+1. install dependencies within virtualenv `$ python setup.py install`
+1. add required information incl. paths and connection data in conf_eth.ini
+1. deploy smart contract `$ python deploy.py`

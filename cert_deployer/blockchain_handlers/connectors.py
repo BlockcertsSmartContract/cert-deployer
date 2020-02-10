@@ -110,11 +110,8 @@ class ContractConnection(object):
             '''
             Sends a signed transaction on the blockchain and waits for a response
             '''
-            # # just temporary solution to avoid error
-            # estimated_gas = 4000000
-
             # gas estimation
-            estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
+            estimated_gas = 300000
             logging.info('Estimated gas for %s: %s', str(method),str(estimated_gas))
             tx_options = self._get_tx_options(estimated_gas)
 
