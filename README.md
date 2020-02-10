@@ -5,10 +5,10 @@ cert-issuer to modify a certificates' or certificate batches' status respectivel
 i.e. to issue or revoke, and the cert-verifier to get that status in order to verify
 its validity.
 
-Required forked repositories of the original cert-isser and cert-verifier are linked below.
+Required forked repositories of the original cert-issuer and cert-verifier are linked below.
 
-https://github.com/flamestro/cert-issuer
-https://github.com/flamestro/cert-verifier
+`https://github.com/flamestro/cert-issuer`
+`https://github.com/flamestro/cert-verifier`
 
 ## Why using cert-deployer
 
