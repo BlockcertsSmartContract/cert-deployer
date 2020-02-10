@@ -63,7 +63,7 @@ respectively.
 We highly recommend to use the cert-deployer within a virtual environment! After
 activating the virtual environment, please execute:
 
-python setup.py install
+`$ python setup.py install`
 
 All necessary dependencies will be installed afterwards. Further required are also
 the setups of an ethereum wallet (the wallet has to be registered in the ethereum
@@ -73,7 +73,7 @@ The last step do be executed is completing the configuration within the conf_eth
 file and, if desired, adjusting the smart contract.
 
 Summarizing:
-1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
+1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
 1. install dependencies within virtualenv `$ python setup.py install`
 1. add required information incl. paths and connection data in conf_eth.ini
 1. deploy smart contract `$ python deploy.py`
