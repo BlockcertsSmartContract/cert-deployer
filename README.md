@@ -92,12 +92,12 @@ from the whole framework (links above).
 While it is possible to deploy batches to the Ethereum blockchain separately, it
 is impossible to modify associated information as e.g. attributes, since the data,
 once deployed,is immutable by nature. As certificates could be revoked eventually,
-BlockCerts v2 has addressed this issue with external server provided revocation lists.
-Unfortunately, the cert-verifier's functionality is, as a consequence, determined
-by either temporal or permanent offline times of these servers. Due to its resulting
-inability distinguishing between valid and invalid certificates this design destroys
-especially the processes availability guarantee naturally coming with the use of
-blockchains.
+[BlockCerts](https://github.com/blockchain-certificates) has addressed this issue
+with external server provided revocation lists. Unfortunately, the cert-verifier's
+functionality is, as a consequence, limited by either temporal or permanent offline
+times of these servers. Due to its resulting inability distinguishing between valid
+and invalid certificates this design destroys especially the processes availability
+guarantee naturally coming with the use of blockchains.
 
 In order to restore i.a. the availability guarantee over the entire certificates'
 lifetime, we provide an extension of the existing Blockcerts implementation that
