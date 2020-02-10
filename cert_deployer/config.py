@@ -31,11 +31,6 @@ def add_arguments(p):
     p.add_argument('--overwrite_ens_link', default=False, type=bool, help='Should the address link be changed?', env_var='CHANGE_ENS_LINK')
     p.add_argument('--chain', required=True, default='ethereum_ropsten',
                    help=('Which chain to use. Default is ethereum_ropsten. Other option is ethereum_mainnet'), env_var='CHAIN')
-    p.add_argument('--safe_mode', dest='safe_mode', default=True, action='store_true',
-                   help='Used to make sure your private key is not plugged in with the wifi.', env_var='SAFE_MODE')
-    p.add_argument('--no_safe_mode', dest='safe_mode', default=False, action='store_false',
-                   help='Turns off safe mode. Only change this option for testing or unit testing.', env_var='NO_SAFE_MODE')
-
 
 def get_config():
 
@@ -44,10 +39,6 @@ def get_config():
                                                                 'conf_eth.ini'])
     add_arguments(p)
     parsed_config, _ = p.parse_known_args()
-
-    if not parsed_config.safe_mode:
-        logging.warning('Your app is configured to skip the wifi check when the USB is plugged in. Read the '
-                        'documentation to ensure this is what you want, since this is less secure')
 
     if parsed_config.chain == "ethereum_mainnet" or parsed_config.chain == "ethereum_ropsten":
         logging.info('This will try to deploy a smart contract on the %s chain, which might take a few minutes.', parsed_config.chain)

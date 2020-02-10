@@ -7,9 +7,79 @@ its validity.
 
 Required forked repositories of the original cert-issuer and cert-verifier are linked below.
 
-`https://github.com/flamestro/cert-issuer`
+https://github.com/flamestro/cert-issuer
 
-`https://github.com/flamestro/cert-verifier`
+https://github.com/flamestro/cert-verifier
+
+## How deploying smart contract works
+
+Potential issuers find our suggested sample contract in the data directory in the
+repository which gets first compiled from source and deployed afterwards. This
+contracts is, again, just a suggestion and can of course be modified without limiting
+the codes functionality – adequate modifications implied and some adjustments of
+the cert-issuer and verifier may be required as well.
+
+After deploying the contract, the cert-deployer links the contract to the potential
+issuer's ens domain – more specific adds the contracts address to address field
+within the ens entry. This input, can of course be changed when deploying another
+contract of course, but note that addresses can only be overwritten. A certain ens
+domain can only point to one f.e. contract.
+
+Please make sure you enter the right inputs as i.a. connection data names and paths
+respectively.
+
+## Setting the deployer up
+
+The cert-deployer requires some preparation before it can be used. This preparation
+includes certain administrative as well as technical steps to be fulfilled and are
+explained more in detail below.
+
+### Prerequisites
+
+We highly recommend to use the cert-deployer within a virtual environment! After
+activating the virtual environment, please execute:
+
+`$ python setup.py install`
+
+All necessary dependencies will be installed afterwards. Further required are also
+the setups of an ethereum wallet (the wallet has to be registered in the ethereum
+chain that being intended to be used later) and an according ens domain. Our
+recommendation for the wallet creation and management is metamask (https://metamask.io)
+which used with the chrome extension the optimum combination for an efficient
+ens name registration at https://app.ens.domains/.
+
+### Configurating cert-deployer
+
+The last step do be executed is completing the configuration within the conf_eth.ini
+file and, if desired, adjusting the smart contract.
+
+`deploying_address = <Your Ethereum address>
+
+chain = <ethereum_ropsten|ethereum_mainnet>
+node_url = <ethereum web3 public node url (e.g. infura)>
+
+ens_name = <Your ENS name registered with your ethereum address>
+overwrite_ens_link = <Do you want to overwrite a present link to a smart contract? True/False>
+
+usb_name= </Volumes/path-to-usb/>
+key_file= <file-you-saved-pk-to>`
+
+Notes:
+1. The potential issuer's ethereum address corresponds to the respective wallet
+address.
+1. Potential issuers can set their own infura nodes up or use publicly shared ones.
+1. If a smart contract shall be deployed and used by an already to another contract
+linked ens name, the `overwrite_ens_link` has to be set to `True`.
+1. The cert-deployer uses a separate class to access the wallet's private key which
+navigates to the path provided.
+
+### Long story short
+
+Summarizing:
+1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
+1. install dependencies within virtualenv `$ python setup.py install`
+1. add required information incl. paths and connection data in conf_eth.ini
+1. deploy smart contract `$ python deploy.py`
 
 ## Why using cert-deployer
 
@@ -41,40 +111,3 @@ itself so that information does not get lost.
 In conclusion, using the cert-deployer, paired with the cert-issuer and -verifier
 linked above, restores the natural blockchain guarantees by moving the revocation
 and identity administration to the blockchain – i.e. to a smart contract.
-
-## How deploying smart contract works
-
-Potential issuers find our suggested sample contract in the data directory in the
-repository which gets first compiled from source and deployed afterwards. This
-contracts is, again, just a suggestion and can of course be modified without limiting
-the codes functionality – adequate modifications implied and some adjustments of
-the cert-issuer and verifier may be required as well.
-
-After deploying the contract, the cert-deployer links the contract to the potential
-issuer's ens domain – more specific adds the contracts address to address field
-within the ens entry. This input, can of course be changed when deploying another
-contract of course, but note that addresses can only be overwritten. A certain ens
-domain can only point to one f.e. contract.
-
-Please make sure you enter the right inputs as i.a. connection data names and paths
-respectively.
-
-## Setting the deployer up
-
-We highly recommend to use the cert-deployer within a virtual environment! After
-activating the virtual environment, please execute:
-
-`$ python setup.py install`
-
-All necessary dependencies will be installed afterwards. Further required are also
-the setups of an ethereum wallet (the wallet has to be registered in the ethereum
-chain that being intended to be used later) and an according ens domain.
-
-The last step do be executed is completing the configuration within the conf_eth.ini
-file and, if desired, adjusting the smart contract.
-
-Summarizing:
-1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
-1. install dependencies within virtualenv `$ python setup.py install`
-1. add required information incl. paths and connection data in conf_eth.ini
-1. deploy smart contract `$ python deploy.py`
