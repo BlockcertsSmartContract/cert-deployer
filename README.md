@@ -8,6 +8,7 @@ its validity.
 Required forked repositories of the original cert-issuer and cert-verifier are linked below.
 
 `https://github.com/flamestro/cert-issuer`
+
 `https://github.com/flamestro/cert-verifier`
 
 ## Why using cert-deployer
