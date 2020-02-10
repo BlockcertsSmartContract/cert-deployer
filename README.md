@@ -46,14 +46,15 @@ chain that being intended to be used later) and an according ENS domain.
 Our recommended tool for creating and managing the wallet is metamask (https://metamask.io)
 which, used as its chrome extension, is also an at least very viable option for an
 efficient ENS name registration at https://app.ens.domains/. Please make sure that
-your wallet has always access to a sufficient amount of ether.
+your wallet has access to a sufficient amount of ether any time.
 
 ### Configurating cert-deployer
 
-The last step to be executed is completing the configuration inputs (optionally:
+The last step to be executed is completing the configuration inputs (optional:
 adjusting the smart contract). The conf_eth.ini file includes the following parameters:
 
-`deploying_address = <Your Ethereum address>
+```
+deploying_address = <Your Ethereum address>
 
 chain = <ethereum_ropsten|ethereum_mainnet>
 node_url = <ethereum web3 public node url (e.g. infura)>
@@ -62,7 +63,8 @@ ens_name = <Your ENS name registered with your ethereum address>
 overwrite_ens_link = <Do you want to overwrite a present link to a smart contract? True/False>
 
 usb_name= </Volumes/path-to-usb/>
-key_file= <file-you-saved-pk-to>`
+key_file= <file-you-saved-pk-to>
+```
 
 Notes:
 1. The ethereum address corresponds to the respective wallet address.
