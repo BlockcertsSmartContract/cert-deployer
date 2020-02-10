@@ -43,9 +43,9 @@ All necessary dependencies will be installed afterwards. Further required are al
 the setups of an Ethereum wallet (the wallet has to be registered in the Ethereum
 chain that being intended to be used later) and an according ENS domain.
 
-Our recommended tool for creating and managing the wallet is metamask (https://metamask.io)
+Our recommended tool for creating and managing the wallet is [Metamask](https://metamask.io)
 which, used as its chrome extension, is also an at least very viable option for an
-efficient ENS name registration at https://app.ens.domains/. Please make sure that
+efficient ENS name registration using the [web application](https://app.ens.domains/). Please make sure that
 your wallet has access to a sufficient amount of ether any time.
 
 ### Configurating cert-deployer
