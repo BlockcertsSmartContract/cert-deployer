@@ -10,11 +10,11 @@ import blockchain_handlers.signer as signer
 
 ENS_CONTRACTS = {
     'ethereum_mainnet': {
-        'ens_registry': '0x314159265dd8dbb310642f98f50c066173c1259b',
-        'ens_resolver': '0x226159d592e2b063810a10ebf6dcbada94ed68b8ODO'
+        'ens_registry': '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+        'ens_resolver': ''
         },
     'ethereum_ropsten': {
-        'ens_registry': '0x112234455c3a32fd11230c42e7bccd4a84e02010',
+        'ens_registry': '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
         'ens_resolver': '0x42D63ae25990889E35F215bC95884039Ba354115'
         }
     }

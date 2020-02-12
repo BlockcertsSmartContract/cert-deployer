@@ -8,7 +8,7 @@ def get_root_dir():
     return root_dir
 
 def get_contr_path():
-    return get_root_dir() + "/contracts/BlockCertsOnchaining.sol"
+    return get_root_dir() + "/contracts/CertificateStore.sol"
 
 def get_contr_info_path():
     return get_root_dir() + "/data/contr_info.json"

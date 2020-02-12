@@ -72,15 +72,18 @@ class ContractDeployer(object):
             raw_opt = opt_file.read()
             opt = json.loads(raw_opt)
 
-        opt["sources"]["BlockCertsOnchaining.sol"]["content"] = source_raw
+        opt["sources"]["CertificateStore.sol"]["content"] = source_raw
         compiled_sol = compile_standard(opt)
 
         # defining bytecode and abi
         self.bytecode = compiled_sol[
-            'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['evm']['bytecode']['object']
+            'contracts']['CertificateStore.sol']['CertificateStore']['evm']['bytecode']['object']
         self.abi = json.loads(compiled_sol[
-                                  'contracts']['BlockCertsOnchaining.sol']['BlockCertsOnchaining']['metadata'])[
-            'output']['abi']
+                                  'contracts']['CertificateStore.sol']['CertificateStore']['metadata'])['output']['abi']
+
+        with open(tools.get_contr_info_path(), "w+") as f:
+            json.dump(self.abi, f)
+
         logging.info("Succesfully compiled contract")
 
     def _deploy(self):
@@ -101,19 +104,7 @@ class ContractDeployer(object):
         # try:
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
-
-        # save contract data
-        with open(tools.get_contr_info_path(), "r") as f:
-            raw = f.read()
-            contr_info = json.loads(raw)
-
         self.contr_address = tx_receipt.contractAddress
-        data = {'abi': self.abi, 'address': self.contr_address}
-        contr_info["blockcertsonchaining"] = data
-
-        with open(tools.get_contr_info_path(), "w+") as f:
-            json.dump(contr_info, f)
-
         # print transaction hash
         logging.info("Deployed the contract at address %s, and used %s gas.", self.contr_address, tx_receipt.gasUsed)
 
@@ -145,6 +136,9 @@ class ContractDeployer(object):
         # get data for output
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
+
+        # not working yet
+        # ens_resolver.functions.transact("setABI", node, 0, json.dumps(self.abi).encode('utf-8'))
 
         logging.info("Set contract with address %s to name %s.", addr, name)
 

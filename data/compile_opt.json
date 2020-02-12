@@ -1,8 +1,8 @@
 {
 	"language": "Solidity",
 	"sources": {
-		"BlockCertsOnchaining.sol": {
-			"content": ""
+		"CertificateStore.sol": {
+			"content": "<added automatically>"
 		}
 	},
 	"settings": {
