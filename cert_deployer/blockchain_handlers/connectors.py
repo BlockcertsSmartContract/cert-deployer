@@ -103,19 +103,17 @@ class ContractConnection(object):
             '''
             return {
                 'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-                'gasPrice': 20000000000,
-                'gas': estimated_gas*2
+                'gasPrice': self.w3.eth.gasPrice,
+                'gas': estimated_gas
             }
 
         def transact(self, method, *argv):
             '''
             Sends a signed transaction on the blockchain and waits for a response
             '''
-            # just temporary solution to avoid error
-            estimated_gas = 4000000
+            # gas estimation
+            estimated_gas = self._contract_obj.functions[method](*argv).estimateGas() * 2
 
-            # # gas estimation
-            # estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
             # logging.info('Estimated gas for %s: %s', str(method),str(estimated_gas))
             tx_options = self._get_tx_options(estimated_gas)
 

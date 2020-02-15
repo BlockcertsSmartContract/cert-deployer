@@ -25,20 +25,21 @@ class ContractDeployer(object):
         self._acct = w3Factory.account
         self._pubkey = self.app_config.deploying_address
         self._ens_name = self.app_config.ens_name
-        self.check_balance()
 
     def check_balance(self):
-        gas_limit = 600000
+        estimated_required_gas = 400000
         gas_price = self._w3.eth.gasPrice
+
         gas_balance = self._w3.eth.getBalance(self._pubkey)
-        if gas_balance < gas_limit*gas_price:
-            logging.error("Your gas balance is not sufficient for performing all transactions.")
+        if gas_balance < estimated_required_gas * gas_price:
+            logging.error("Your account balance is not sufficient to perform all transactions.")
             exit()
 
     def do_deploy(self):
         '''
         Guides the deployment process step-by-step
         '''
+        self.check_balance()
         self._security_check()
         self._compile_contract()
         self._deploy()
