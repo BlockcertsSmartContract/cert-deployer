@@ -1,11 +1,10 @@
 import json
-import subprocess
-import time
 import logging
 import config
 
 from solc import compile_standard
-from blockchain_handlers.namehash import namehash
+# from blockchain_handlers.namehash import namehash
+from ens import ENS
 from blockchain_handlers.connectors import MakeW3, ContractConnection
 import blockchain_handlers.signer as signer
 import blockchain_handlers.path_tools as tools
@@ -51,7 +50,7 @@ class ContractDeployer(object):
         '''
         # connect to public resolver
         ens_resolver = ContractConnection("ens_resolver", self.app_config)
-        node = namehash(self._ens_name)
+        node = ENS.namehash(self._ens_name)
         temp = ens_resolver.functions.call("addr", node)
 
         # check if ens address is already linked to a contract
@@ -114,7 +113,7 @@ class ContractDeployer(object):
         '''
         # prepare domain
         ens_domain = self._ens_name
-        node = namehash(ens_domain)
+        node = ENS.namehash(ens_domain)
 
         # connect to registry and resolver
         ens_registry = ContractConnection("ens_registry", self.app_config)

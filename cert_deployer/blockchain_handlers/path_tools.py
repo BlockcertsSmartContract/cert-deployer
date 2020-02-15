@@ -11,7 +11,7 @@ def get_contr_path():
     return get_root_dir() + "/contracts/CertificateStore.sol"
 
 def get_contr_info_path():
-    return get_root_dir() + "/data/contr_info.json"
+    return get_root_dir() + "/data/certificate_store_abi.json"
 
 def get_compile_data_path():
     return get_root_dir() + "/data/compile_opt.json"

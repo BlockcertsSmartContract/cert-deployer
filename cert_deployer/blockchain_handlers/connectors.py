@@ -103,6 +103,7 @@ class ContractConnection(object):
             '''
             return {
                 'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
+                'gasPrice': 20000000000,
                 'gas': estimated_gas*2
             }
 
