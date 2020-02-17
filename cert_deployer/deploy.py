@@ -122,7 +122,7 @@ class ContractDeployer(object):
 
         # set resolver
         curr_resolver = ens_registry.functions.call("resolver", node)
-        if curr_resolver != "0x0000000000000000000000000000000000000000":
+        if curr_resolver == "0x0000000000000000000000000000000000000000":
             resolver_address = ContractConnection.get_ens_address(self.app_config.chain, "ens_resolver")
             ens_registry.functions.transact("setResolver", node, resolver_address)
         else:
