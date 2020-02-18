@@ -30,15 +30,15 @@ py-cid==0.3.0             # via content-hash
 py-multibase==1.0.1       # via py-cid
 py-multicodec==0.2.1      # via content-hash, py-cid
 py-multihash==0.2.3       # via content-hash, py-cid
+py-solc==3.2.0
 pycryptodome==3.9.4       # via eth-hash, eth-keyfile
 pyrsistent==0.15.7        # via jsonschema
 pysha3==1.0.2
 python-baseconv==1.2.2    # via py-multibase
-requests-cache==0.5.2     # via solc
-requests==2.22.0          # via ipfshttpclient, requests-cache, solc, web3
+requests==2.22.0          # via ipfshttpclient, web3
 rlp==1.2.0                # via eth-account, eth-rlp
+semantic-version==2.8.4   # via py-solc
 six==1.14.0               # via attrdict, ipfshttpclient, jsonschema, multiaddr, parsimonious, protobuf, py-multibase, py-multicodec, py-multihash, pyrsistent
-solc==0.0.4
 toolz==0.10.0             # via cytoolz
 typing-extensions==3.7.4.1  # via web3
 urllib3==1.25.7           # via requests
