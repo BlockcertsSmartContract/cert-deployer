@@ -9,6 +9,7 @@ to implement on-chain revocation of certificates and a persistent identity using
 
 ## set up
 1. (optional) To have decentralization of contract info you have to run ipfs daemon locally while using this tool
+1. Ensure you have installed [solc](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html)
 1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
 1. install dependencies (see: `requirements.txt`)
 1. in `config.py`:
