@@ -13,16 +13,6 @@ https://github.com/flamestro/cert-issuer
 https://github.com/flamestro/cert-verifier
 
 ## How deploying smart contract works
-## set up
-1. (optional) To have decentralization of contract info you have to run ipfs daemon locally while using this tool
-1. Ensure you have installed [solc](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html)
-1. clone github repo `$ git clone https://github.com/flamestro/BlockCertsOnchainingEth.git`
-1. install dependencies (see: `requirements.txt`)
-1. in `config.py`:
-  1. add url and keypair for desired ethereum network
-  1. set `current_chain` to reflect your changes
-1. (optional) start ganache
-1. deploy smart contract `$ deploy.py`
 
 Potential issuers find our suggested sample contract in the data directory which
 gets, first, compiled from source and, second, deployed afterwards. This contracts is, again,
@@ -58,7 +48,7 @@ which, used as its chrome extension, is also an at least very viable option for 
 efficient ENS name registration using the [web application](https://app.ens.domains/). Please make sure that
 your wallet has access to a sufficient amount of ether any time.
 
-### Configurating cert-deployer
+### Configuring cert-deployer
 
 The last step to be executed is completing the configuration inputs (optional:
 adjusting the smart contract). The conf_eth.ini file includes the following parameters:
@@ -89,6 +79,7 @@ accessible (e.g. USB stick) improving security.
 ### Long story short
 
 Execute these instructions step-by-step:
+1. ensure you have installed [solidity compiler (solc)](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html)
 1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
 1. install dependencies within virtualenv `$ python setup.py install`
 1. add required information incl. paths and connection data into conf_eth.ini
@@ -97,7 +88,7 @@ Execute these instructions step-by-step:
 ... install the forked cert-issuer (and cert-verifier-) repository for benefitting
 from the whole framework (links above).
 
-## Why using cert-deployer
+## Why use cert-deployer
 
 While it is possible to deploy batches to the Ethereum blockchain separately, it
 is impossible to modify associated information as e.g. attributes, since the data,
