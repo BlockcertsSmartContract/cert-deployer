@@ -14,10 +14,10 @@ with open(os.path.join(here, 'README.md')) as fp:
     long_description = fp.read()
 
 setup(
-    name='blockcertsonchaining',
+    name='cert-deployer',
     version='0.0.1',
-    description='BlockChain-based issuing of Education Credentials',
-    author='PAS',
+    description='Deploy smart contracts for BlockCerts\' smart contract backend',
+    author='',
     tests_require=[''],
     url='',
     license='MIT',

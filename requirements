@@ -5,4 +5,4 @@ json5==0.8.5
 content-hash==1.1.1
 ipfshttpclient==0.4.12
 pysha3==1.0.2
-ConfigArgParse==1.0   
+configargparse==1.0   
