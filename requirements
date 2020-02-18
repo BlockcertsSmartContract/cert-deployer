@@ -1,6 +1,6 @@
 # generate list with $ pip-compile requirements
 web3==5.4.0
-solc==3.2.0
+solc==0.0.4
 json5==0.8.5
 content-hash==1.1.1
 ipfshttpclient==0.4.12
