@@ -128,6 +128,9 @@ class ContractDeployer(object):
         else:
             logging.info("Resolver already set for %s.", ens_domain)
 
+        # set ABI
+        ens_resolver.functions.transact("setABI", node, 1, json.dumps(self.abi).encode())
+        print(ens_resolver.functions.call("ABI", node, 1))
         # set address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
         ens_resolver.functions.transact("setAddr", node, self.contr_address)

@@ -1,5 +1,4 @@
 import os
-import uuid
 
 from setuptools import setup, find_packages
 
