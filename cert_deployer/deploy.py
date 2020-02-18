@@ -3,7 +3,6 @@ import logging
 import config
 
 from solc import compile_standard
-# from blockchain_handlers.namehash import namehash
 from ens import ENS
 from blockchain_handlers.connectors import MakeW3, ContractConnection
 import blockchain_handlers.signer as signer
@@ -139,9 +138,6 @@ class ContractDeployer(object):
         # get data for output
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
-
-        # not working yet
-        # ens_resolver.functions.transact("setABI", node, 0, json.dumps(self.abi).encode('utf-8'))
 
         logging.info("Set contract with address %s to name %s.", addr, name)
 
