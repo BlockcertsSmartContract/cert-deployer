@@ -130,7 +130,6 @@ class ContractDeployer(object):
 
         # set ABI
         ens_resolver.functions.transact("setABI", node, 1, json.dumps(self.abi).encode())
-        print(ens_resolver.functions.call("ABI", node, 1))
 
         # set address
         self.contr_address = self._w3.toChecksumAddress(self.contr_address)
