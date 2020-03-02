@@ -26,14 +26,15 @@ class MakeW3(object):
     ethereum blockchain and initializes the account data
     '''
     def __init__(self, app_config):
-        self.current_chain = app_config.chain
         self.url = app_config.node_url
         self.w3 = self._create_w3_obj()
         self.account = app_config.deploying_address
         self.w3.eth.defaultAccount = self.account
 
     def _create_w3_obj(self):
-        '''Instantiates a web3 connection with ethereum node'''
+        '''
+        Instantiates a web3 connection with ethereum node
+        '''
         return Web3(HTTPProvider(self.url))
 
 
@@ -59,9 +60,9 @@ class ContractConnection(object):
         return self.w3.eth.contract(address=address, abi=abi)
 
     def _get_abi(self):
-        """
+        '''
         Returns smart contract abi stored in data directory
-        """
+        '''
         directory = os.path.dirname(os.path.abspath(__file__))
         path = os.path.join(directory, f"data/{self.contract_name}_abi.json")
 
@@ -93,18 +94,15 @@ class ContractConnection(object):
             self.w3Factory = w3Factory
             self.w3 = self.w3Factory.w3
             self._contract_obj = contract_obj
-            current_chain = app_config.chain
-            self.acct = self.w3Factory.account
-            self.acct_addr = app_config.deploying_address
+            self._acct = self.w3Factory.account
 
         def _get_tx_options(self, estimated_gas):
             '''
             Returns raw transaction
             '''
             return {
-                'nonce': self.w3.eth.getTransactionCount(self.acct_addr),
-                'gasPrice': self.w3.eth.gasPrice,
-                'gas': estimated_gas
+                'nonce': self.w3.eth.getTransactionCount(self._acct),
+                'gas': estimated_gas*2
             }
 
         def transact(self, method, *argv):
@@ -112,12 +110,10 @@ class ContractConnection(object):
             Sends a signed transaction on the blockchain and waits for a response
             '''
             # gas estimation
-            estimated_gas = self._contract_obj.functions[method](*argv).estimateGas() * 2
-
-            # logging.info('Estimated gas for %s: %s', str(method),str(estimated_gas))
-            tx_options = self._get_tx_options(estimated_gas)
+            estimated_gas = self._contract_obj.functions[method](*argv).estimateGas()
 
             # preparing transaction
+            tx_options = self._get_tx_options(estimated_gas)
             construct_txn = self._contract_obj.functions[method](*argv).buildTransaction(tx_options)
             signed = signer.sign_transaction(self.app_config, construct_txn)
 
