@@ -8,9 +8,9 @@ its validity.
 The related forked repositories of the original cert-issuer and cert-verifier are linked
 below.
 
-https://github.com/flamestro/cert-issuer
+https://github.com/BlockCertsSmartContract/cert-issuer
 
-https://github.com/flamestro/cert-verifier
+https://github.com/BlockCertsSmartContract/cert-verifier
 
 ## How deploying smart contract works
 
@@ -44,7 +44,7 @@ the setups of an Ethereum wallet (the wallet has to be registered in the Ethereu
 chain that being intended to be used later) and an according ENS domain.
 
 Our recommended tool for creating and managing the wallet is [Metamask](https://metamask.io)
-which, used as its chrome extension, is also an at least very viable option for an
+which is, used as its chrome extension, an at least very viable option for an
 efficient ENS name registration using the [web application](https://app.ens.domains/). Please make sure that
 your wallet has access to a sufficient amount of ether any time.
 
@@ -70,7 +70,7 @@ Notes:
 1. The ethereum address corresponds to the respective wallet address.
 1. Potential issuers can set up their own infura nodes or use publicly shared ones.
 1. If a smart contract shall be deployed and used by an already to another contract
-linked ENS name, the `overwrite_ens_link` has to be set to `True` in order to prevent
+linked ENS name, the `overwrite_ens_link` has to be  set to `True` in order to prevent
 accidental overwriting.
 1. The cert-deployer uses a separate class to access the wallet's private key which
 should be stored under the path provided. Ideally, that location is not permanently
@@ -80,12 +80,12 @@ accessible (e.g. USB stick) improving security.
 
 Execute these instructions step-by-step:
 1. ensure you have installed [solidity compiler (solc)](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html)
-1. clone github repo `$ git clone https://github.com/flamestro/cert-deployer.git`
+1. clone github repo `$ git clone https://github.com/BlockCertsSmartContract/cert-deployer.git`
 1. install dependencies within virtualenv `$ python setup.py install`
 1. add required information incl. paths and connection data into conf_eth.ini
 1. deploy smart contract `$ python deploy.py`
 
-... install the forked cert-issuer (and cert-verifier-) repository for benefitting
+... install the forked cert-issuer- (and cert-verifier) repositories for benefitting
 from the whole framework (links above).
 
 ## Why use cert-deployer
