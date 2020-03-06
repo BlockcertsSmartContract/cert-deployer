@@ -1,5 +1,5 @@
 # Ethereum Smart Contract Backend
-*v1.0*
+*v1.1*
 
 ## Quick Start
 1. [Create Ethereum wallet](https://www.myetherwallet.com/)
@@ -41,7 +41,7 @@ A strong chain of trust has to be established to trust the issuer's identity. In
 
 This issuing method moves this chain of trust completely onto the blockchain by using ENS which allows any addressable blockchain resources to be linked to a human-readable name, e.g. tu-berlin.eth. When an institution’s Blockcerts smart contract is deployed, its ENS domain is instructed to point to this contract. In any certificates issued to this contract, this ENS name will be present as the URL has been previously. If institutions advertise their domain and it becomes public knowledge, this chain of trust established supersedes the former, as ENS comes with the same availability guarantees as the blockchain itself. In the verification process only the institution's ENS name has to be manually verified, as before the institution's hostname.
 
-## Implementation
+## Usage
 ### Smart contract
 Once before starting the issuing process a smart contract has to be deployed by an institution. The contract bundles functionality for both issuing and revoking certificates. It works by storing storing a hash representation of the certificate or a batch of certificates. Each hash has one of three states associated to it: `not issued` (default), `revoked` or `valid`.
 Internally the use of a mapping ensures constant complexity for both read and write access to certificate states, thus minimizing gas-costs. Since no gas-costs are incurred by calling data from the ethereum blockchain, the verification process is free of charge.
@@ -123,7 +123,7 @@ The ENS domain that points to a smart contract deployed with cert-deployer.
 `revocation_list_file = <path-to-your-revocation_list>`  
 This file lists certificates that will be revoked when passing the --revoke flag when running from the command line.
 
-#### Setup and dependencies
+#### Setup and requirements
 The smart contract backend requires the web3 module to interact with the blockchain. This dependency is incompatible with the ethereum module required by the current implementation. For this reason, there is an install-time option to install the smart contract backend. The use of a [virtual environment](virtualenv.md) is highly recommended.
 
 `python setup.py install experimental --blockchain=ethereum_smart_contract`
@@ -163,6 +163,11 @@ Since ENS is our trust anchor, we have added a new verification step. This verif
 #### Configuration
 The config file is used to set Ethereum node addresses to be used in the verifying process.
 
+#### Setup
+All dependencies required can be installed by running (preferrably inside a [virtual environment](docs/virtualenv.md)):
+
+`python setup.py install`
+
 ### Cert-schema
 #### Description
 In order to verify certificates issued to a smart contract the necessary information needs to be stored in the certificate file.
@@ -188,4 +193,3 @@ The application binary interface (ABI) is necessary to communicate with the smar
 
 `chain`, `type` and `sourceId` are present in the [chainpoint v2 schema](https://chainpoint.org/) used.
 The additional fields used are therefore non-standard extensions. Ideally, a way is found to incorporate the functionality into the standard or a way is found to offer the same functionality while adhering to the standard.
-
