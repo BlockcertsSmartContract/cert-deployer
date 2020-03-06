@@ -8,9 +8,9 @@ its validity.
 The related forked repositories of the original cert-issuer and cert-verifier are linked
 below.
 
-https://github.com/BlockCertsSmartContract/cert-issuer
+https://github.com/BlockcertsSmartContract/cert-issuer
 
-https://github.com/BlockCertsSmartContract/cert-verifier
+https://github.com/BlockcertsSmartContract/cert-verifier
 
 ## How deploying smart contract works
 
@@ -80,7 +80,7 @@ accessible (e.g. USB stick) improving security.
 
 Execute these instructions step-by-step:
 1. ensure you have installed [solidity compiler (solc)](https://solidity.readthedocs.io/en/v0.5.3/installing-solidity.html)
-1. clone github repo `$ git clone https://github.com/BlockCertsSmartContract/cert-deployer.git`
+1. clone github repo `$ git clone https://github.com/BlockcertsSmartContract/cert-deployer.git`
 1. install dependencies within virtualenv `$ python setup.py install`
 1. add required information incl. paths and connection data into conf_eth.ini
 1. deploy smart contract `$ python deploy.py`
