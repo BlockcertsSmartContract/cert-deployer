@@ -22,21 +22,20 @@ class ContractDeployer(object):
         w3Factory = MakeW3(self.app_config)
         self._w3 = w3Factory.w3
         self._acct = w3Factory.account
-        self._pubkey = self.app_config.deploying_address
         self._ens_name = self.app_config.ens_name
 
     def check_balance(self):
         estimated_required_gas = 400000
         gas_price = self._w3.eth.gasPrice
 
-        gas_balance = self._w3.eth.getBalance(self._pubkey)
+        gas_balance = self._w3.eth.getBalance(self._acct)
         if gas_balance < estimated_required_gas * gas_price:
             logging.error("Your account balance is not sufficient to perform all transactions.")
             exit()
 
     def do_deploy(self):
         '''
-        Guides the deployment process step-by-step
+        Leads the deployment process step-by-step
         '''
         self.check_balance()
         self._security_check()
@@ -53,9 +52,9 @@ class ContractDeployer(object):
         node = ENS.namehash(self._ens_name)
         temp = ens_resolver.functions.call("addr", node)
 
-        # check if ens address is already linked to a contract
+        # check if ens address is already linked to a contract and potential overwriting intended
         if temp != "0x0000000000000000000000000000000000000000" and self.app_config.overwrite_ens_link is not True:
-            logging.error("A smart Contract already deployed on this domain and change_ens_link is not True.")
+            logging.error("A smart Contract already deployed on this domain and overwrite_ens_link is not True.")
             exit("Stopping process.")
 
     def _compile_contract(self):
@@ -93,19 +92,19 @@ class ContractDeployer(object):
         contract = self._w3.eth.contract(abi=self.abi, bytecode=self.bytecode)
         estimated_gas = contract.constructor().estimateGas()
         construct_txn = contract.constructor().buildTransaction({
-            'nonce': self._w3.eth.getTransactionCount(self._pubkey),
+            'nonce': self._w3.eth.getTransactionCount(self._acct),
             'gas': estimated_gas*2
         })
 
         # signing and sending transaction
         signed = signer.sign_transaction(self.app_config, construct_txn)
-        logging.info("Deployment pending...")
-        # try:
+        logging.info("Transaction deployment pending...")
+
         tx_hash = self._w3.eth.sendRawTransaction(signed.rawTransaction)
         tx_receipt = self._w3.eth.waitForTransactionReceipt(tx_hash)
         self.contr_address = tx_receipt.contractAddress
-        # print transaction hash
-        logging.info("Deployed the contract at address %s, and used %s gas.", self.contr_address, tx_receipt.gasUsed)
+
+        logging.info("Deployed the contract at address %s,  using the following amount of gas: %s", self.contr_address, tx_receipt.gasUsed)
 
     def _assign_ens(self):
         '''
@@ -125,7 +124,7 @@ class ContractDeployer(object):
             resolver_address = ContractConnection.get_ens_address(self.app_config.chain, "ens_resolver")
             ens_registry.functions.transact("setResolver", node, resolver_address)
         else:
-            logging.info("Resolver already set for %s.", ens_domain)
+            logging.info("Resolver already set for %s", ens_domain)
 
         # set ABI
         ens_resolver.functions.transact("setABI", node, 1, json.dumps(self.abi).encode())
@@ -139,7 +138,7 @@ class ContractDeployer(object):
         addr = ens_resolver.functions.call("addr", node)
         name = ens_resolver.functions.call("name", node)
 
-        logging.info("Set contract with address %s to name %s.", addr, name)
+        logging.info("SUCCESS – Set contract with address %s to name %s", addr, name)
 
 
 if __name__ == '__main__':

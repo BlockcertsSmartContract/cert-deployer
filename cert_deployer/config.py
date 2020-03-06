@@ -41,7 +41,7 @@ def get_config():
     parsed_config, _ = p.parse_known_args()
 
     if parsed_config.chain == "ethereum_mainnet" or parsed_config.chain == "ethereum_ropsten":
-        logging.info('This will try to deploy a smart contract on the %s chain, which might take a few minutes.', parsed_config.chain)
+        logging.info('Now deploying a smart contract on the %s chain. This might take a few minutes...', parsed_config.chain)
     else:
         logging.error('Unknown chain. Please check your config file')
         exit()
