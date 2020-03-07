@@ -25,7 +25,7 @@ class ContractDeployer(object):
         self._ens_name = self.app_config.ens_name
 
     def check_balance(self):
-        estimated_required_gas = 400000
+        estimated_required_gas = 500000
         gas_price = self._w3.eth.gasPrice
 
         gas_balance = self._w3.eth.getBalance(self._acct)
