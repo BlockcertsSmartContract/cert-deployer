@@ -12,6 +12,9 @@ https://github.com/BlockcertsSmartContract/cert-issuer
 
 https://github.com/BlockcertsSmartContract/cert-verifier
 
+## What's this?
+See our [complete documentation](docs/ethereum_smart_contract.md).
+
 ## How deploying smart contract works
 
 Potential issuers find our suggested sample contract in the data directory which
