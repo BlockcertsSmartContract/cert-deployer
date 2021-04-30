@@ -41,7 +41,7 @@ semantic-version==2.8.4   # via py-solc
 six==1.14.0               # via attrdict, ipfshttpclient, jsonschema, multiaddr, parsimonious, protobuf, py-multibase, py-multicodec, py-multihash, pyrsistent
 toolz==0.10.0             # via cytoolz
 typing-extensions==3.7.4.1  # via web3
-urllib3==1.25.7           # via requests
+urllib3==1.25.8           # via requests
 varint==1.0.2             # via multiaddr, py-multicodec, py-multihash
 web3==5.4.0
 websockets==8.1           # via web3
