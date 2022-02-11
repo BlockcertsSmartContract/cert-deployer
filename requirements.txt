@@ -25,7 +25,7 @@ multiaddr==0.0.9          # via ipfshttpclient
 mypy-extensions==0.4.3    # via web3
 netaddr==0.7.19           # via multiaddr
 parsimonious==0.8.1       # via eth-abi
-protobuf==3.11.2          # via web3
+protobuf==3.15.0          # via web3
 py-cid==0.3.0             # via content-hash
 py-multibase==1.0.1       # via py-cid
 py-multicodec==0.2.1      # via content-hash, py-cid
