@@ -7,7 +7,7 @@ configargparse==1.0
 content-hash==1.1.1
 cytoolz==0.10.1           # via eth-keyfile, eth-utils
 eth-abi==2.1.0            # via eth-account, web3
-eth-account==0.4.0        # via web3
+eth-account==0.5.9        # via web3
 eth-hash[pycryptodome]==0.2.0  # via eth-utils, web3
 eth-keyfile==0.5.1        # via eth-account
 eth-keys==0.2.4           # via eth-account, eth-keyfile
