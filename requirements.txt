@@ -1,7 +1,7 @@
 attrdict==2.0.1           # via eth-account
 attrs==19.3.0             # via jsonschema
 base58==1.0.3             # via multiaddr, py-cid, py-multihash
-certifi==2019.11.28       # via requests
+certifi==2022.12.7       # via requests
 chardet==3.0.4            # via requests
 configargparse==1.0
 content-hash==1.1.1
